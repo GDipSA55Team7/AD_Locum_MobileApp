@@ -2,8 +2,12 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_orientation="horizontal"
-    android:padding="5dp">
+    android:paddingTop="5dp"
+    android:paddingRight="5dp"
+    android:paddingLeft="5dp"
+    android:orientation="horizontal"
+    android:paddingBottom="10dp" >
+
     <LinearLayout
         android:layout_width="0dp"
         android:layout_height="match_parent"
@@ -55,9 +59,11 @@
         android:orientation="horizontal" >
 
         <LinearLayout
-            android:layout_width="215dp"
-            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:layout_gravity="center"
+            android:gravity="center_vertical"
+            android:paddingLeft="5dp"
             android:orientation="vertical">
 
             <TextView
@@ -70,24 +76,16 @@
                 android:id="@+id/clinic_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:inputType="textNoSuggestions"
                 android:text="Punggol Family Clinic Pte Ltd" />
 
             <TextView
                 android:id="@+id/address"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:inputType="textMultiLine"
-                android:text="322, #01-03 Sumang Walk \nPunggol, 820322 " />
+                android:inputType="textMultiLine|textNoSuggestions"
+                android:text="322, #01-03 Sumang Walk Punggol, 820322 " />
         </LinearLayout>
-
-        <Button
-            android:id="@+id/viewButton"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="wrap_content"
-            android:text="View"
-            android:layout_gravity="bottom" />
-
 
     </LinearLayout>
 
