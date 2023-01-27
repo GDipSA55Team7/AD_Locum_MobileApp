@@ -7,6 +7,6 @@
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
-    <color name="Btn_drawable_outline">#00008B</color>
+    <color name="Btn_BgColor">#87CEFA</color>
     <color name="validation_failed">#FF0000</color>
 </resources>
