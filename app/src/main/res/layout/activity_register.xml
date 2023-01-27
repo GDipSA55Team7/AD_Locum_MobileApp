@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/white"
+    android:id="@+id/linearlayoutRegisterActivity"
+    tools:context=".LoginActivity">
+
+    <TextView
+        android:text="CREATE NEW PROFILE"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:layout_marginTop="10dp"
+        android:textSize="25dp"
+        android:textColor="@color/black"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        />
+
+    <EditText
+        android:id="@+id/name"
+        android:drawableLeft="@drawable/ic_baseline_person_24"
+        android:drawablePadding="10dp"
+        android:hint="Enter your Name"
+        android:inputType="text"
+        style="@style/RegisterFieldStyle"
+        />
+
+    <EditText
+        android:id="@+id/username"
+        android:drawableLeft="@drawable/ic_baseline_person_24"
+        android:drawablePadding="10dp"
+        android:hint="Enter your Username"
+        android:inputType="text"
+        style="@style/RegisterFieldStyle"
+        />
+
+
+    <EditText
+        android:id="@+id/email"
+        android:drawableLeft="@drawable/ic_email"
+        android:drawablePadding="10dp"
+        android:hint="Enter your Email"
+        android:inputType="textEmailAddress"
+        style="@style/RegisterFieldStyle"
+        />
+
+
+    <EditText
+        android:id="@+id/password"
+        android:drawableLeft="@drawable/ic_password"
+        android:drawablePadding="10dp"
+        android:textColorHint="@color/black"
+        android:hint="Enter your Password"
+        android:inputType="textPassword"
+        style="@style/RegisterFieldStyle"
+        />
+
+
+    <EditText
+        android:id="@+id/contactNumber"
+        android:drawableLeft="@drawable/ic_phone"
+        android:drawablePadding="10dp"
+        android:hint="Enter your Contact Number"
+        android:inputType="number"
+        style="@style/RegisterFieldStyle"
+        />
+
+
+    <EditText
+        android:id="@+id/medicalLicenseNumber"
+        android:drawableLeft="@drawable/ic_address"
+        android:drawablePadding="10dp"
+        android:hint="Medical License Number"
+        android:inputType="text"
+        style="@style/RegisterFieldStyle"
+        />
+
+
+    <Button
+        android:id="@+id/register"
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="30dp"
+        android:layout_marginEnd="32dp"
+        android:layout_gravity="center"
+        android:text="REGISTER"
+        style="@style/btnstyle1"
+        />
+
+    <Button
+        android:id="@+id/reset"
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="30dp"
+        android:layout_marginEnd="32dp"
+        android:layout_gravity="center"
+        android:text="RESET"
+        style="@style/btnstyle1"
+        />
+
+</LinearLayout>
