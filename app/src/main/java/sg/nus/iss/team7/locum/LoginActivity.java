@@ -3,13 +3,20 @@ package sg.nus.iss.team7.locum;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Rect;
 import android.os.Bundle;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
+
+import com.google.gson.Gson;
 
 import java.io.IOException;
 
@@ -25,7 +32,7 @@ import sg.nus.iss.team7.locum.Utilities.UtilityConstants;
 public class LoginActivity extends AppCompatActivity {
 
     EditText mUsername,mPassword;
-    Button mloginBtn,mregisterBtn;
+    Button mLoginBtn,mRegisterBtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,10 +45,10 @@ public class LoginActivity extends AppCompatActivity {
 
        mUsername = findViewById(R.id.username);
        mPassword = findViewById(R.id.password);
-       mloginBtn = findViewById(R.id.login);
-       mregisterBtn = findViewById(R.id.register);
+       mLoginBtn = findViewById(R.id.login);
+       mRegisterBtn = findViewById(R.id.register);
 
-       mloginBtn.setOnClickListener(new View.OnClickListener() {
+       mLoginBtn.setOnClickListener(new View.OnClickListener() {
            @Override
            public void onClick(View v) {
                String username = mUsername.getText().toString().trim();
@@ -70,8 +77,8 @@ public class LoginActivity extends AppCompatActivity {
                            if(response.isSuccessful()){
                                FreeLancer validatedFL = response.body();
                                Toast.makeText(getApplicationContext(),"Login successful, welcome " + validatedFL.getName(),Toast.LENGTH_SHORT).show();
-//                               storeUserDetailsInSharedPref(validatedFL);
-//                               launchSelectGroupActivity();
+                               storeFLDetailsInSharedPref(validatedFL);
+
                            }
                            else {
                                int statusCode = response.code();
@@ -97,9 +104,16 @@ public class LoginActivity extends AppCompatActivity {
            }
        });
 
+        mRegisterBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                launchRegisterActivity();
+            }
+        });
+
 
     }
-
+    //comfirmation dialog for leaving app
     @Override
     public void onBackPressed() {
         new AlertDialog.Builder(this)
@@ -116,12 +130,37 @@ public class LoginActivity extends AppCompatActivity {
                 .show();
     }
 
+    //hide softkeyboard on lose focus
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent event) {
+        if (event.getAction() == MotionEvent.ACTION_DOWN) {
+            View v = getCurrentFocus();
+            if ( v instanceof EditText) {
+                Rect outRect = new Rect();
+                v.getGlobalVisibleRect(outRect);
+                if (!outRect.contains((int)event.getRawX(), (int)event.getRawY())) {
+                    v.clearFocus();
+                    InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
+                }
+            }
+        }
+        return super.dispatchTouchEvent( event );
+    }
+
 
     private boolean isLoggedIn(){
         SharedPreferences userDetailsSharedPref = getSharedPreferences(UtilityConstants.FREELANCER_SHARED_PREF,MODE_PRIVATE);
-        if(userDetailsSharedPref.contains(UtilityConstants.FREELANCER_DETAILS)){
-            return true;
-        }
-        return false;
+            return userDetailsSharedPref.contains(UtilityConstants.FREELANCER_DETAILS);
+    }
+    private void launchRegisterActivity(){
+        Intent intent = new Intent(LoginActivity.this,RegisterActivity.class);
+        startActivity(intent);
+    }
+    private void storeFLDetailsInSharedPref(FreeLancer freeLancer){
+        Gson gson = new Gson();
+        String json = gson.toJson(freeLancer);
+        SharedPreferences sharedPreferences = getSharedPreferences(UtilityConstants.FREELANCER_SHARED_PREF, MODE_PRIVATE);
+        sharedPreferences.edit().putString(UtilityConstants.FREELANCER_DETAILS, json).apply();
     }
 }

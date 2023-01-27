@@ -40,14 +40,15 @@
 
         <Button
             android:id="@+id/login"
-            style="@style/btnstyle1"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:layout_marginStart="15dp"
             android:layout_marginEnd="15dp"
             android:layout_gravity="top"
-            android:text="LOG IN" />
+            android:text="LOG IN"
+            style="@style/btnstyle1"
+            />
 
         <Button
             android:id="@+id/register"

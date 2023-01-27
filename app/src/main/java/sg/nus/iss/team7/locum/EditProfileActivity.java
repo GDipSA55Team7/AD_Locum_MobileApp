@@ -3,6 +3,7 @@ package sg.nus.iss.team7.locum;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Rect;
 import android.os.Bundle;
 import android.text.Editable;
@@ -11,51 +12,68 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.Spinner;
 import android.widget.Toast;
 
-public class RegisterActivity extends AppCompatActivity {
+import com.google.gson.Gson;
 
-    EditText mName,mUserName,mPassword,mEmail,mContactNumber,mMedicalLicenseNumber;
-    Button mRegister,mReset;
-    boolean nameIsValid ,usernameIsValid,passwordIsValid,emailIsValid,
-            contactNumberIsValid,medicalLicenseNumberIsValid;
+import sg.nus.iss.team7.locum.Model.FreeLancer;
+import sg.nus.iss.team7.locum.Utilities.UtilityConstants;
+
+public class EditProfileActivity extends AppCompatActivity {
+
+    EditText mName,mUserName,mEmail,mPassword,mContactNumber,mMedicalLicenseNumber;
+    Button mSubmitBtn,mResetBtn;
+    boolean nameIsValid = true ,usernameIsValid = true,passwordIsValid = true,emailIsValid = true,
+            contactNumberIsValid = true,medicalLicenseNumberIsValid = true;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_register);
+        setContentView(R.layout.activity_edit_profile);
+
 
         initElements();
-        mRegister = findViewById(R.id.register);
-        mReset = findViewById(R.id.reset);
 
-        mRegister.setOnClickListener(new View.OnClickListener() {
+        //logged in get from shared Pref
+        FreeLancer fl = readFromSharedPref();
+        mName.setText(fl.getName());
+        mUserName.setText(fl.getUserName());
+        mEmail.setText(fl.getEmail());
+        mPassword.setText(fl.getPassword());
+        mContactNumber.setText(fl.getContact());
+        mMedicalLicenseNumber.setText(fl.getMedicalLicenseNo());
+
+        mSubmitBtn = findViewById(R.id.register);
+        mResetBtn = findViewById(R.id.reset);
+
+
+        mSubmitBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(allFieldsValid()){
-                    Toast.makeText(getApplicationContext(),"Proceed with register",Toast.LENGTH_SHORT).show();
+                if(!allFieldsValid()){
+                    Toast.makeText(getApplicationContext(),"Make sure all fields are valid",Toast.LENGTH_SHORT).show();
                 }
                 else{
-                    Toast.makeText(getApplicationContext(),"Make sure all fields are valid",Toast.LENGTH_SHORT).show();
+                    //update
+                    Toast.makeText(getApplicationContext(),"can proceed with update call",Toast.LENGTH_SHORT).show();
                 }
             }
         });
 
-        mReset.setOnClickListener(new View.OnClickListener() {
+        mResetBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                LinearLayout linearLayout =  findViewById(R.id.linearlayoutRegisterActivity);
+                LinearLayout linearLayout =  findViewById(R.id.linearlayoutEditProfileActivity);
                 clearAllFields(linearLayout);
             }
         });
-    }
 
+
+    }
 
     private void initElements(){
 
@@ -213,20 +231,22 @@ public class RegisterActivity extends AppCompatActivity {
         }
         return "";
     }
+    private FreeLancer readFromSharedPref(){
+//        Gson gson = new Gson();
+//        SharedPreferences sharedPreferences = getSharedPreferences(UtilityConstants.FREELANCER_SHARED_PREF, MODE_PRIVATE);
+//        String json = sharedPreferences.getString(UtilityConstants.FREELANCER_DETAILS, "");
+//        FreeLancer fl = gson.fromJson(json, FreeLancer.class);
+//        return fl;
 
-    private boolean allFieldsValid(){
-        return nameIsValid && usernameIsValid && passwordIsValid && emailIsValid && medicalLicenseNumberIsValid && contactNumberIsValid;
-    }
-
-    private void clearAllFields(ViewGroup group) {
-        for (int i = 0, count = group.getChildCount(); i < count; ++i) {
-            View view = group.getChildAt(i);
-            if (view instanceof EditText) {
-                ((EditText)view).setText("");
-            }
-            if(view instanceof ViewGroup && (((ViewGroup)view).getChildCount() > 0))
-                clearAllFields((ViewGroup)view);
-        }
+        //hardcode testing
+        FreeLancer fl = new FreeLancer();
+        fl.setName("johnTan");
+        fl.setUserName("JT23");
+        fl.setContact("92287435");
+        fl.setEmail("a02@u.nus.edu");
+        fl.setMedicalLicenseNo("M12345J");
+        fl.setPassword("password");
+        return fl;
     }
 
     //hide softkeyboard on lose focus
@@ -245,6 +265,21 @@ public class RegisterActivity extends AppCompatActivity {
             }
         }
         return super.dispatchTouchEvent( event );
+    }
+
+    private boolean allFieldsValid(){
+        return nameIsValid && usernameIsValid && passwordIsValid && emailIsValid && medicalLicenseNumberIsValid && contactNumberIsValid;
+    }
+
+    private void clearAllFields(ViewGroup group) {
+        for (int i = 0, count = group.getChildCount(); i < count; ++i) {
+            View view = group.getChildAt(i);
+            if (view instanceof EditText) {
+                ((EditText)view).setText("");
+            }
+            if(view instanceof ViewGroup && (((ViewGroup)view).getChildCount() > 0))
+                clearAllFields((ViewGroup)view);
+        }
     }
 
 }
