@@ -1,6 +1,7 @@
 package sg.nus.iss.team7.locum;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.core.view.ViewCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.DividerItemDecoration;
@@ -8,6 +9,8 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.InsetDrawable;
 import android.os.Bundle;
 import android.transition.TransitionInflater;
 import android.view.LayoutInflater;
@@ -33,6 +36,9 @@ public class JobSearchFragment extends Fragment implements RecyclerViewInterface
 
         DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(recyclerView.getContext(),
                 linearLayoutManager.getOrientation());
+        Drawable dividerDrawable = ContextCompat.getDrawable(getContext(), R.drawable.divider);
+        InsetDrawable insetDivider = new InsetDrawable(dividerDrawable, 40, 0, 40, 0);
+        dividerItemDecoration.setDrawable(insetDivider);
         recyclerView.addItemDecoration(dividerItemDecoration);
 
         JobSearchAdapter adapter = new JobSearchAdapter(recyclerView.getContext(), this);

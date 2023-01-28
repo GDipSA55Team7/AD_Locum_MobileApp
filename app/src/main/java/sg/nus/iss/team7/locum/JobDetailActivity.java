@@ -8,6 +8,8 @@ import android.widget.TextView;
 
 public class JobDetailActivity extends AppCompatActivity {
 
+    JobDetailFragment jobDetailFragment = new JobDetailFragment();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -16,7 +18,6 @@ public class JobDetailActivity extends AppCompatActivity {
         Intent intent = getIntent();
         int itemPos = intent.getIntExtra("itemPos", 0);
 
-        TextView textView = findViewById(R.id.textView);
-        textView.setText("job detail " + itemPos);
+        getSupportFragmentManager().beginTransaction().replace(R.id.container, jobDetailFragment).commit();
     }
 }

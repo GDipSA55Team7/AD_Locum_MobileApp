@@ -2,6 +2,7 @@
 <resources>
     <color name="app_main_blue">#34548b</color>
     <color name="app_sec_blue">#b3c7d5</color>
+    <color name="status_green">#98ee99</color>
     <color name="purple_200">#FFBB86FC</color>
     <color name="purple_500">#FF6200EE</color>
     <color name="purple_700">#FF3700B3</color>
@@ -10,6 +11,8 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="light_grey">#F5F5F5F5</color>
+    <color name="darker_grey"> #D3D3D3</color>
+    <color name="darkest_grey">#808080</color>
     <color name="Btn_BgColor">#87CEFA</color>
     <color name="validation_failed">#FF0000</color>
 </resources>

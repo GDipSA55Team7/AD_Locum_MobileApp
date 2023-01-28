@@ -27,7 +27,6 @@ public class JobSearchAdapter extends RecyclerView.Adapter<JobSearchAdapter.MyVi
 
     public static class MyViewHolder extends RecyclerView.ViewHolder {
         public TextView date, full_rate, hour_rate, time_start, time_end, job_name, clinic_name, address;
-        public AppCompatButton button;
 
         public MyViewHolder(@NonNull View view, RecyclerViewInterface recyclerViewInterface) {
             super(view);
@@ -78,8 +77,4 @@ public class JobSearchAdapter extends RecyclerView.Adapter<JobSearchAdapter.MyVi
     public int getItemCount() {
         return 10;
     }
-
-
-
-
 }
