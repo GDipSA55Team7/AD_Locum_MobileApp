@@ -5,14 +5,13 @@ import com.google.gson.annotations.SerializedName;
 
 public class FreeLancer {
 
-
     @SerializedName("id")
     @Expose
     private String id;
 
-    @SerializedName("userName")
+    @SerializedName("username")
     @Expose
-    private String userName;
+    private String username;
 
     @SerializedName("password")
     @Expose
@@ -35,20 +34,14 @@ public class FreeLancer {
     @Expose
     private String medicalLicenseNo;
 
-    public String getId() {
-        return id;
+
+
+    public String getUsername() {
+        return username;
     }
 
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public String getUserName() {
-        return userName;
-    }
-
-    public void setUserName(String userName) {
-        this.userName = userName;
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public String getPassword() {

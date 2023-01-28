@@ -5,11 +5,14 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Rect;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.InputType;
 import android.text.TextWatcher;
+import android.text.method.PasswordTransformationMethod;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,9 +24,21 @@ import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
+
+import java.io.IOException;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import sg.nus.iss.team7.locum.APICommunication.ApiMethods;
+import sg.nus.iss.team7.locum.APICommunication.RetroFitClient;
+import sg.nus.iss.team7.locum.Model.FreeLancer;
+import sg.nus.iss.team7.locum.Utilities.UtilityConstants;
 
 public class RegisterActivity extends AppCompatActivity {
 
@@ -44,7 +59,55 @@ public class RegisterActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if(allFieldsValid()){
-                    Toast.makeText(getApplicationContext(),"Proceed with register",Toast.LENGTH_SHORT).show();
+                    FreeLancer fl = new FreeLancer();
+                    fl.setName(mName.getText().toString().trim());
+                    fl.setUsername(mUserName.getText().toString().trim());
+                    fl.setPassword(mPassword.getText().toString().trim());
+                    fl.setEmail(mEmail.getText().toString().trim());
+                    fl.setContact(mContactNumber.getText().toString().trim());
+                    fl.setMedicalLicenseNo(mMedicalLicenseNumber.getText().toString().trim());
+
+                    Retrofit retrofit = RetroFitClient.getClient(RetroFitClient.BASE_URL);
+                    ApiMethods api = retrofit.create(ApiMethods.class);
+
+                    Call<FreeLancer> registerFLCall = api.registerFreeLancer(fl);
+                    registerFLCall.enqueue(new Callback<FreeLancer>() {
+                        @Override
+                        public void onResponse(Call<FreeLancer> call, Response<FreeLancer> response) {
+                            if(response.isSuccessful()){
+                                if(response.code() == 201){
+                                    FreeLancer newFL = response.body();
+                                    Toast.makeText(getApplicationContext(),"Register successful, welcome " + newFL.getName(),Toast.LENGTH_SHORT).show();
+                                    //if register is successful, store in shared Pref
+                                    storeFLDetailsInSharedPref(newFL);
+                                    //redirect
+
+
+                                    //for testing editProfile API call redirect to editProfileActivity
+                                    Intent intent = new Intent(RegisterActivity.this,EditProfileActivity.class);
+                                    startActivity(intent);
+                                }
+                            }
+                            else {
+                                int statusCode = response.code();
+                                if (statusCode == 500) {
+                                    createDialogForRegisterFailed("Internal Server Error");
+                                    //Toast.makeText(getApplicationContext(), "INTERNAL SERVER ERROR", Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                        }
+                        @Override
+                        public void onFailure(Call<FreeLancer> call, Throwable t) {
+                            if (t instanceof IOException) {
+                                createDialogForRegisterFailed("Network Failure");
+                                // Toast.makeText(LoginActivity.this, "Network Failure ", Toast.LENGTH_SHORT).show();
+                            }
+                            else {
+                                createDialogForRegisterFailed("JSON Parsing Issue");
+                                // Toast.makeText(LoginActivity.this, "JSON Parsing Issue", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    });
                 }
                 else{
                     //Toast.makeText(getApplicationContext(),"Make sure all fields are valid",Toast.LENGTH_SHORT).show();
@@ -76,6 +139,7 @@ public class RegisterActivity extends AppCompatActivity {
 
         mPassword = findViewById(R.id.password);
         mPassword.setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
+        mPassword.setTransformationMethod(new PasswordTransformationMethod());
 
         mContactNumber = findViewById(R.id.contactNumber);
 
@@ -215,7 +279,12 @@ public class RegisterActivity extends AppCompatActivity {
                 })
                 .show();
     }
-
+    private void storeFLDetailsInSharedPref(FreeLancer freeLancer){
+        Gson gson = new Gson();
+        String json = gson.toJson(freeLancer);
+        SharedPreferences sharedPreferences = getSharedPreferences(UtilityConstants.FREELANCER_SHARED_PREF, MODE_PRIVATE);
+        sharedPreferences.edit().putString(UtilityConstants.FREELANCER_DETAILS, json).apply();
+    }
 
     //hide softkeyboard on lose focus
     @Override
