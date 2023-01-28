@@ -43,8 +43,8 @@ public class JobSearchAdapter extends RecyclerView.Adapter<JobSearchAdapter.MyVi
                 @Override
                 public void onClick(View v) {
                     if (recyclerViewInterface != null) {
-                        int pos = getAbsoluteAdapterPosition();
-                        //int pos = getAdapterPosition();
+                        //int pos = getAbsoluteAdapterPosition();
+                        int pos = getAdapterPosition();
                         if(pos != RecyclerView.NO_POSITION) {
                             recyclerViewInterface.onItemClick(pos);
                         }

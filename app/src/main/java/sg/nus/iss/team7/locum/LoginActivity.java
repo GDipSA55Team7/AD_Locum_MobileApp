@@ -18,10 +18,8 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.LinearLayout;
 import android.widget.Toast;
 
-import com.airbnb.lottie.LottieAnimationView;
 import com.google.gson.Gson;
 
 import java.io.IOException;
@@ -35,7 +33,6 @@ import retrofit2.Retrofit;
 import sg.nus.iss.team7.locum.APICommunication.ApiMethods;
 import sg.nus.iss.team7.locum.APICommunication.RetroFitClient;
 import sg.nus.iss.team7.locum.Model.FreeLancer;
-import sg.nus.iss.team7.locum.Utilities.UtilityConstants;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -50,11 +47,10 @@ public class LoginActivity extends AppCompatActivity {
 
         if(isLoggedIn()) {
             // go to another activity
-
+            Intent intent = new Intent(LoginActivity.this,JobDetailActivity.class);
+            startActivity(intent);
         }
         initElementsAndListeners();
-        setLoginAnimation();
-
 
        mLoginBtn.setOnClickListener(new View.OnClickListener() {
            @Override
@@ -100,8 +96,7 @@ public class LoginActivity extends AppCompatActivity {
                                //if login is successful, store in shared Pref
                                storeFLDetailsInSharedPref(existingFL);
 
-                               //for testing editProfile API call redirect to editProfileActivity
-                               Intent intent = new Intent(LoginActivity.this,EditProfileActivity.class);
+                               Intent intent = new Intent(LoginActivity.this,JobDetailActivity.class);
                                startActivity(intent);
                            }
                            else {
@@ -175,17 +170,9 @@ public class LoginActivity extends AppCompatActivity {
         return super.dispatchTouchEvent( event );
     }
 
-    private void setLoginAnimation(){
-        int width=1000;
-        int height=1000;
-        LottieAnimationView lottieanimation=findViewById(R.id.doctor_login);
-        LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) lottieanimation.getLayoutParams();
-        params.width = width;
-        params.height = height;
-    }
     private boolean isLoggedIn(){
-        SharedPreferences userDetailsSharedPref = getSharedPreferences(UtilityConstants.FREELANCER_SHARED_PREF,MODE_PRIVATE);
-        return userDetailsSharedPref.contains(UtilityConstants.FREELANCER_DETAILS);
+        SharedPreferences userDetailsSharedPref = getSharedPreferences(getResources().getString(R.string.Freelancer_Shared_Pref),MODE_PRIVATE);
+        return userDetailsSharedPref.contains(getResources().getString(R.string.Freelancer_Details));
     }
     private void initElementsAndListeners(){
         mUserName = findViewById(R.id.username);
@@ -244,10 +231,9 @@ public class LoginActivity extends AppCompatActivity {
     private void storeFLDetailsInSharedPref(FreeLancer freeLancer){
         Gson gson = new Gson();
         String json = gson.toJson(freeLancer);
-        SharedPreferences sharedPreferences = getSharedPreferences(UtilityConstants.FREELANCER_SHARED_PREF, MODE_PRIVATE);
-        sharedPreferences.edit().putString(UtilityConstants.FREELANCER_DETAILS, json).apply();
+        SharedPreferences sharedPreferences = getSharedPreferences(getResources().getString(R.string.Freelancer_Shared_Pref), MODE_PRIVATE);
+        sharedPreferences.edit().putString(getResources().getString(R.string.Freelancer_Details), json).apply();
     }
-
     private void createDialogForLoginFailed(String msg){
         new AlertDialog.Builder(LoginActivity.this)
                 .setIcon(R.drawable.ic_exit_application)

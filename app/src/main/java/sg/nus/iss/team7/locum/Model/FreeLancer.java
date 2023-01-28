@@ -34,7 +34,22 @@ public class FreeLancer {
     @Expose
     private String medicalLicenseNo;
 
+    @SerializedName("errorsFieldString")
+    @Expose
+    private String errorsFieldString;
 
+    public String getId() {
+        return id;
+    }
+
+
+    public String getErrorsFieldString() {
+        return errorsFieldString;
+    }
+
+    public void setErrorsFieldString(String errorsFieldString) {
+        this.errorsFieldString = errorsFieldString;
+    }
 
     public String getUsername() {
         return username;

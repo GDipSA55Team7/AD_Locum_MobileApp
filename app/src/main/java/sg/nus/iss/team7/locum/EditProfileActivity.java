@@ -35,7 +35,6 @@ import retrofit2.Retrofit;
 import sg.nus.iss.team7.locum.APICommunication.ApiMethods;
 import sg.nus.iss.team7.locum.APICommunication.RetroFitClient;
 import sg.nus.iss.team7.locum.Model.FreeLancer;
-import sg.nus.iss.team7.locum.Utilities.UtilityConstants;
 
 public class EditProfileActivity extends AppCompatActivity {
 
@@ -52,9 +51,7 @@ public class EditProfileActivity extends AppCompatActivity {
 
         //update fields with existing profile data
         FreeLancer fl = readFromSharedPref();
-
         displayExistingFreeLancerDetails(fl);
-
 
         mSubmitBtn = findViewById(R.id.register);
         mResetBtn = findViewById(R.id.reset);
@@ -68,7 +65,7 @@ public class EditProfileActivity extends AppCompatActivity {
                 }
                 else{
                     //update
-                    Toast.makeText(getApplicationContext(),"can proceed with update call",Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(getApplicationContext(),"can proceed with update call",Toast.LENGTH_SHORT).show();
 
                     Retrofit retrofit = RetroFitClient.getClient(RetroFitClient.BASE_URL);
                     ApiMethods api = retrofit.create(ApiMethods.class);
@@ -87,7 +84,7 @@ public class EditProfileActivity extends AppCompatActivity {
                             if(response.isSuccessful()){
                                 if(response.code() == 200){
                                     //FreeLancer validatedFL = response.body();
-                                    Toast.makeText(getApplicationContext(),"Login successful, welcome " + fl.getName(),Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(getApplicationContext(),"Details updated ",Toast.LENGTH_SHORT).show();
                                     //if register is successful, store in shared Pref
                                     storeFLDetailsInSharedPref(fl);
                                     //redirect
@@ -153,7 +150,7 @@ public class EditProfileActivity extends AppCompatActivity {
         listenerForLengthValidation(mPassword,"Password",5,15);
 
         // regex for normal email  - String emailPattern = "[a-zA-Z0-9._-]+@[a-z]+\\.+[a-z]+";
-        String validEmailRegex = "[a-zA-Z0-9._-]+@u.nus.edu";
+        String validEmailRegex = "[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,4}";;
         String validMedicalLicenseNumberRegex = "^M[0-9]{5}[A-Z]$";
         String validContactNumberRegex = "\\d{8}";
 
@@ -183,8 +180,8 @@ public class EditProfileActivity extends AppCompatActivity {
 
     private FreeLancer readFromSharedPref(){
         Gson gson = new Gson();
-        SharedPreferences sharedPreferences = getSharedPreferences(UtilityConstants.FREELANCER_SHARED_PREF, MODE_PRIVATE);
-        String json = sharedPreferences.getString(UtilityConstants.FREELANCER_DETAILS, "");
+        SharedPreferences sharedPreferences = getSharedPreferences(getResources().getString(R.string.Freelancer_Shared_Pref), MODE_PRIVATE);
+        String json = sharedPreferences.getString(getResources().getString(R.string.Freelancer_Details), "");
         FreeLancer fl = gson.fromJson(json, FreeLancer.class);
         return fl;
 
@@ -198,6 +195,24 @@ public class EditProfileActivity extends AppCompatActivity {
 //        fl.setPassword("password");
     }
 
+
+    private void listenerForLengthValidation(final EditText editTxt,final String fieldName,final int minChar,final int maxChar){
+        editTxt.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                Boolean fieldIsValid = validateLength(editTxt, fieldName, minChar, maxChar);
+                mapFieldToValidStatus.put(fieldName, fieldIsValid);
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+            }
+        });
+    }
     private boolean validateLength(EditText editTxt, String fieldName, int minChar, int maxChar){
 
         boolean fieldIsValid = true;
@@ -216,23 +231,6 @@ public class EditProfileActivity extends AppCompatActivity {
             }
         }
         return fieldIsValid;
-    }
-    private void listenerForLengthValidation(final EditText editTxt,final String fieldName,final int minChar,final int maxChar){
-        editTxt.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-            }
-
-            @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                Boolean fieldIsValid = validateLength(editTxt, fieldName, minChar, maxChar);
-                mapFieldToValidStatus.put(fieldName, fieldIsValid);
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-            }
-        });
     }
     private void listenerForRegexValidation(final EditText editTxt,final String fieldName,final String validPattern){
         editTxt.addTextChangedListener(new TextWatcher() {
@@ -263,7 +261,7 @@ public class EditProfileActivity extends AppCompatActivity {
 
             switch(fieldName){
                 case "Email":
-                    editTxt.setError("Must be valid NUS email format E.g. ABC@u.nus.edu");
+                    editTxt.setError("Must be valid  email format E.G. ABC@gmail.com");
                     break;
                 case "ContactNumber":
                     editTxt.setError("Phone Number must 8 digits long");
@@ -320,8 +318,8 @@ public class EditProfileActivity extends AppCompatActivity {
     private void storeFLDetailsInSharedPref(FreeLancer freeLancer){
         Gson gson = new Gson();
         String json = gson.toJson(freeLancer);
-        SharedPreferences sharedPreferences = getSharedPreferences(UtilityConstants.FREELANCER_SHARED_PREF, MODE_PRIVATE);
-        sharedPreferences.edit().putString(UtilityConstants.FREELANCER_DETAILS, json).apply();
+        SharedPreferences sharedPreferences = getSharedPreferences(getResources().getString(R.string.Freelancer_Shared_Pref), MODE_PRIVATE);
+        sharedPreferences.edit().putString(getResources().getString(R.string.Freelancer_Details), json).apply();
     }
 
     private void createDialogForSubmitFailed(String msg){

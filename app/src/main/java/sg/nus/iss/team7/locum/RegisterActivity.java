@@ -38,7 +38,6 @@ import retrofit2.Retrofit;
 import sg.nus.iss.team7.locum.APICommunication.ApiMethods;
 import sg.nus.iss.team7.locum.APICommunication.RetroFitClient;
 import sg.nus.iss.team7.locum.Model.FreeLancer;
-import sg.nus.iss.team7.locum.Utilities.UtilityConstants;
 
 public class RegisterActivity extends AppCompatActivity {
 
@@ -76,16 +75,34 @@ public class RegisterActivity extends AppCompatActivity {
                         public void onResponse(Call<FreeLancer> call, Response<FreeLancer> response) {
                             if(response.isSuccessful()){
                                 if(response.code() == 201){
-                                    FreeLancer newFL = response.body();
-                                    Toast.makeText(getApplicationContext(),"Register successful, welcome " + newFL.getName(),Toast.LENGTH_SHORT).show();
+                                    FreeLancer returnedFL = response.body();
+                                    Toast.makeText(getApplicationContext(),"Register successful, welcome " + returnedFL.getName(),Toast.LENGTH_SHORT).show();
+
                                     //if register is successful, store in shared Pref
-                                    storeFLDetailsInSharedPref(newFL);
+                                    storeFLDetailsInSharedPref(returnedFL);
+
                                     //redirect
-
-
-                                    //for testing editProfile API call redirect to editProfileActivity
-                                    Intent intent = new Intent(RegisterActivity.this,EditProfileActivity.class);
+                                    Intent intent = new Intent(RegisterActivity.this,JobDetailActivity.class);
                                     startActivity(intent);
+                                }
+                                else if  (response.code() == 409) {
+                                    FreeLancer invalidFL = response.body();
+                                    String errString =  invalidFL.getErrorsFieldString();
+
+                                    String displayErrorTxt = "";
+                                    if(errString.contains("username")){
+                                        displayErrorTxt += "UserName has been taken.Please choose another unique username\n";
+                                    }
+                                    if(errString.contains("email")){
+                                        displayErrorTxt += "Email has been taken.Please choose another unique email\n";
+
+                                    }
+
+                                    if(errString.contains("medical")){
+                                        displayErrorTxt += "MedicalLicenseNumber has been taken.Please provide valid MedicalLicenseNumber\n";
+                                    }
+
+                                    createDialogForRegisterFailed(displayErrorTxt);
                                 }
                             }
                             else {
@@ -94,6 +111,8 @@ public class RegisterActivity extends AppCompatActivity {
                                     createDialogForRegisterFailed("Internal Server Error");
                                     //Toast.makeText(getApplicationContext(), "INTERNAL SERVER ERROR", Toast.LENGTH_SHORT).show();
                                 }
+
+
                             }
                         }
                         @Override
@@ -151,7 +170,8 @@ public class RegisterActivity extends AppCompatActivity {
         listenerForLengthValidation(mPassword,"Password",5,15);
 
         // regex for normal email  - String emailPattern = "[a-zA-Z0-9._-]+@[a-z]+\\.+[a-z]+";
-        String validEmailRegex = "[a-zA-Z0-9._-]+@u.nus.edu";
+        //String validEmailRegex = "[a-zA-Z0-9._-]+@u.nus.edu";
+        String validEmailRegex = "[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,4}";
         String validMedicalLicenseNumberRegex = "^M[0-9]{5}[A-Z]$";
         String validContactNumberRegex = "\\d{8}";
 
@@ -226,7 +246,7 @@ public class RegisterActivity extends AppCompatActivity {
 
             switch(fieldName){
                 case "Email":
-                    editTxt.setError("Must be valid NUS email format E.g. ABC@u.nus.edu");
+                    editTxt.setError("Must be valid  email format E.G. ABC@gmail.com");
                     break;
                 case "ContactNumber":
                     editTxt.setError("Phone Number must 8 digits long");
@@ -279,11 +299,12 @@ public class RegisterActivity extends AppCompatActivity {
                 })
                 .show();
     }
+
     private void storeFLDetailsInSharedPref(FreeLancer freeLancer){
         Gson gson = new Gson();
         String json = gson.toJson(freeLancer);
-        SharedPreferences sharedPreferences = getSharedPreferences(UtilityConstants.FREELANCER_SHARED_PREF, MODE_PRIVATE);
-        sharedPreferences.edit().putString(UtilityConstants.FREELANCER_DETAILS, json).apply();
+        SharedPreferences sharedPreferences = getSharedPreferences(getResources().getString(R.string.Freelancer_Shared_Pref), MODE_PRIVATE);
+        sharedPreferences.edit().putString(getResources().getString(R.string.Freelancer_Details), json).apply();
     }
 
     //hide softkeyboard on lose focus

@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="sg.nus.iss.team7.locum">
     <uses-permission android:name="android.permission.INTERNET" />
-
+    <uses-permission android:name="android.permission.INTERNET"/>
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -18,11 +18,12 @@
         tools:targetApi="31">
         <activity
             android:name=".JobDetailActivity"
-            android:exported="false"
+            android:exported="true"
             android:screenOrientation="portrait">
             <meta-data
                 android:name="android.app.lib_name"
                 android:value="" />
+
         </activity>
         <activity
             android:name=".MainActivity"
@@ -32,12 +33,20 @@
             <meta-data
                 android:name="android.app.lib_name"
                 android:value="" />
-            android:name=".EditProfileActivity"
+        </activity>
+
+        <activity
+        android:name=".EditProfileActivity"
             android:theme="@style/AppFullScreenTheme"
             android:exported="true" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
 
-
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
         </activity>
+
+
         <activity
             android:name=".RegisterActivity"
             android:exported="true"
@@ -53,11 +62,7 @@
             android:exported="true"
             android:screenOrientation="portrait"
             android:theme="@style/AppFullScreenTheme">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
     </application>
 
