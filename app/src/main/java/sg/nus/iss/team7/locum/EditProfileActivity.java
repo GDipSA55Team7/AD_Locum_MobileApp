@@ -14,54 +14,62 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.Spinner;
 import android.widget.Toast;
 
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-public class RegisterActivity extends AppCompatActivity {
+import sg.nus.iss.team7.locum.Model.FreeLancer;
 
-    EditText mName,mUserName,mPassword,mEmail,mContactNumber,mMedicalLicenseNumber;
-    Button mRegister,mReset;
+public class EditProfileActivity extends AppCompatActivity {
+
+    EditText mName,mUserName,mEmail,mPassword,mContactNumber,mMedicalLicenseNumber;
+    Button mSubmitBtn,mResetBtn;
     Map<String,Boolean> mapFieldToValidStatus = new HashMap<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_register);
+        setContentView(R.layout.activity_edit_profile);
 
         initListeners();
-        mRegister = findViewById(R.id.register);
-        mReset = findViewById(R.id.reset);
 
-        mRegister.setOnClickListener(new View.OnClickListener() {
+        //update fields with existing profile data
+        FreeLancer fl = readFromSharedPref();
+        mName.setText(fl.getName());
+        mUserName.setText(fl.getUserName());
+        mEmail.setText(fl.getEmail());
+        mPassword.setText(fl.getPassword());
+        mContactNumber.setText(fl.getContact());
+        mMedicalLicenseNumber.setText(fl.getMedicalLicenseNo());
+
+        mSubmitBtn = findViewById(R.id.register);
+        mResetBtn = findViewById(R.id.reset);
+
+        mSubmitBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(allFieldsValid()){
-                    Toast.makeText(getApplicationContext(),"Proceed with register",Toast.LENGTH_SHORT).show();
+                if(!allFieldsValid()){
+                    //Toast.makeText(getApplicationContext(),"Make sure all fields are valid",Toast.LENGTH_SHORT).show();
+                    createDialogForValidationFailed("Make sure all fields are valid");
                 }
                 else{
-                    //Toast.makeText(getApplicationContext(),"Make sure all fields are valid",Toast.LENGTH_SHORT).show();
-                    createDialogForRegisterFailed("Make sure all fields are valid");
+                    //update
+                    Toast.makeText(getApplicationContext(),"can proceed with update call",Toast.LENGTH_SHORT).show();
                 }
             }
         });
-
-        mReset.setOnClickListener(new View.OnClickListener() {
+        mResetBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                LinearLayout linearLayout =  findViewById(R.id.linearlayoutRegisterActivity);
+                LinearLayout linearLayout =  findViewById(R.id.linearlayoutEditProfileActivity);
                 clearAllFields(linearLayout);
             }
         });
     }
-
 
     private void initListeners(){
 
@@ -95,6 +103,42 @@ public class RegisterActivity extends AppCompatActivity {
         listenerForRegexValidation(mMedicalLicenseNumber,"MedicalLicenseNumber",validMedicalLicenseNumberRegex);
         listenerForRegexValidation(mContactNumber,"ContactNumber",validContactNumberRegex);
 
+    }
+
+    // Hide softkeyboard on element loses focus
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent event) {
+        if (event.getAction() == MotionEvent.ACTION_DOWN) {
+            View v = getCurrentFocus();
+            if ( v instanceof EditText) {
+                Rect outRect = new Rect();
+                v.getGlobalVisibleRect(outRect);
+                if (!outRect.contains((int)event.getRawX(), (int)event.getRawY())) {
+                    v.clearFocus();
+                    InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
+                }
+            }
+        }
+        return super.dispatchTouchEvent( event );
+    }
+
+    private FreeLancer readFromSharedPref(){
+//        Gson gson = new Gson();
+//        SharedPreferences sharedPreferences = getSharedPreferences(UtilityConstants.FREELANCER_SHARED_PREF, MODE_PRIVATE);
+//        String json = sharedPreferences.getString(UtilityConstants.FREELANCER_DETAILS, "");
+//        FreeLancer fl = gson.fromJson(json, FreeLancer.class);
+//        return fl;
+
+        //hardcode testing
+        FreeLancer fl = new FreeLancer();
+        fl.setName("johnTan");
+        fl.setUserName("JT23");
+        fl.setContact("92287435");
+        fl.setEmail("a02@u.nus.edu");
+        fl.setMedicalLicenseNo("M12345J");
+        fl.setPassword("password");
+        return fl;
     }
 
     private boolean validateLength(EditText editTxt, String fieldName, int minChar, int maxChar){
@@ -202,10 +246,10 @@ public class RegisterActivity extends AppCompatActivity {
         }
     }
 
-    private void createDialogForRegisterFailed(String msg){
-        new AlertDialog.Builder(RegisterActivity.this)
+    private void createDialogForValidationFailed(String msg){
+        new AlertDialog.Builder(EditProfileActivity.this)
                 .setIcon(R.drawable.ic_exit_application)
-                .setTitle("Register Failed")
+                .setTitle("Submit Failed")
                 .setMessage(msg)
                 .setCancelable(true)
                 .setPositiveButton("OK", new DialogInterface.OnClickListener() {
@@ -215,26 +259,4 @@ public class RegisterActivity extends AppCompatActivity {
                 })
                 .show();
     }
-
-
-    //hide softkeyboard on lose focus
-    @Override
-    public boolean dispatchTouchEvent(MotionEvent event) {
-        if (event.getAction() == MotionEvent.ACTION_DOWN) {
-            View v = getCurrentFocus();
-            if ( v instanceof EditText) {
-                Rect outRect = new Rect();
-                v.getGlobalVisibleRect(outRect);
-                if (!outRect.contains((int)event.getRawX(), (int)event.getRawY())) {
-                    v.clearFocus();
-                    InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                    imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
-                }
-            }
-        }
-        return super.dispatchTouchEvent( event );
-    }
-
-
-
 }

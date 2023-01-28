@@ -1,16 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:background="@color/white"
     tools:context=".LoginActivity">
 
+
+    <com.airbnb.lottie.LottieAnimationView
+        android:id="@+id/doctor_login"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:lottie_rawRes="@raw/doctor_login"
+        app:lottie_autoPlay="true"
+        app:lottie_loop="true"
+        android:gravity="center"
+        android:layout_gravity="center"
+        />
+
+
     <EditText
         android:id="@+id/username"
-        android:layout_marginTop="180dp"
+        android:layout_marginTop="50dp"
         android:drawableLeft="@drawable/ic_baseline_person_24"
         android:drawablePadding="10dp"
         android:hint="Enter Your Username"
@@ -21,7 +34,7 @@
     <EditText
         android:id="@+id/password"
         android:layout_marginTop="50dp"
-        android:drawableLeft="@drawable/ic_baseline_person_24"
+        android:drawableLeft="@drawable/ic_password"
         android:drawablePadding="10dp"
         android:hint="Enter Your Password"
         android:inputType="textPassword"
@@ -40,14 +53,15 @@
 
         <Button
             android:id="@+id/login"
-            style="@style/btnstyle1"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:layout_marginStart="15dp"
             android:layout_marginEnd="15dp"
             android:layout_gravity="top"
-            android:text="LOG IN" />
+            android:text="LOG IN"
+            style="@style/btnstyle1"
+            />
 
         <Button
             android:id="@+id/register"
