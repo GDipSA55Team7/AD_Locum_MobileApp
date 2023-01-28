@@ -1,11 +1,15 @@
 package sg.nus.iss.team7.locum;
 
+import androidx.annotation.NonNull;
+import androidx.core.view.ViewCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.transition.TransitionInflater;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,25 +21,6 @@ import sg.nus.iss.team7.locum.Interface.RecyclerViewInterface;
 public class JobSearchFragment extends Fragment implements RecyclerViewInterface {
 
     RecyclerView recyclerView;
-
-//    @Override
-//    public void onCreate(Bundle savedInstanceState) {
-//        super.onCreate(savedInstanceState);
-//        setContentView(R.layout.activity_job_search);
-//
-//        recyclerView = findViewById(R.id.jobRecyclerView);
-//
-//        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getApplicationContext());
-//        recyclerView.setLayoutManager(linearLayoutManager);
-//
-//        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(recyclerView.getContext(),
-//                linearLayoutManager.getOrientation());
-//        recyclerView.addItemDecoration(dividerItemDecoration);
-//
-//        JobSearchAdapter adapter = new JobSearchAdapter(this, this);
-//
-//        recyclerView.setAdapter(adapter);
-//    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -59,7 +44,8 @@ public class JobSearchFragment extends Fragment implements RecyclerViewInterface
 
     @Override
     public void onItemClick(int position) {
-        // TODO: add the intent
-        Toast.makeText(recyclerView.getContext(), "clicked item " + position,Toast.LENGTH_SHORT).show();
+        Intent intent = new Intent(getContext(), JobDetailActivity.class);
+        intent.putExtra("itemPos", position);
+        startActivity(intent);
     }
 }
