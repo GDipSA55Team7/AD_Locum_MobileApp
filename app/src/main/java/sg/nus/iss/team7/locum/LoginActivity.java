@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.InputType;
 import android.text.TextWatcher;
+import android.text.method.PasswordTransformationMethod;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -49,9 +50,9 @@ public class LoginActivity extends AppCompatActivity {
 
         if(isLoggedIn()) {
             // go to another activity
+
         }
         initElementsAndListeners();
-
         setLoginAnimation();
 
 
@@ -87,17 +88,21 @@ public class LoginActivity extends AppCompatActivity {
                    ApiMethods api = retrofit.create(ApiMethods.class);
 
                    FreeLancer checkFLlogin = new FreeLancer();
-                   checkFLlogin.setUserName(usernameInput);
+                   checkFLlogin.setUsername(usernameInput);
                    checkFLlogin.setPassword(passwordInput);
                    Call<FreeLancer> loginFLCall = api.loginFreeLancer(checkFLlogin);
                    loginFLCall.enqueue(new Callback<FreeLancer>() {
                        @Override
                        public void onResponse(Call<FreeLancer> call, Response<FreeLancer> response) {
                            if(response.isSuccessful()){
-                               FreeLancer validatedFL = response.body();
-                               Toast.makeText(getApplicationContext(),"Login successful, welcome " + validatedFL.getName(),Toast.LENGTH_SHORT).show();
+                               FreeLancer existingFL = response.body();
+                               Toast.makeText(getApplicationContext(),"Login successful, welcome " + existingFL.getName(),Toast.LENGTH_SHORT).show();
                                //if login is successful, store in shared Pref
-                               storeFLDetailsInSharedPref(validatedFL);
+                               storeFLDetailsInSharedPref(existingFL);
+
+                               //for testing editProfile API call redirect to editProfileActivity
+                               Intent intent = new Intent(LoginActivity.this,EditProfileActivity.class);
+                               startActivity(intent);
                            }
                            else {
                                int statusCode = response.code();
@@ -187,6 +192,8 @@ public class LoginActivity extends AppCompatActivity {
         mUserName.setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
         mPassword = findViewById(R.id.password);
         mPassword.setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
+        mPassword.setTransformationMethod(new PasswordTransformationMethod());
+
 
         listenerForLengthValidation(mUserName,"UserName",3,12);
         listenerForLengthValidation(mPassword,"Password",5,15);

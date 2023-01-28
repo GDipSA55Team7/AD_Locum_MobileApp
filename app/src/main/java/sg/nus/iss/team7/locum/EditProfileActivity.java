@@ -5,11 +5,13 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.graphics.Rect;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.InputType;
 import android.text.TextWatcher;
+import android.text.method.PasswordTransformationMethod;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,10 +21,21 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
+
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import sg.nus.iss.team7.locum.APICommunication.ApiMethods;
+import sg.nus.iss.team7.locum.APICommunication.RetroFitClient;
 import sg.nus.iss.team7.locum.Model.FreeLancer;
+import sg.nus.iss.team7.locum.Utilities.UtilityConstants;
 
 public class EditProfileActivity extends AppCompatActivity {
 
@@ -39,12 +52,9 @@ public class EditProfileActivity extends AppCompatActivity {
 
         //update fields with existing profile data
         FreeLancer fl = readFromSharedPref();
-        mName.setText(fl.getName());
-        mUserName.setText(fl.getUserName());
-        mEmail.setText(fl.getEmail());
-        mPassword.setText(fl.getPassword());
-        mContactNumber.setText(fl.getContact());
-        mMedicalLicenseNumber.setText(fl.getMedicalLicenseNo());
+
+        displayExistingFreeLancerDetails(fl);
+
 
         mSubmitBtn = findViewById(R.id.register);
         mResetBtn = findViewById(R.id.reset);
@@ -59,6 +69,53 @@ public class EditProfileActivity extends AppCompatActivity {
                 else{
                     //update
                     Toast.makeText(getApplicationContext(),"can proceed with update call",Toast.LENGTH_SHORT).show();
+
+                    Retrofit retrofit = RetroFitClient.getClient(RetroFitClient.BASE_URL);
+                    ApiMethods api = retrofit.create(ApiMethods.class);
+
+                    fl.setName(mName.getText().toString().trim());
+                    fl.setUsername(mUserName.getText().toString().trim());
+                    fl.setEmail(mEmail.getText().toString().trim());
+                    fl.setPassword(mPassword.getText().toString().trim());
+                    fl.setContact(mContactNumber.getText().toString().trim());
+                    fl.setMedicalLicenseNo(mMedicalLicenseNumber.getText().toString().trim());
+
+                    Call<ResponseBody> updateFLCall = api.updateFreeLancer(fl);
+                    updateFLCall.enqueue(new Callback<ResponseBody>() {
+                        @Override
+                        public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                            if(response.isSuccessful()){
+                                if(response.code() == 200){
+                                    //FreeLancer validatedFL = response.body();
+                                    Toast.makeText(getApplicationContext(),"Login successful, welcome " + fl.getName(),Toast.LENGTH_SHORT).show();
+                                    //if register is successful, store in shared Pref
+                                    storeFLDetailsInSharedPref(fl);
+                                    //redirect
+                                }
+                                else if(response.code() == 404){
+                                    createDialogForSubmitFailed("NOT FOUND");
+                                }
+                            }
+                            else {
+                                int statusCode = response.code();
+                                if (statusCode == 500) {
+                                    createDialogForSubmitFailed("Internal Server Error");
+                                    //Toast.makeText(getApplicationContext(), "INTERNAL SERVER ERROR", Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                        }
+                        @Override
+                        public void onFailure(Call<ResponseBody> call, Throwable t) {
+                            if (t instanceof IOException) {
+                                createDialogForSubmitFailed("Network Failure");
+                                // Toast.makeText(LoginActivity.this, "Network Failure ", Toast.LENGTH_SHORT).show();
+                            }
+                            else {
+                                createDialogForSubmitFailed("JSON Parsing Issue");
+                                // Toast.makeText(LoginActivity.this, "JSON Parsing Issue", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    });
                 }
             }
         });
@@ -84,6 +141,7 @@ public class EditProfileActivity extends AppCompatActivity {
 
         mPassword = findViewById(R.id.password);
         mPassword.setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
+        mPassword.setTransformationMethod(new PasswordTransformationMethod());
 
         mContactNumber = findViewById(R.id.contactNumber);
 
@@ -124,21 +182,20 @@ public class EditProfileActivity extends AppCompatActivity {
     }
 
     private FreeLancer readFromSharedPref(){
-//        Gson gson = new Gson();
-//        SharedPreferences sharedPreferences = getSharedPreferences(UtilityConstants.FREELANCER_SHARED_PREF, MODE_PRIVATE);
-//        String json = sharedPreferences.getString(UtilityConstants.FREELANCER_DETAILS, "");
-//        FreeLancer fl = gson.fromJson(json, FreeLancer.class);
-//        return fl;
+        Gson gson = new Gson();
+        SharedPreferences sharedPreferences = getSharedPreferences(UtilityConstants.FREELANCER_SHARED_PREF, MODE_PRIVATE);
+        String json = sharedPreferences.getString(UtilityConstants.FREELANCER_DETAILS, "");
+        FreeLancer fl = gson.fromJson(json, FreeLancer.class);
+        return fl;
 
         //hardcode testing
-        FreeLancer fl = new FreeLancer();
-        fl.setName("johnTan");
-        fl.setUserName("JT23");
-        fl.setContact("92287435");
-        fl.setEmail("a02@u.nus.edu");
-        fl.setMedicalLicenseNo("M12345J");
-        fl.setPassword("password");
-        return fl;
+//        FreeLancer fl = new FreeLancer();
+//        fl.setName("johnTan");
+//        fl.setUsername("JT23");
+//        fl.setContact("92287435");
+//        fl.setEmail("a02@u.nus.edu");
+//        fl.setMedicalLicenseNo("M12345J");
+//        fl.setPassword("password");
     }
 
     private boolean validateLength(EditText editTxt, String fieldName, int minChar, int maxChar){
@@ -259,4 +316,35 @@ public class EditProfileActivity extends AppCompatActivity {
                 })
                 .show();
     }
+
+    private void storeFLDetailsInSharedPref(FreeLancer freeLancer){
+        Gson gson = new Gson();
+        String json = gson.toJson(freeLancer);
+        SharedPreferences sharedPreferences = getSharedPreferences(UtilityConstants.FREELANCER_SHARED_PREF, MODE_PRIVATE);
+        sharedPreferences.edit().putString(UtilityConstants.FREELANCER_DETAILS, json).apply();
+    }
+
+    private void createDialogForSubmitFailed(String msg){
+        new AlertDialog.Builder(EditProfileActivity.this)
+                .setIcon(R.drawable.ic_exit_application)
+                .setTitle("Submit Changes Failed")
+                .setMessage(msg)
+                .setCancelable(true)
+                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.dismiss();
+                    }
+                })
+                .show();
+    }
+
+    private void displayExistingFreeLancerDetails(FreeLancer fl){
+        mName.setText(fl.getName());
+        mUserName.setText(fl.getUsername());
+        mEmail.setText(fl.getEmail());
+        mPassword.setText(fl.getPassword());
+        mContactNumber.setText(fl.getContact());
+        mMedicalLicenseNumber.setText(fl.getMedicalLicenseNo());
+    }
+
 }
