@@ -1,5 +1,8 @@
 package sg.nus.iss.team7.locum;
 
+import static android.content.Intent.getIntent;
+
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;

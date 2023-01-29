@@ -82,7 +82,7 @@ public class RegisterActivity extends AppCompatActivity {
                                     storeFLDetailsInSharedPref(returnedFL);
 
                                     //redirect
-                                    Intent intent = new Intent(RegisterActivity.this,JobDetailActivity.class);
+                                    Intent intent = new Intent(RegisterActivity.this,MainActivity.class);
                                     startActivity(intent);
                                 }
                                 else if  (response.code() == 409) {

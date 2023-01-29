@@ -10,6 +10,23 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
+
+        <TextView
+            android:id="@+id/title"
+            android:layout_width="350dp"
+            android:layout_height="wrap_content"
+            android:lines="2"
+            android:text="Looking for doctor etc"
+            android:textColor="@color/app_main_blue"
+            android:textSize="23dp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.442"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.020" />
+
         <TextView
             android:id="@+id/startTimeHeader"
             android:layout_width="110dp"
@@ -17,27 +34,10 @@
             android:text="Start Time"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.090"
+            app:layout_constraintHorizontal_bias="0.089"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.043" />
-
-        <TextView
-            android:id="@+id/startTime"
-            style="?android:listSeparatorTextViewStyle"
-            android:layout_width="110dp"
-            android:layout_height="wrap_content"
-            android:gravity="left"
-            android:text="10:30 AM"
-            android:textAlignment="gravity"
-            android:textAllCaps="false"
-            android:textSize="20sp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.090"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/startTimeHeader"
-            app:layout_constraintVertical_bias="0.015" />
+            app:layout_constraintVertical_bias="0.115" />
 
         <TextView
             android:id="@+id/hourlyRate"
@@ -50,10 +50,10 @@
             android:textSize="20sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.090"
+            app:layout_constraintHorizontal_bias="0.089"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/hourlyRateHeader"
-            app:layout_constraintVertical_bias="0.018" />
+            app:layout_constraintVertical_bias="0.025" />
 
         <TextView
             android:id="@+id/totalShift"
@@ -70,7 +70,7 @@
             app:layout_constraintHorizontal_bias="0.091"
             app:layout_constraintStart_toEndOf="@+id/hourlyRate"
             app:layout_constraintTop_toBottomOf="@+id/totalShiftHeader"
-            app:layout_constraintVertical_bias="0.018" />
+            app:layout_constraintVertical_bias="0.024" />
 
         <TextView
             android:id="@+id/endTime"
@@ -84,10 +84,10 @@
             android:textSize="20sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.090"
+            app:layout_constraintHorizontal_bias="0.091"
             app:layout_constraintStart_toEndOf="@+id/startTime"
             app:layout_constraintTop_toBottomOf="@+id/endTimeHeader"
-            app:layout_constraintVertical_bias="0.016" />
+            app:layout_constraintVertical_bias="0.015" />
 
         <TextView
             android:id="@+id/totalTime"
@@ -101,7 +101,7 @@
             android:textSize="20sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.450"
+            app:layout_constraintHorizontal_bias="0.358"
             app:layout_constraintStart_toEndOf="@+id/endTime"
             app:layout_constraintTop_toBottomOf="@+id/totalTimeHeader"
             app:layout_constraintVertical_bias="0.015" />
@@ -113,10 +113,10 @@
             android:text="End Time"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.093"
+            app:layout_constraintHorizontal_bias="0.091"
             app:layout_constraintStart_toEndOf="@+id/startTimeHeader"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.043" />
+            app:layout_constraintVertical_bias="0.115" />
 
         <TextView
             android:id="@+id/totalTimeHeader"
@@ -125,10 +125,10 @@
             android:text="Total Time"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.450"
+            app:layout_constraintHorizontal_bias="0.358"
             app:layout_constraintStart_toEndOf="@+id/endTimeHeader"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.044" />
+            app:layout_constraintVertical_bias="0.115" />
 
         <TextView
             android:id="@+id/hourlyRateHeader"
@@ -140,7 +140,7 @@
             app:layout_constraintHorizontal_bias="0.089"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/startTime"
-            app:layout_constraintVertical_bias="0.133" />
+            app:layout_constraintVertical_bias="0.033" />
 
         <TextView
             android:id="@+id/totalShiftHeader"
@@ -152,7 +152,24 @@
             app:layout_constraintHorizontal_bias="0.091"
             app:layout_constraintStart_toEndOf="@+id/hourlyRateHeader"
             app:layout_constraintTop_toBottomOf="@+id/endTime"
-            app:layout_constraintVertical_bias="0.132" />
+            app:layout_constraintVertical_bias="0.031" />
+
+        <TextView
+            android:id="@+id/startTime"
+            style="?android:listSeparatorTextViewStyle"
+            android:layout_width="110dp"
+            android:layout_height="wrap_content"
+            android:gravity="left"
+            android:text="10:30 AM"
+            android:textAlignment="gravity"
+            android:textAllCaps="false"
+            android:textSize="20sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.089"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/startTimeHeader"
+            app:layout_constraintVertical_bias="0.015" />
 
         <TextView
             android:id="@+id/jobDescriptionHeader"

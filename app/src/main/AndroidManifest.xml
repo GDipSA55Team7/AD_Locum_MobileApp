@@ -39,11 +39,6 @@
         android:name=".EditProfileActivity"
             android:theme="@style/AppFullScreenTheme"
             android:exported="true" >
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
 
 
@@ -61,8 +56,12 @@
             android:name=".SplashScreenActivity"
             android:exported="true"
             android:screenOrientation="portrait"
-            android:theme="@style/AppFullScreenTheme">
-
+            android:theme="@style/AppFullScreenTheme"
+            >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
         </activity>
     </application>
 

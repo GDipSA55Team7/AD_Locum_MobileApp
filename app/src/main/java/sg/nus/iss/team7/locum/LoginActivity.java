@@ -47,7 +47,7 @@ public class LoginActivity extends AppCompatActivity {
 
         if(isLoggedIn()) {
             // go to another activity
-            Intent intent = new Intent(LoginActivity.this,JobDetailActivity.class);
+            Intent intent = new Intent(LoginActivity.this,MainActivity.class);
             startActivity(intent);
         }
         initElementsAndListeners();
@@ -96,7 +96,7 @@ public class LoginActivity extends AppCompatActivity {
                                //if login is successful, store in shared Pref
                                storeFLDetailsInSharedPref(existingFL);
 
-                               Intent intent = new Intent(LoginActivity.this,JobDetailActivity.class);
+                               Intent intent = new Intent(LoginActivity.this,MainActivity.class);
                                startActivity(intent);
                            }
                            else {
