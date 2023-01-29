@@ -3,12 +3,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MyJobsFragment">
+    tools:context=".HistoryJobChildFragment">
 
     <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/myHistoryJobRecyclerView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="job history etc" />
+        android:layout_height="match_parent" >
+
+    </androidx.recyclerview.widget.RecyclerView>
 
 </FrameLayout>

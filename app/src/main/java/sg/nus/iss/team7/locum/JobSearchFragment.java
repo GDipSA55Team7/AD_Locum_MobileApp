@@ -14,7 +14,7 @@ import android.widget.Toast;
 import sg.nus.iss.team7.locum.Adapter.JobSearchAdapter;
 import sg.nus.iss.team7.locum.Interface.RecyclerViewInterface;
 
-public class JobSearchFragment extends Fragment implements RecyclerViewInterface {
+public class JobSearchFragment extends Fragment implements RecyclerViewInterface{
 
     RecyclerView recyclerView;
 
