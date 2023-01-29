@@ -15,4 +15,6 @@
     <color name="darkest_grey">#808080</color>
     <color name="Btn_BgColor">#87CEFA</color>
     <color name="validation_failed">#FF0000</color>
+    <color name="selected">#2B91EB</color>
+    <color name="unselected">#D5DBD6</color>
 </resources>
