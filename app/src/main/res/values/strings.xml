@@ -5,4 +5,8 @@
     <string name="long_placeholder">Super long placeholder text to test what happens when it goes past the container. Super long placeholder text to test what happens when it goes past the container.Super long placeholder text to test what happens when it goes past the container. Super long placeholder text to test what happens when it goes past the container.Super long placeholder text to test what happens when it goes past the container.Super long placeholder text to test what happens when it goes past the container. Super long placeholder text to test what happens when it goes past the container. Super long placeholder text to test what happens when it goes past the container. Super long placeholder text to test what happens when it goes past the container.Super long placeholder text to test what happens when it goes past the container. Super long placeholder text to test what happens when it goes past the container.Super long placeholder text to test what happens when it goes past the container.Super long placeholder text to test what happens when it goes past the container. Super long placeholder text to test what happens when it goes past the container. Super long placeholder text to test what happens when it goes past the container.</string>
     <string name="Freelancer_Shared_Pref">FL_Shared_Pref</string>
     <string name="Freelancer_Details">FL_Details</string>
+    <string name="cancelAlertTitle">Cancel</string>
+    <string name="cancelMsg">You confirm to cancel the job ?</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
 </resources>

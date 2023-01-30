@@ -40,7 +40,6 @@ public class MyJobsFragment extends Fragment {
         }
 
         for(int i=0;i<titles.length;i++){
-//            fragments.add(new TabFragment());
             tabLayout.addTab(tabLayout.newTab());
         }
 
