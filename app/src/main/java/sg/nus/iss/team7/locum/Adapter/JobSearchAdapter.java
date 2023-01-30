@@ -7,19 +7,21 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.widget.AppCompatButton;
 import androidx.recyclerview.widget.RecyclerView;
 
-import java.util.List;
+import java.text.ParseException;
+import java.util.ArrayList;
 
+import sg.nus.iss.team7.locum.Model.JobPost;
 import sg.nus.iss.team7.locum.R;
 import sg.nus.iss.team7.locum.Interface.RecyclerViewInterface;
+import sg.nus.iss.team7.locum.Utilities.DatetimeParser;
 
 public class JobSearchAdapter extends RecyclerView.Adapter<JobSearchAdapter.MyViewHolder>{
     private final RecyclerViewInterface recyclerViewInterface;
 
     Context context;
-    List<String> myList;
+    ArrayList<JobPost> myList;
 
     public JobSearchAdapter(Context context, RecyclerViewInterface recyclerViewInterface) {
         this.recyclerViewInterface = recyclerViewInterface;
@@ -54,7 +56,7 @@ public class JobSearchAdapter extends RecyclerView.Adapter<JobSearchAdapter.MyVi
         }
     }
 
-    public void MyAdapter(List<String> list) {
+    public void setMyList(ArrayList<JobPost> list) {
         this.myList = list;
     }
 
@@ -71,10 +73,44 @@ public class JobSearchAdapter extends RecyclerView.Adapter<JobSearchAdapter.MyVi
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
 
+        JobPost jobPost = myList.get(position);
+
+        String addressStr = jobPost.getClinic().getAddress() + ", " + jobPost.getClinic().getPostalCode();
+        String hourRateStr = "$" + jobPost.getRatePerHour().toString() + "/HR";
+        String fullRateStr = "$" + jobPost.getTotalRate().toString();
+
+        try {
+            holder.date.setText(DatetimeParser.parseDate(jobPost.getStartDateTime()));
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        try {
+            holder.time_start.setText(DatetimeParser.parseTime(jobPost.getStartDateTime()));
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        try {
+            holder.time_end.setText(DatetimeParser.parseTime(jobPost.getEndDateTime()));
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        holder.hour_rate.setText(hourRateStr);
+        holder.clinic_name.setText(jobPost.getClinic().getName());
+        holder.full_rate.setText(fullRateStr);
+        holder.address.setText(addressStr);
+        holder.job_name.setText(jobPost.getDescription());
     }
 
     @Override
     public int getItemCount() {
-        return 10;
+        if (myList != null) {
+            return myList.size();
+        }
+        return 0;
+    }
+
+    @Override
+    public long getItemId(int position) {
+        return myList.get(position).getId();
     }
 }

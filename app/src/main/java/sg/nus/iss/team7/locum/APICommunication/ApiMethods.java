@@ -21,4 +21,18 @@ public interface ApiMethods {
 
     @POST("/api/freelancer/update")
     Call<FreeLancer> updateFreeLancer(@Body FreeLancer fl);
+
+
+    @GET("/api/jobs/allopen")
+    Call<ArrayList<JobPost>> getAllOpenJobs();
+
+    @GET("/api/jobs/job?")
+    Call<JobPost> getJobById(@Query("id") int jobId);
+
+    @POST("/api/jobs/job?")
+    Call<JobPost> setJobStatus(@Query("id") String id, @Query("status") String status, @Query("userId") String userId);
+
+    @GET("/api/jobs/history?")
+    Call<ArrayList<JobPost>> getJobHistory(@Query("id") int userId);
+
 }
