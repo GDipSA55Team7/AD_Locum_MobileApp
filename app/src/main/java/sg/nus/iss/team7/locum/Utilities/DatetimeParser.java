@@ -24,5 +24,14 @@ public class DatetimeParser {
         Date date = inputFormat.parse(datetimeStr);
         return timeFormat.format(date);
     }
+
+    public static String getHoursBetween(String datetime1, String datetime2) throws ParseException {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm");
+        Date date1 = dateFormat.parse(datetime1);
+        Date date2 = dateFormat.parse(datetime2);
+        long difference = date2.getTime() - date1.getTime();
+        double hours = (double) difference / (1000 * 60 * 60);
+        return String.format("%.1f Hours", hours);
+    }
 }
 

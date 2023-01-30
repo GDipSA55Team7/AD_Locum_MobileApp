@@ -9,6 +9,8 @@ import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
+import retrofit2.http.Path;
+import retrofit2.http.Query;
 import sg.nus.iss.team7.locum.Model.FreeLancer;
 import sg.nus.iss.team7.locum.Model.JobPost;
 
@@ -26,5 +28,8 @@ public interface ApiMethods {
 
     @GET("/api/jobs/allopen")
     Call<ArrayList<JobPost>> getAllOpenJobs();
+
+    @GET("/api/jobs/job?")
+    Call<JobPost> getJobById(@Query("id") int jobId);
 
 }

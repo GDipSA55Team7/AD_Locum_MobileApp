@@ -1,123 +1,14 @@
 package sg.nus.iss.team7.locum.Model;
 
-//import java.time.LocalDateTime;
-//
-//public class JobPost {
-//
-//    private long id;
-//    private String description;
-//    private String startDateTime;
-//    private String endDateTime;
-//    private double ratePerHour;
-//    private double totalRate;
-//    private String status;
-//    private User clinicUser;
-//    private User freelancer;
-//    private Clinic clinic;
-//
-//    public JobPost() {
-//    }
-//
-//    public JobPost(long id, String description, String startDateTime, String endDateTime, double ratePerHour, double totalRate,
-//                   String status, User clinicUser, User freelancer, Clinic clinic) {
-//        this.id = id;
-//        this.description = description;
-//        this.startDateTime = startDateTime;
-//        this.endDateTime = endDateTime;
-//        this.ratePerHour = ratePerHour;
-//        this.totalRate = totalRate;
-//        this.status = status;
-//        this.clinicUser = clinicUser;
-//        this.freelancer = freelancer;
-//        this.clinic = clinic;
-//    }
-//
-//    public long getId() {
-//        return id;
-//    }
-//
-//    public void setId(long id) {
-//        this.id = id;
-//    }
-//
-//    public String getDescription() {
-//        return description;
-//    }
-//
-//    public void setDescription(String description) {
-//        this.description = description;
-//    }
-//
-//    public String getStartDateTime() {
-//        return startDateTime;
-//    }
-//
-//    public void setStartDateTime(String startDateTime) {
-//        this.startDateTime = startDateTime;
-//    }
-//
-//    public String getEndDateTime() {
-//        return endDateTime;
-//    }
-//
-//    public void setEndDateTime(String endDateTime) {
-//        this.endDateTime = endDateTime;
-//    }
-//
-//    public double getRatePerHour() {
-//        return ratePerHour;
-//    }
-//
-//    public void setRatePerHour(double ratePerHour) {
-//        this.ratePerHour = ratePerHour;
-//    }
-//
-//    public double getTotalRate() {
-//        return totalRate;
-//    }
-//
-//    public void setTotalRate(double totalRate) {
-//        this.totalRate = totalRate;
-//    }
-//
-//    public String getStatus() {
-//        return status;
-//    }
-//
-//    public void setStatus(String status) {
-//        this.status = status;
-//    }
-//
-//    public User getClinicUser() {
-//        return clinicUser;
-//    }
-//
-//    public void setClinicUser(User clinicUser) {
-//        this.clinicUser = clinicUser;
-//    }
-//
-//    public User getFreelancer() {
-//        return freelancer;
-//    }
-//
-//    public void setFreelancer(User freelancer) {
-//        this.freelancer = freelancer;
-//    }
-//
-//    public Clinic getClinic() {
-//        return clinic;
-//    }
-//
-//    public void setClinic(Clinic clinic) {
-//        this.clinic = clinic;
-//    }
-//}
+import android.os.Parcel;
+import android.os.Parcelable;
 
+import androidx.annotation.NonNull;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class JobPost {
+public class JobPost implements Parcelable {
 
     @SerializedName("id")
     @Expose
@@ -149,6 +40,97 @@ public class JobPost {
     @SerializedName("clinic")
     @Expose
     private Clinic clinic;
+
+    protected JobPost(Parcel in) {
+        if (in.readByte() == 0) {
+            id = null;
+        } else {
+            id = in.readInt();
+        }
+        description = in.readString();
+        startDateTime = in.readString();
+        endDateTime = in.readString();
+        if (in.readByte() == 0) {
+            ratePerHour = null;
+        } else {
+            ratePerHour = in.readDouble();
+        }
+        if (in.readByte() == 0) {
+            totalRate = null;
+        } else {
+            totalRate = in.readDouble();
+        }
+        status = in.readString();
+        clinic = in.readParcelable(clinic.getClass().getClassLoader());
+        if (in.readByte() == 0) {
+            clinicUser = null;
+            freelancer = null;
+        } else {
+            clinicUser = in.readParcelable(freelancer.getClass().getClassLoader());
+            freelancer = in.readParcelable(freelancer.getClass().getClassLoader());
+        }
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        if (id == null) {
+            dest.writeByte((byte) 0);
+        } else {
+            dest.writeByte((byte) 1);
+            dest.writeInt(id);
+        }
+        dest.writeString(description);
+        dest.writeString(startDateTime);
+        dest.writeString(endDateTime);
+        if (ratePerHour == null) {
+            dest.writeByte((byte) 0);
+        } else {
+            dest.writeByte((byte) 1);
+            dest.writeDouble(ratePerHour);
+        }
+        if (totalRate == null) {
+            dest.writeByte((byte) 0);
+        } else {
+            dest.writeByte((byte) 1);
+            dest.writeDouble(totalRate);
+        }
+        dest.writeString(status);
+        if (clinic == null) {
+            dest.writeByte((byte) 0);
+        } else {
+            dest.writeByte((byte) 1);
+            dest.writeValue(clinic);
+        }
+        if (clinicUser == null) {
+            dest.writeByte((byte) 0);
+        } else {
+            dest.writeByte((byte) 1);
+            dest.writeValue(clinicUser);
+        }
+        if (freelancer == null) {
+            dest.writeByte((byte) 0);
+        } else {
+            dest.writeByte((byte) 1);
+            dest.writeValue(freelancer);
+        }
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    public static final Creator<JobPost> CREATOR = new Creator<JobPost>() {
+        @Override
+        public JobPost createFromParcel(Parcel in) {
+            return new JobPost(in);
+        }
+
+        @Override
+        public JobPost[] newArray(int size) {
+            return new JobPost[size];
+        }
+    };
 
     public Integer getId() {
         return id;
