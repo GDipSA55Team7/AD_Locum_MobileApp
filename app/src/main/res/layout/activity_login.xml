@@ -26,7 +26,7 @@
         android:layout_height="150dp"
         android:layout_gravity="center"
         android:gravity="center"
-        android:layout_marginTop="100dp"
+        android:layout_marginTop="50dp"
         android:background="@drawable/splash_screen_img"
         android:src="@drawable/splash_screen_img"
         />
@@ -54,39 +54,42 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="horizontal"
-        android:layout_marginBottom="50dp"
-        android:layout_marginTop="50dp"
+        android:layout_height="wrap_content"
         android:layout_marginStart="20dp"
+        android:layout_marginTop="50dp"
+        android:layout_marginBottom="50dp"
         android:layout_marginEnd="20dp"
-        >
+        android:orientation="horizontal">
 
         <Button
             android:id="@+id/login"
+            style="@style/btnstyle1"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
+            android:layout_gravity="top"
             android:layout_marginStart="15dp"
             android:layout_marginEnd="15dp"
-            android:layout_gravity="top"
-            android:text="LOG IN"
-            style="@style/btnstyle1"
-            />
+            android:layout_weight="1"
+            android:text="LOG IN" />
 
         <Button
             android:id="@+id/register"
+            style="@style/btnstyle1"
             android:layout_width="0dp"
-            android:layout_weight="1"
             android:layout_height="wrap_content"
+            android:layout_gravity="top"
             android:layout_marginStart="15dp"
             android:layout_marginEnd="15dp"
-            android:layout_gravity="top"
-            android:text="REGISTER"
-            style="@style/btnstyle1"
-            />
+            android:layout_weight="1"
+            android:text="REGISTER" />
 
     </LinearLayout>
 
+<!--    <Button-->
+<!--        android:id="@+id/passwordReset"-->
+<!--        style="@style/btnstyle1"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:text="RESET PASSWORD" />-->
 
 </LinearLayout>

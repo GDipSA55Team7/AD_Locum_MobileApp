@@ -30,16 +30,6 @@
         />
 
     <EditText
-        android:id="@+id/username"
-        android:drawableLeft="@drawable/ic_baseline_person_24"
-        android:drawablePadding="10dp"
-        android:hint="Enter your Username"
-        android:inputType="text"
-        style="@style/RegisterFieldStyle"
-        />
-
-
-    <EditText
         android:id="@+id/email"
         android:drawableLeft="@drawable/ic_email"
         android:drawablePadding="10dp"

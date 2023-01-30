@@ -16,8 +16,9 @@ public interface ApiMethods {
     @POST("/api/freelancer/login")
     Call<FreeLancer> loginFreeLancer(@Body FreeLancer fl);
 
+//    @POST("/api/freelancer/update")
+//    Call<ResponseBody> updateFreeLancer(@Body FreeLancer fl);
+
     @POST("/api/freelancer/update")
-    Call<ResponseBody> updateFreeLancer(@Body FreeLancer fl);
-
-
+    Call<FreeLancer> updateFreeLancer(@Body FreeLancer fl);
 }

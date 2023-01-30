@@ -42,6 +42,9 @@ public class FreeLancer {
         return id;
     }
 
+    public void setId(String id) {
+        this.id = id;
+    }
 
     public String getErrorsFieldString() {
         return errorsFieldString;
@@ -97,5 +100,19 @@ public class FreeLancer {
 
     public void setMedicalLicenseNo(String medicalLicenseNo) {
         this.medicalLicenseNo = medicalLicenseNo;
+    }
+
+    @Override
+    public String toString() {
+        return "FreeLancer{" +
+                "id='" + id + '\'' +
+                ", username='" + username + '\'' +
+                ", password='" + password + '\'' +
+                ", name='" + name + '\'' +
+                ", email='" + email + '\'' +
+                ", contact='" + contact + '\'' +
+                ", medicalLicenseNo='" + medicalLicenseNo + '\'' +
+                ", errorsFieldString='" + errorsFieldString + '\'' +
+                '}';
     }
 }

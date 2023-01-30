@@ -4,7 +4,6 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Rect;
@@ -17,17 +16,14 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
 
 import java.io.IOException;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -54,28 +50,29 @@ public class RegisterActivity extends AppCompatActivity {
         mRegister = findViewById(R.id.register);
         mReset = findViewById(R.id.reset);
 
-        mRegister.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(allFieldsValid()){
-                    FreeLancer fl = new FreeLancer();
-                    fl.setName(mName.getText().toString().trim());
-                    fl.setUsername(mUserName.getText().toString().trim());
-                    fl.setPassword(mPassword.getText().toString().trim());
-                    fl.setEmail(mEmail.getText().toString().trim());
-                    fl.setContact(mContactNumber.getText().toString().trim());
-                    fl.setMedicalLicenseNo(mMedicalLicenseNumber.getText().toString().trim());
+        mRegister.setOnClickListener(v -> {
+            if(allFieldsValid()){
+                FreeLancer fl = new FreeLancer();
+                fl.setName(mName.getText().toString().trim());
+                fl.setUsername(mUserName.getText().toString().trim());
+                fl.setPassword(mPassword.getText().toString().trim());
+                fl.setEmail(mEmail.getText().toString().trim());
+                fl.setContact(mContactNumber.getText().toString().trim());
+                fl.setMedicalLicenseNo(mMedicalLicenseNumber.getText().toString().trim());
+                fl.setErrorsFieldString("");
+                fl.setId("");
 
-                    Retrofit retrofit = RetroFitClient.getClient(RetroFitClient.BASE_URL);
-                    ApiMethods api = retrofit.create(ApiMethods.class);
+                Retrofit retrofit = RetroFitClient.getClient(RetroFitClient.BASE_URL);
+                ApiMethods api = retrofit.create(ApiMethods.class);
 
-                    Call<FreeLancer> registerFLCall = api.registerFreeLancer(fl);
-                    registerFLCall.enqueue(new Callback<FreeLancer>() {
-                        @Override
-                        public void onResponse(Call<FreeLancer> call, Response<FreeLancer> response) {
-                            if(response.isSuccessful()){
-                                if(response.code() == 201){
-                                    FreeLancer returnedFL = response.body();
+                Call<FreeLancer> registerFLCall = api.registerFreeLancer(fl);
+                registerFLCall.enqueue(new Callback<FreeLancer>() {
+                    @Override
+                    public void onResponse(Call<FreeLancer> call, Response<FreeLancer> response) {
+                        if(response.isSuccessful()){
+                           if(response.code()  == 201){
+                                FreeLancer returnedFL = response.body();
+                                if(returnedFL != null && returnedFL.getName() != null){
                                     Toast.makeText(getApplicationContext(),"Register successful, welcome " + returnedFL.getName(),Toast.LENGTH_SHORT).show();
 
                                     //if register is successful, store in shared Pref
@@ -84,63 +81,63 @@ public class RegisterActivity extends AppCompatActivity {
                                     //redirect
                                     Intent intent = new Intent(RegisterActivity.this,MainActivity.class);
                                     startActivity(intent);
+                                    finish();
                                 }
-                                else if  (response.code() == 409) {
-                                    FreeLancer invalidFL = response.body();
+                            }
+                        }
+                        else {
+                            int statusCode = response.code();
+                            if (statusCode == 500) {
+                                createDialogForRegisterFailed("Internal Server Error");
+                            }
+                            //Server-side Validation Error - non-unique Fields(username,Email,medicalLicenseNo)
+                            else if  ( statusCode == 406) {
+                                FreeLancer invalidFL = null;
+                                if (response.errorBody() != null) {
+                                    invalidFL = new Gson().fromJson( response.errorBody().charStream(), FreeLancer.class);
+                                }
+
+                                if(invalidFL != null){
                                     String errString =  invalidFL.getErrorsFieldString();
 
-                                    String displayErrorTxt = "";
-                                    if(errString.contains("username")){
-                                        displayErrorTxt += "UserName has been taken.Please choose another unique username\n";
-                                    }
-                                    if(errString.contains("email")){
-                                        displayErrorTxt += "Email has been taken.Please choose another unique email\n";
+                                    String displayErrorTxt = "These fields have already been taken/registered :";
+                                    if(!errString.isEmpty()){
+                                        if(errString.contains("username")){
+                                            displayErrorTxt += " UserName,";
+                                        }
+                                        if(errString.contains("email")){
+                                            displayErrorTxt += " Email,";
+                                        }
 
+                                        if(errString.contains("medical")){
+                                            displayErrorTxt += " MedicalLicenseNumber,";
+                                        }
+                                        displayErrorTxt = displayErrorTxt.substring(0, displayErrorTxt.length() - 1);
+                                        createDialogForRegisterFailed(displayErrorTxt);
                                     }
-
-                                    if(errString.contains("medical")){
-                                        displayErrorTxt += "MedicalLicenseNumber has been taken.Please provide valid MedicalLicenseNumber\n";
-                                    }
-
-                                    createDialogForRegisterFailed(displayErrorTxt);
                                 }
                             }
-                            else {
-                                int statusCode = response.code();
-                                if (statusCode == 500) {
-                                    createDialogForRegisterFailed("Internal Server Error");
-                                    //Toast.makeText(getApplicationContext(), "INTERNAL SERVER ERROR", Toast.LENGTH_SHORT).show();
-                                }
-
-
-                            }
                         }
-                        @Override
-                        public void onFailure(Call<FreeLancer> call, Throwable t) {
-                            if (t instanceof IOException) {
-                                createDialogForRegisterFailed("Network Failure");
-                                // Toast.makeText(LoginActivity.this, "Network Failure ", Toast.LENGTH_SHORT).show();
-                            }
-                            else {
-                                createDialogForRegisterFailed("JSON Parsing Issue");
-                                // Toast.makeText(LoginActivity.this, "JSON Parsing Issue", Toast.LENGTH_SHORT).show();
-                            }
+                    }
+                    @Override
+                    public void onFailure(Call<FreeLancer> call, Throwable t) {
+                        if (t instanceof IOException) {
+                            createDialogForRegisterFailed("Network Failure");
                         }
-                    });
-                }
-                else{
-                    //Toast.makeText(getApplicationContext(),"Make sure all fields are valid",Toast.LENGTH_SHORT).show();
-                    createDialogForRegisterFailed("Make sure all fields are valid");
-                }
+                        else {
+                            createDialogForRegisterFailed("JSON Parsing Issue");
+                        }
+                    }
+                });
+            }
+            else{
+                createDialogForRegisterFailed("Make sure all fields are valid");
             }
         });
 
-        mReset.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                LinearLayout linearLayout =  findViewById(R.id.linearlayoutRegisterActivity);
-                clearAllFields(linearLayout);
-            }
+        mReset.setOnClickListener(v -> {
+            LinearLayout linearLayout =  findViewById(R.id.linearlayoutRegisterActivity);
+            clearAllFields(linearLayout);
         });
     }
 
@@ -169,8 +166,6 @@ public class RegisterActivity extends AppCompatActivity {
         listenerForLengthValidation(mUserName,"UserName",3,12);
         listenerForLengthValidation(mPassword,"Password",5,15);
 
-        // regex for normal email  - String emailPattern = "[a-zA-Z0-9._-]+@[a-z]+\\.+[a-z]+";
-        //String validEmailRegex = "[a-zA-Z0-9._-]+@u.nus.edu";
         String validEmailRegex = "[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,4}";
         String validMedicalLicenseNumberRegex = "^M[0-9]{5}[A-Z]$";
         String validContactNumberRegex = "\\d{8}";
@@ -178,7 +173,6 @@ public class RegisterActivity extends AppCompatActivity {
         listenerForRegexValidation(mEmail,"Email",validEmailRegex);
         listenerForRegexValidation(mMedicalLicenseNumber,"MedicalLicenseNumber",validMedicalLicenseNumberRegex);
         listenerForRegexValidation(mContactNumber,"ContactNumber",validContactNumberRegex);
-
     }
 
     private boolean validateLength(EditText editTxt, String fieldName, int minChar, int maxChar){
@@ -292,11 +286,7 @@ public class RegisterActivity extends AppCompatActivity {
                 .setTitle("Register Failed")
                 .setMessage(msg)
                 .setCancelable(true)
-                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        dialog.dismiss();
-                    }
-                })
+                .setPositiveButton("OK", (dialog, id) -> dialog.dismiss())
                 .show();
     }
 
@@ -324,7 +314,4 @@ public class RegisterActivity extends AppCompatActivity {
         }
         return super.dispatchTouchEvent( event );
     }
-
-
-
 }

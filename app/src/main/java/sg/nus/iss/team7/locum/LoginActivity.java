@@ -4,7 +4,6 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Rect;
@@ -46,93 +45,83 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
 
         if(isLoggedIn()) {
-            // go to another activity
             Intent intent = new Intent(LoginActivity.this,MainActivity.class);
             startActivity(intent);
+            finish();
         }
         initElementsAndListeners();
 
-       mLoginBtn.setOnClickListener(new View.OnClickListener() {
-           @Override
-           public void onClick(View v) {
-               String usernameInput = mUserName.getText().toString().trim();
-               String passwordInput = mPassword.getText().toString().trim();
+       mLoginBtn.setOnClickListener(v -> {
+           String usernameInput = mUserName.getText().toString().trim();
+           String passwordInput = mPassword.getText().toString().trim();
 
-               //check if fields are empty
-               if(usernameInput.isEmpty()){
-                   mUserName.setError("Username cannot be empty");
-               }
-               if(passwordInput.isEmpty()){
-                   mPassword.setError("Password cannot be empty");
-               }
-               if(usernameInput.isEmpty() || passwordInput.isEmpty()){
-                   //Toast.makeText(getApplicationContext(),"Make sure all fields are valid ",Toast.LENGTH_SHORT).show();
-                   new AlertDialog.Builder(LoginActivity.this)
-                           .setIcon(R.drawable.ic_exit_application)
-                           .setTitle("Login Failed")
-                           .setMessage("Pls check that both username and password are not empty")
-                           .setCancelable(true)
-                           .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                               public void onClick(DialogInterface dialog, int id) {
-                                   dialog.dismiss();
-                               }
-                           })
-                           .show();
-               }
-               if(!usernameInput.isEmpty() && !passwordInput.isEmpty()){
-                   Retrofit retrofit = RetroFitClient.getClient(RetroFitClient.BASE_URL);
-                   ApiMethods api = retrofit.create(ApiMethods.class);
+           //check if fields are empty
+           if(usernameInput.isEmpty()){
+               mUserName.setError("Username cannot be empty");
+           }
+           if(passwordInput.isEmpty()){
+               mPassword.setError("Password cannot be empty");
+           }
+           if(usernameInput.isEmpty() || passwordInput.isEmpty()){
+               //Toast.makeText(getApplicationContext(),"Make sure all fields are valid ",Toast.LENGTH_SHORT).show();
+               new AlertDialog.Builder(LoginActivity.this)
+                       .setIcon(R.drawable.ic_exit_application)
+                       .setTitle("Login Failed")
+                       .setMessage("Pls check that both username and password are not empty")
+                       .setCancelable(true)
+                       .setPositiveButton("OK", (dialog, id) -> dialog.dismiss())
+                       .show();
+           }
+           if(!usernameInput.isEmpty() && !passwordInput.isEmpty()){
+               Retrofit retrofit = RetroFitClient.getClient(RetroFitClient.BASE_URL);
+               ApiMethods api = retrofit.create(ApiMethods.class);
 
-                   FreeLancer checkFLlogin = new FreeLancer();
-                   checkFLlogin.setUsername(usernameInput);
-                   checkFLlogin.setPassword(passwordInput);
-                   Call<FreeLancer> loginFLCall = api.loginFreeLancer(checkFLlogin);
-                   loginFLCall.enqueue(new Callback<FreeLancer>() {
-                       @Override
-                       public void onResponse(Call<FreeLancer> call, Response<FreeLancer> response) {
-                           if(response.isSuccessful()){
-                               FreeLancer existingFL = response.body();
-                               Toast.makeText(getApplicationContext(),"Login successful, welcome " + existingFL.getName(),Toast.LENGTH_SHORT).show();
+               FreeLancer checkFLlogin = new FreeLancer();
+               checkFLlogin.setUsername(usernameInput);
+               checkFLlogin.setPassword(passwordInput);
+               System.out.println(usernameInput);
+               System.out.println(passwordInput);
+               Call<FreeLancer> loginFLCall = api.loginFreeLancer(checkFLlogin);
+               loginFLCall.enqueue(new Callback<FreeLancer>() {
+                   @Override
+                   public void onResponse(Call<FreeLancer> call, Response<FreeLancer> response) {
+                       if(response.isSuccessful() && response.code() == 200){
+                           FreeLancer existingFL = response.body();
+                           if(existingFL != null && existingFL.getName() != null){
+                               Toast.makeText(getApplicationContext(),"Login Successful, Welcome " + existingFL.getName(),Toast.LENGTH_SHORT).show();
                                //if login is successful, store in shared Pref
                                storeFLDetailsInSharedPref(existingFL);
 
                                Intent intent = new Intent(LoginActivity.this,MainActivity.class);
                                startActivity(intent);
+                               finish();
                            }
-                           else {
-                               int statusCode = response.code();
-                               if (statusCode == 500) {
-                                   createDialogForLoginFailed("Internal Server Error");
-                                   //Toast.makeText(getApplicationContext(), "INTERNAL SERVER ERROR", Toast.LENGTH_SHORT).show();
-                               }
-                               else if (statusCode == 404){
-                                   createDialogForLoginFailed("No Such Registered User");
-                                   //Toast.makeText(getApplicationContext(), "No Such Registered User", Toast.LENGTH_SHORT).show();
-                               }
+
+                       }
+                       else {
+                           int statusCode = response.code();
+                           if (statusCode == 500) {
+                               createDialogForLoginFailed("Internal Server Error");
+                           }
+                           else if (statusCode == 404){
+                               createDialogForLoginFailed("No Such Registered User");
                            }
                        }
-                       @Override
-                       public void onFailure(Call<FreeLancer> call, Throwable t) {
-                           if (t instanceof IOException) {
-                               createDialogForLoginFailed("Network Failure");
-                               // Toast.makeText(LoginActivity.this, "Network Failure ", Toast.LENGTH_SHORT).show();
-                           }
-                           else {
-                               createDialogForLoginFailed("JSON Parsing Issue");
-                              // Toast.makeText(LoginActivity.this, "JSON Parsing Issue", Toast.LENGTH_SHORT).show();
-                           }
+                   }
+                   @Override
+                   public void onFailure(Call<FreeLancer> call, Throwable t) {
+                       if (t instanceof IOException) {
+                           createDialogForLoginFailed("Network Failure");
                        }
-                   });
-               }
+                       else {
+                           createDialogForLoginFailed("JSON Parsing Issue");
+                       }
+                   }
+               });
            }
        });
 
-       mRegisterBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                launchRegisterActivity();
-            }
-        });
+       mRegisterBtn.setOnClickListener(v -> launchRegisterActivity());
     }
 
     // Comfirmation prompt for exiting app
@@ -143,11 +132,7 @@ public class LoginActivity extends AppCompatActivity {
                 .setTitle("Leaving Application")
                 .setMessage("Are you sure you want to exit?")
                 .setCancelable(false)
-                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        LoginActivity.super.onBackPressed();
-                    }
-                })
+                .setPositiveButton("Yes", (dialog, id) -> LoginActivity.super.onBackPressed())
                 .setNegativeButton("No", null)
                 .show();
     }
@@ -228,6 +213,7 @@ public class LoginActivity extends AppCompatActivity {
         Intent intent = new Intent(LoginActivity.this,RegisterActivity.class);
         startActivity(intent);
     }
+
     private void storeFLDetailsInSharedPref(FreeLancer freeLancer){
         Gson gson = new Gson();
         String json = gson.toJson(freeLancer);
@@ -240,11 +226,7 @@ public class LoginActivity extends AppCompatActivity {
                 .setTitle("Login Failed")
                 .setMessage(msg)
                 .setCancelable(true)
-                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        dialog.dismiss();
-                    }
-                })
+                .setPositiveButton("OK", (dialog, id) -> dialog.dismiss())
                 .show();
     }
 }
