@@ -195,6 +195,7 @@
             android:hyphenationFrequency="full"
             android:padding="5dp"
             android:scrollbars="vertical"
+            android:textSize="15dp"
             android:text="@string/long_placeholder"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"

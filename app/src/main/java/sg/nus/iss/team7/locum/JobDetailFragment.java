@@ -1,6 +1,7 @@
 package sg.nus.iss.team7.locum;
 
 import static android.content.Context.MODE_PRIVATE;
+import static android.view.View.GONE;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -108,6 +109,8 @@ public class JobDetailFragment extends Fragment {
             button.setText("APPLY");
         } else if (jobPost.getStatus().equalsIgnoreCase("PENDING_ACCEPTANCE")){
             button.setText("CANCEL");
+        } else if ((jobPost.getStatus().startsWith("COMPLETED"))) {
+            button.setVisibility(GONE);
         }
 
         button.setOnClickListener(new View.OnClickListener() {

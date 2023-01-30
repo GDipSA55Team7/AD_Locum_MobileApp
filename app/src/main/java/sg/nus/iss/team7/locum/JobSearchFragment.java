@@ -44,7 +44,6 @@ public class JobSearchFragment extends Fragment implements RecyclerViewInterface
     private ShimmerFrameLayout shimmerFrameLayout;
     private SwipeRefreshLayout swipeContainer;
     private JobSearchAdapter adapter;
-    final Handler handler = new Handler();
 
     RecyclerView recyclerView;
 
@@ -52,7 +51,7 @@ public class JobSearchFragment extends Fragment implements RecyclerViewInterface
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.activity_job_search, container, false);
 
-        // Shimmer reload effect
+        // Shimmer load effect
         shimmerFrameLayout = view.findViewById(R.id.shimmer_view_container);
         shimmerFrameLayout.startShimmer();
 

@@ -43,13 +43,7 @@ public class JobDetailActivity extends AppCompatActivity {
         // listener to update status in UI if job is applied
         viewModel = new ViewModelProvider(this).get(ItemViewModel.class);
         viewModel.getSelectedItem().observe(this, jobPost -> {
-            if(jobPost.getStatus().equalsIgnoreCase("PENDING_ACCEPTANCE")) {
-            statusText.setText("APPLIED");
-            statusText.setBackgroundTintList(getColorStateList(R.color.status_mid));
-            } else if (jobPost.getStatus().equalsIgnoreCase("OPEN")) {
-            statusText.setText("OPEN");
-            statusText.setBackgroundTintList(getColorStateList(R.color.status_green));
-            }
+            setStatusBar();
         });
 
     }
@@ -77,7 +71,9 @@ public class JobDetailActivity extends AppCompatActivity {
 
                     clinicNameText.setText(jobPost.getClinic().getName());
                     addressText.setText(addressStr);
-                    statusText.setText(jobPost.getStatus());
+
+                    setStatusBar();
+
 
                     try {
                         dateText.setText(DatetimeParser.parseDate(jobPost.getStartDateTime()));
@@ -97,5 +93,18 @@ public class JobDetailActivity extends AppCompatActivity {
                 Toast.makeText(getApplicationContext(),"error getting job", Toast.LENGTH_SHORT);
             }
         });
+    }
+
+    private void setStatusBar() {
+        if(jobPost.getStatus().equalsIgnoreCase("PENDING_ACCEPTANCE")) {
+            statusText.setText("APPLIED");
+            statusText.setBackgroundTintList(getColorStateList(R.color.status_mid));
+        } else if (jobPost.getStatus().equalsIgnoreCase("OPEN")) {
+            statusText.setText("OPEN");
+            statusText.setBackgroundTintList(getColorStateList(R.color.status_green));
+        } else if (jobPost.getStatus().startsWith("COMPLETED")) {
+            statusText.setText("COMPLETED");
+            statusText.setBackgroundTintList(getColorStateList(R.color.darker_grey));
+        }
     }
 }

@@ -14,7 +14,7 @@
         android:layout_marginTop="5dp"
         android:orientation="vertical"
         app:shimmer_repeat_mode="reverse"
-        app:shimmer_duration="800">
+        app:shimmer_duration="700">
 
         <!-- Adding 7 rows of placeholders -->
         <LinearLayout

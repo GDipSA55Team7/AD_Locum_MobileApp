@@ -35,4 +35,7 @@ public interface ApiMethods {
     @POST("/api/jobs/job?")
     Call<JobPost> setJobStatus(@Query("id") String id, @Query("status") String status, @Query("userId") String userId);
 
+    @GET("/api/jobs/history?")
+    Call<ArrayList<JobPost>> getJobHistory(@Query("id") int userId);
+
 }

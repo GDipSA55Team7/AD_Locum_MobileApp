@@ -18,7 +18,7 @@
 
         <TextView
             android:id="@+id/clinicName"
-            android:layout_width="wrap_content"
+            android:layout_width="370dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="20dp"
             android:text="Punggol Family Clinic Pte Ltd"
@@ -46,10 +46,10 @@
 
         <TextView
             android:id="@+id/address"
-            android:layout_width="wrap_content"
+            android:layout_width="370dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="20dp"
-            android:layout_marginTop="120dp"
+            android:layout_marginTop="105dp"
             android:lines="2"
             android:maxLines="2"
             android:text="322, #01-03 Sumang Walk 820322"
