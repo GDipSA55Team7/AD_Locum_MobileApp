@@ -1,7 +1,5 @@
 package sg.nus.iss.team7.locum;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -21,13 +19,15 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.google.gson.Gson;
 
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -68,23 +68,33 @@ public class EditProfileActivity extends AppCompatActivity {
                 Retrofit retrofit = RetroFitClient.getClient(RetroFitClient.BASE_URL);
                 ApiMethods api = retrofit.create(ApiMethods.class);
 
-                fl.setName(mName.getText().toString().trim());
-                fl.setEmail(mEmail.getText().toString().trim());
-                fl.setPassword(mPassword.getText().toString().trim());
-                fl.setContact(mContactNumber.getText().toString().trim());
-                fl.setMedicalLicenseNo(mMedicalLicenseNumber.getText().toString().trim());
+                if (fl != null) {
+                    fl.setName(mName.getText().toString().trim());
+                }
+                if (fl != null) {
+                    fl.setEmail(mEmail.getText().toString().trim());
+                }
+                if (fl != null) {
+                    fl.setPassword(mPassword.getText().toString().trim());
+                }
+                if (fl != null) {
+                    fl.setContact(mContactNumber.getText().toString().trim());
+                }
+                if (fl != null) {
+                    fl.setMedicalLicenseNo(mMedicalLicenseNumber.getText().toString().trim());
+                }
 
                 Call<FreeLancer> updateFLCall = api.updateFreeLancer(fl);
                 updateFLCall.enqueue(new Callback<FreeLancer>() {
                     @Override
-                    public void onResponse(Call<FreeLancer> call, Response<FreeLancer> response) {
+                    public void onResponse(@NonNull Call<FreeLancer> call, @NonNull Response<FreeLancer> response) {
                         if(response.isSuccessful()){
                             if(response.code() == 200){
                                 Toast.makeText(getApplicationContext(),"Update Success ",Toast.LENGTH_SHORT).show();
                                 //if register is successful, store in shared Pref
                                 storeFLDetailsInSharedPref(fl);
                                 //redirect
-                                Intent intent = new Intent(EditProfileActivity.this,MainActivity.class);
+                                Intent intent = new Intent(EditProfileActivity.this, MainActivity.class);
                                 startActivity(intent);
                                 finish();
                             }
@@ -120,7 +130,7 @@ public class EditProfileActivity extends AppCompatActivity {
                         }
                     }
                     @Override
-                    public void onFailure(Call<FreeLancer> call, Throwable t) {
+                    public void onFailure(@NonNull Call<FreeLancer> call, @NonNull Throwable t) {
                         if (t instanceof IOException) {
                             createDialogForEditFailed(getResources().getString(R.string.NetworkFailure));
                         }
@@ -282,8 +292,9 @@ public class EditProfileActivity extends AppCompatActivity {
             isValid = false;
         }
         for (Boolean b : mapFieldToValidStatus.values()){
-            if(b == Boolean.FALSE){
+            if (b == Boolean.FALSE) {
                 isValid = false;
+                break;
             }
         }
         return isValid;

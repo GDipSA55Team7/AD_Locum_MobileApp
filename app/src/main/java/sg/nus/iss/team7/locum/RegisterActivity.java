@@ -1,5 +1,6 @@
 package sg.nus.iss.team7.locum;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.AlertDialog;
@@ -68,9 +69,9 @@ public class RegisterActivity extends AppCompatActivity {
                 Call<FreeLancer> registerFLCall = api.registerFreeLancer(fl);
                 registerFLCall.enqueue(new Callback<FreeLancer>() {
                     @Override
-                    public void onResponse(Call<FreeLancer> call, Response<FreeLancer> response) {
+                    public void onResponse(@NonNull Call<FreeLancer> call, @NonNull Response<FreeLancer> response) {
                         if(response.isSuccessful()){
-                           if(response.code()  == 201){
+                            if(response.code()  == 201){
                                 FreeLancer returnedFL = response.body();
                                 if(returnedFL != null && returnedFL.getName() != null){
                                     Toast.makeText(getApplicationContext(), getResources().getString(R.string.RegisterSuccess) + returnedFL.getName(),Toast.LENGTH_SHORT).show();
@@ -120,7 +121,7 @@ public class RegisterActivity extends AppCompatActivity {
                         }
                     }
                     @Override
-                    public void onFailure(Call<FreeLancer> call, Throwable t) {
+                    public void onFailure(@NonNull Call<FreeLancer> call, @NonNull Throwable t) {
                         if (t instanceof IOException) {
                             createDialogForRegisterFailed(getResources().getString(R.string.NetworkFailure));
                         }
