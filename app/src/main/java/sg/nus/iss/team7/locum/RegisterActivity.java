@@ -73,7 +73,7 @@ public class RegisterActivity extends AppCompatActivity {
                            if(response.code()  == 201){
                                 FreeLancer returnedFL = response.body();
                                 if(returnedFL != null && returnedFL.getName() != null){
-                                    Toast.makeText(getApplicationContext(),"Register successful, welcome " + returnedFL.getName(),Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(getApplicationContext(), getResources().getString(R.string.RegisterSuccess) + returnedFL.getName(),Toast.LENGTH_SHORT).show();
 
                                     //if register is successful, store in shared Pref
                                     storeFLDetailsInSharedPref(returnedFL);
@@ -88,7 +88,7 @@ public class RegisterActivity extends AppCompatActivity {
                         else {
                             int statusCode = response.code();
                             if (statusCode == 500) {
-                                createDialogForRegisterFailed("Internal Server Error");
+                                createDialogForRegisterFailed(getResources().getString(R.string.InternalServerError));
                             }
                             //Server-side Validation Error - non-unique Fields(username,Email,medicalLicenseNo)
                             else if  ( statusCode == 406) {
@@ -102,14 +102,14 @@ public class RegisterActivity extends AppCompatActivity {
 
                                     String displayErrorTxt = "These fields have already been taken/registered :";
                                     if(!errString.isEmpty()){
-                                        if(errString.contains("username")){
+                                        if(errString.contains("Username")){
                                             displayErrorTxt += " UserName,";
                                         }
-                                        if(errString.contains("email")){
+                                        if(errString.contains("Email")){
                                             displayErrorTxt += " Email,";
                                         }
 
-                                        if(errString.contains("medical")){
+                                        if(errString.contains("Medical")){
                                             displayErrorTxt += " MedicalLicenseNumber,";
                                         }
                                         displayErrorTxt = displayErrorTxt.substring(0, displayErrorTxt.length() - 1);
@@ -122,16 +122,16 @@ public class RegisterActivity extends AppCompatActivity {
                     @Override
                     public void onFailure(Call<FreeLancer> call, Throwable t) {
                         if (t instanceof IOException) {
-                            createDialogForRegisterFailed("Network Failure");
+                            createDialogForRegisterFailed(getResources().getString(R.string.NetworkFailure));
                         }
                         else {
-                            createDialogForRegisterFailed("JSON Parsing Issue");
+                            createDialogForRegisterFailed(getResources().getString(R.string.JSONParsingIssue));
                         }
                     }
                 });
             }
             else{
-                createDialogForRegisterFailed("Make sure all fields are valid");
+                createDialogForRegisterFailed(getResources().getString(R.string.AllFieldsAreValid));
             }
         });
 
@@ -162,17 +162,17 @@ public class RegisterActivity extends AppCompatActivity {
         mMedicalLicenseNumber = findViewById(R.id.medicalLicenseNumber);
         mMedicalLicenseNumber.setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
 
-        listenerForLengthValidation(mName,"Name",1,10);
-        listenerForLengthValidation(mUserName,"UserName",3,12);
-        listenerForLengthValidation(mPassword,"Password",5,15);
+        listenerForLengthValidation(mName,getResources().getString(R.string.Name),1,10);
+        listenerForLengthValidation(mUserName,getResources().getString(R.string.UserName),3,12);
+        listenerForLengthValidation(mPassword,getResources().getString(R.string.Password),5,15);
 
-        String validEmailRegex = "[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,4}";
-        String validMedicalLicenseNumberRegex = "^M[0-9]{5}[A-Z]$";
-        String validContactNumberRegex = "\\d{8}";
+        String validEmailRegex = getResources().getString(R.string.ValidEmailRegex);
+        String validMedicalLicenseNumberRegex = getResources().getString(R.string.ValidMedicalLicenseNumberRegex);
+        String validContactNumberRegex = getResources().getString(R.string.ValidContactNumberRegex);
 
-        listenerForRegexValidation(mEmail,"Email",validEmailRegex);
-        listenerForRegexValidation(mMedicalLicenseNumber,"MedicalLicenseNumber",validMedicalLicenseNumberRegex);
-        listenerForRegexValidation(mContactNumber,"ContactNumber",validContactNumberRegex);
+        listenerForRegexValidation(mEmail,getResources().getString(R.string.Email),validEmailRegex);
+        listenerForRegexValidation(mMedicalLicenseNumber,getResources().getString(R.string.MedicalLicenseNumber),validMedicalLicenseNumberRegex);
+        listenerForRegexValidation(mContactNumber,getResources().getString(R.string.ContactNumber),validContactNumberRegex);
     }
 
     private boolean validateLength(EditText editTxt, String fieldName, int minChar, int maxChar){
@@ -181,7 +181,7 @@ public class RegisterActivity extends AppCompatActivity {
         String checkFieldStr = editTxt.getText().toString().trim();
 
         if(checkFieldStr.isEmpty()){
-            editTxt.setError(fieldName +" must not be empty");
+            editTxt.setError(fieldName + getResources().getString(R.string.MustNotBeEmpty));
             if(fieldIsValid){
                 fieldIsValid = false;
             }
@@ -233,20 +233,21 @@ public class RegisterActivity extends AppCompatActivity {
         String fieldInput = editTxt.getText().toString().trim();
 
         if (fieldInput.isEmpty()){
-            editTxt.setError( fieldName + " cannot be empty");
+            editTxt.setError( fieldName + getResources().getString(R.string.MustNotBeEmpty));
             return false;
         }
         else if(!fieldInput.matches(validRegexPattern)){
 
             switch(fieldName){
+
                 case "Email":
-                    editTxt.setError("Must be valid  email format E.G. ABC@gmail.com");
+                    editTxt.setError("Must be valid " + getResources().getString(R.string.Email) + getResources().getString(R.string.EmailValidation));
                     break;
                 case "ContactNumber":
-                    editTxt.setError("Phone Number must 8 digits long");
+                    editTxt.setError( getResources().getString(R.string.ContactNumber)  + getResources().getString(R.string.ContactNumberValidation));
                     break;
                 case "MedicalLicenseNumber":
-                    editTxt.setError("Input must follow valid format E.g. M12345J");
+                    editTxt.setError("Must be valid " + getResources().getString(R.string.MedicalLicenseNumber) + getResources().getString(R.string.MedicalLicenseNumberValidation));
                     break;
                 default:
                     break;
@@ -283,10 +284,10 @@ public class RegisterActivity extends AppCompatActivity {
     private void createDialogForRegisterFailed(String msg){
         new AlertDialog.Builder(RegisterActivity.this)
                 .setIcon(R.drawable.ic_exit_application)
-                .setTitle("Register Failed")
+                .setTitle(getResources().getString(R.string.RegisterFailed))
                 .setMessage(msg)
                 .setCancelable(true)
-                .setPositiveButton("OK", (dialog, id) -> dialog.dismiss())
+                .setPositiveButton(getResources().getString(R.string.Ok), (dialog, id) -> dialog.dismiss())
                 .show();
     }
 

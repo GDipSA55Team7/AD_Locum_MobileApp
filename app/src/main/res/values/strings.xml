@@ -5,4 +5,45 @@
     <string name="long_placeholder">Super long placeholder text to test what happens when it goes past the container. Super long placeholder text to test what happens when it goes past the container.Super long placeholder text to test what happens when it goes past the container. Super long placeholder text to test what happens when it goes past the container.Super long placeholder text to test what happens when it goes past the container.Super long placeholder text to test what happens when it goes past the container. Super long placeholder text to test what happens when it goes past the container. Super long placeholder text to test what happens when it goes past the container. Super long placeholder text to test what happens when it goes past the container.Super long placeholder text to test what happens when it goes past the container. Super long placeholder text to test what happens when it goes past the container.Super long placeholder text to test what happens when it goes past the container.Super long placeholder text to test what happens when it goes past the container. Super long placeholder text to test what happens when it goes past the container. Super long placeholder text to test what happens when it goes past the container.</string>
     <string name="Freelancer_Shared_Pref">FL_Shared_Pref</string>
     <string name="Freelancer_Details">FL_Details</string>
+
+    <string name="Name">Name</string>
+    <string name="UserName">UserName</string>
+    <string name="Password">Password</string>
+    <string name="Email">Email</string>
+    <string name="ContactNumber">ContactNumber</string>
+    <string name="MedicalLicenseNumber">MedicalLicenseNumber</string>
+
+    <string name="SubmitChangesFailed">Submit Changes Failed</string>
+    <string name="SubmitFailed">Submit Failed</string>
+    <string name="ContactNumberValidation"> must be 8 digits long</string>
+    <string name="MedicalLicenseNumberValidation"> format E.g. M12345J</string>
+    <string name="EmailValidation"> format E.G. ABC@gmail.com</string>
+
+    <string name="ValidEmailRegex">[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}</string>
+    <string name="ValidMedicalLicenseNumberRegex">^M[0-9]{5}[A-Z]$</string>
+    <string name="ValidContactNumberRegex">\\d{8}</string>
+
+    <string name="No">NO</string>
+    <string name="Yes">YES</string>
+    <string name="Ok">OK</string>
+    <string name="LoginFailed">Login Failed</string>
+    <string name="LoginFailedUserNameAndPasswordEmpty"> Username and Password cannot be empty</string>
+
+    <string name="AllFieldsAreValid">Make sure all fields are valid</string>
+
+    <string name="LoginSuccess">Login Successful, Welcome </string>
+    <string name="MustNotBeEmpty"> must not be empty</string>
+
+
+    <string name="RegisterFailed">Register Failed</string>
+    <string name="RegisterSuccess">Register Successful, Welcome </string>
+
+    <string name="InternalServerError">Internal Server Error</string>
+    <string name="NoSuchRegisteredUser">No Such Registered User</string>
+    <string name="NetworkFailure">Network Failure</string>
+    <string name="JSONParsingIssue">JSON Parsing Issue</string>
+
+    <string name="LeavingApplication">Leaving Application</string>
+    <string name="LeavingApplicationPrompt">Are you sure you want to exit?</string>
+
 </resources>

@@ -60,7 +60,7 @@ public class EditProfileActivity extends AppCompatActivity {
 
         mSubmitBtn.setOnClickListener(v -> {
             if(!allFieldsValid()){
-                createDialogForValidationFailed("Make sure all fields are valid");
+                createDialogForValidationFailed(getResources().getString(R.string.AllFieldsAreValid));
             }
             //proceed to update
             else{
@@ -92,7 +92,7 @@ public class EditProfileActivity extends AppCompatActivity {
                         else {
                             int statusCode = response.code();
                             if (statusCode == 500) {
-                                createDialogForEditFailed("Internal Server Error");
+                                createDialogForEditFailed(getResources().getString(R.string.InternalServerError));
                             }
                             else if  ( statusCode == 406) {
                                 FreeLancer invalidFL = null;
@@ -105,11 +105,11 @@ public class EditProfileActivity extends AppCompatActivity {
 
                                     String displayErrorTxt = "These fields have already been taken/registered :";
                                     if(!errString.isEmpty()){
-                                        if(errString.contains("email")){
+                                        if(errString.contains("Email")){
                                             displayErrorTxt += " Email,";
                                         }
 
-                                        if(errString.contains("medical")){
+                                        if(errString.contains("Medical")){
                                             displayErrorTxt += " MedicalLicenseNumber,";
                                         }
                                         displayErrorTxt = displayErrorTxt.substring(0, displayErrorTxt.length() - 1);
@@ -122,10 +122,10 @@ public class EditProfileActivity extends AppCompatActivity {
                     @Override
                     public void onFailure(Call<FreeLancer> call, Throwable t) {
                         if (t instanceof IOException) {
-                            createDialogForEditFailed("Network Failure");
+                            createDialogForEditFailed(getResources().getString(R.string.NetworkFailure));
                         }
                         else {
-                            createDialogForEditFailed("JSON Parsing Issue");
+                            createDialogForEditFailed(getResources().getString(R.string.JSONParsingIssue));
                         }
                     }
                 });
@@ -154,16 +154,16 @@ public class EditProfileActivity extends AppCompatActivity {
         mMedicalLicenseNumber = findViewById(R.id.medicalLicenseNumber);
         mMedicalLicenseNumber.setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
 
-        listenerForLengthValidation(mName,"Name",1,10);
-        listenerForLengthValidation(mPassword,"Password",5,15);
+        listenerForLengthValidation(mName,getResources().getString(R.string.Name),1,10);
+        listenerForLengthValidation(mPassword,getResources().getString(R.string.Password),5,15);
 
-        String validEmailRegex = "[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,4}";
-        String validMedicalLicenseNumberRegex = "^M[0-9]{5}[A-Z]$";
-        String validContactNumberRegex = "\\d{8}";
+        String validEmailRegex = getResources().getString(R.string.ValidEmailRegex);
+        String validMedicalLicenseNumberRegex = getResources().getString(R.string.ValidMedicalLicenseNumberRegex);
+        String validContactNumberRegex = getResources().getString(R.string.ValidContactNumberRegex);
 
-        listenerForRegexValidation(mEmail,"Email",validEmailRegex);
-        listenerForRegexValidation(mMedicalLicenseNumber,"MedicalLicenseNumber",validMedicalLicenseNumberRegex);
-        listenerForRegexValidation(mContactNumber,"ContactNumber",validContactNumberRegex);
+        listenerForRegexValidation(mEmail,getResources().getString(R.string.Email),validEmailRegex);
+        listenerForRegexValidation(mMedicalLicenseNumber,getResources().getString(R.string.MedicalLicenseNumber),validMedicalLicenseNumberRegex);
+        listenerForRegexValidation(mContactNumber,getResources().getString(R.string.ContactNumber),validContactNumberRegex);
 
     }
 
@@ -217,7 +217,7 @@ public class EditProfileActivity extends AppCompatActivity {
         String checkFieldStr = editTxt.getText().toString().trim();
 
         if(checkFieldStr.isEmpty()){
-            editTxt.setError(fieldName +" must not be empty");
+            editTxt.setError(fieldName +getResources().getString(R.string.MustNotBeEmpty));
             if(fieldIsValid){
                 fieldIsValid = false;
             }
@@ -252,20 +252,20 @@ public class EditProfileActivity extends AppCompatActivity {
         String fieldInput = editTxt.getText().toString().trim();
 
         if (fieldInput.isEmpty()){
-            editTxt.setError( fieldName + " cannot be empty");
+            editTxt.setError( fieldName + getResources().getString(R.string.MustNotBeEmpty));
             return false;
         }
         else if(!fieldInput.matches(validRegexPattern)){
 
             switch(fieldName){
                 case "Email":
-                    editTxt.setError("Must be valid  email format E.G. ABC@gmail.com");
+                    editTxt.setError("Must be valid " + getResources().getString(R.string.Email) + getResources().getString(R.string.EmailValidation));
                     break;
                 case "ContactNumber":
-                    editTxt.setError("Phone Number must 8 digits long");
+                    editTxt.setError( getResources().getString(R.string.ContactNumber)  + getResources().getString(R.string.ContactNumberValidation));
                     break;
                 case "MedicalLicenseNumber":
-                    editTxt.setError("Input must follow valid format E.g. M12345J");
+                    editTxt.setError("Must be valid " + getResources().getString(R.string.MedicalLicenseNumber) + getResources().getString(R.string.MedicalLicenseNumberValidation));
                     break;
                 default:
                     break;
@@ -302,10 +302,10 @@ public class EditProfileActivity extends AppCompatActivity {
     private void createDialogForValidationFailed(String msg){
         new AlertDialog.Builder(EditProfileActivity.this)
                 .setIcon(R.drawable.ic_exit_application)
-                .setTitle("Submit Failed")
+                .setTitle(getResources().getString(R.string.SubmitFailed))
                 .setMessage(msg)
                 .setCancelable(true)
-                .setPositiveButton("OK", (dialog, id) -> dialog.dismiss())
+                .setPositiveButton(getResources().getString(R.string.Ok), (dialog, id) -> dialog.dismiss())
                 .show();
     }
 
@@ -319,10 +319,10 @@ public class EditProfileActivity extends AppCompatActivity {
     private void createDialogForEditFailed(String msg){
         new AlertDialog.Builder(EditProfileActivity.this)
                 .setIcon(R.drawable.ic_exit_application)
-                .setTitle("Submit Changes Failed")
+                .setTitle(getResources().getString(R.string.SubmitChangesFailed))
                 .setMessage(msg)
                 .setCancelable(true)
-                .setPositiveButton("OK", (dialog, id) -> dialog.dismiss())
+                .setPositiveButton(getResources().getString(R.string.Ok), (dialog, id) -> dialog.dismiss())
                 .show();
     }
 
