@@ -1,9 +1,14 @@
 package sg.nus.iss.team7.locum.Model;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
+import androidx.annotation.NonNull;
+
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class FreeLancer {
+public class FreeLancer implements Parcelable {
 
     @SerializedName("id")
     @Expose
@@ -37,6 +42,9 @@ public class FreeLancer {
     @SerializedName("errorsFieldString")
     @Expose
     private String errorsFieldString;
+
+    public FreeLancer() {
+    }
 
     public String getId() {
         return id;
@@ -98,4 +106,44 @@ public class FreeLancer {
     public void setMedicalLicenseNo(String medicalLicenseNo) {
         this.medicalLicenseNo = medicalLicenseNo;
     }
+
+    protected FreeLancer(Parcel in) {
+        id = in.readString();
+        username = in.readString();
+        password = in.readString();
+        name = in.readString();
+        email = in.readString();
+        contact = in.readString();
+        medicalLicenseNo = in.readString();
+        errorsFieldString = in.readString();
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(id);
+        dest.writeString(username);
+        dest.writeString(password);
+        dest.writeString(name);
+        dest.writeString(email);
+        dest.writeString(contact);
+        dest.writeString(medicalLicenseNo);
+        dest.writeString(errorsFieldString);
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    public static final Creator<FreeLancer> CREATOR = new Creator<FreeLancer>() {
+        @Override
+        public FreeLancer createFromParcel(Parcel in) {
+            return new FreeLancer(in);
+        }
+
+        @Override
+        public FreeLancer[] newArray(int size) {
+            return new FreeLancer[size];
+        }
+    };
 }

@@ -53,7 +53,7 @@
             app:layout_constraintHorizontal_bias="0.089"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/hourlyRateHeader"
-            app:layout_constraintVertical_bias="0.025" />
+            app:layout_constraintVertical_bias="0.024" />
 
         <TextView
             android:id="@+id/totalShift"
@@ -99,6 +99,7 @@
             android:textAlignment="gravity"
             android:textAllCaps="false"
             android:textSize="20sp"
+            android:maxLines="1"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.358"
@@ -204,6 +205,7 @@
 
         <Button
             style="@style/Widget.MaterialComponents.Button.Icon"
+            android:id="@+id/jobDetailBtn"
             android:layout_width="150dp"
             android:layout_height="60dp"
             android:text="Apply"
