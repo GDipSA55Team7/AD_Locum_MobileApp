@@ -1,5 +1,6 @@
 package sg.nus.iss.team7.locum;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,8 +18,7 @@ import sg.nus.iss.team7.locum.Interface.RecyclerViewInterface;
 
 public class HistoryJobChildFragment extends Fragment implements RecyclerViewInterface{
     RecyclerView recyclerView;
-
-
+    MyHistoryJobAdapter adapter;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -34,7 +34,7 @@ public class HistoryJobChildFragment extends Fragment implements RecyclerViewInt
                 linearLayoutManager.getOrientation());
         recyclerView.addItemDecoration(dividerItemDecoration);
 
-        MyHistoryJobAdapter adapter = new MyHistoryJobAdapter(recyclerView.getContext(), this);
+        adapter = new MyHistoryJobAdapter(recyclerView.getContext(), this);
 
         recyclerView.setAdapter(adapter);
 
@@ -43,6 +43,9 @@ public class HistoryJobChildFragment extends Fragment implements RecyclerViewInt
 
     @Override
     public void onItemClick(int position) {
-        Toast.makeText(recyclerView.getContext(), "clicked item " + position,Toast.LENGTH_SHORT).show();
+        Intent intent = new Intent(getContext(), JobDetailActivity.class);
+        int itemId = (int) adapter.getItemId(position);
+        intent.putExtra("itemId", itemId);
+        startActivity(intent);
     }
 }

@@ -4,6 +4,7 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -12,12 +13,13 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
 
+import sg.nus.iss.team7.locum.Interface.CancelButtonInterface;
 import sg.nus.iss.team7.locum.Interface.RecyclerViewInterface;
 import sg.nus.iss.team7.locum.R;
 
 public class MyConfirmedJobAdapter extends RecyclerView.Adapter<MyConfirmedJobAdapter.MyViewHolder>{
     private final RecyclerViewInterface recyclerViewInterface;
-
+    private CancelButtonInterface buttonInterface;
     Context context;
     List<String> myList;
 
@@ -25,11 +27,15 @@ public class MyConfirmedJobAdapter extends RecyclerView.Adapter<MyConfirmedJobAd
         this.recyclerViewInterface = recyclerViewInterface;
     }
 
+
+    public void buttonSetOnclick(CancelButtonInterface buttonInterface){
+        this.buttonInterface = buttonInterface;
+    }
     public static class MyViewHolder extends RecyclerView.ViewHolder {
         public TextView date, full_rate, hour_rate, time_start, time_end, job_name, clinic_name, address;
-        public AppCompatButton button;
+        public Button cancelBtn;
 
-        public MyViewHolder(@NonNull View view, RecyclerViewInterface recyclerViewInterface) {
+        public MyViewHolder(@NonNull View view, RecyclerViewInterface recyclerViewInterface, CancelButtonInterface buttonInterface) {
             super(view);
             date = (TextView) view.findViewById(R.id.date);
             full_rate = (TextView) view.findViewById(R.id.full_rate);
@@ -39,6 +45,7 @@ public class MyConfirmedJobAdapter extends RecyclerView.Adapter<MyConfirmedJobAd
             job_name = (TextView) view.findViewById(R.id.job_name);
             clinic_name = (TextView) view.findViewById(R.id.clinic_name);
             address = (TextView) view.findViewById(R.id.address);
+            cancelBtn= view.findViewById(R.id.cancelBtn);
 
             view.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -52,6 +59,19 @@ public class MyConfirmedJobAdapter extends RecyclerView.Adapter<MyConfirmedJobAd
                     }
                 }
             });
+            cancelBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if(buttonInterface != null){
+                        int position = getAbsoluteAdapterPosition();
+
+                        if(position != RecyclerView.NO_POSITION) {
+                            buttonInterface.onButtonClick(position);
+                        }
+                    }
+                }
+            });
+
         }
     }
 
@@ -65,13 +85,12 @@ public class MyConfirmedJobAdapter extends RecyclerView.Adapter<MyConfirmedJobAd
 
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.my_job_confirmed_list_item, parent, false);
 
-        MyViewHolder viewHolder = new MyViewHolder(view, recyclerViewInterface);
+        MyViewHolder viewHolder = new MyViewHolder(view, recyclerViewInterface, buttonInterface);
         return viewHolder;
     }
 
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
-
     }
 
     @Override
