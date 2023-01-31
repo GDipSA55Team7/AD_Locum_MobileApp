@@ -34,6 +34,7 @@ import sg.nus.iss.team7.locum.Adapter.MyConfirmedJobAdapter;
 import sg.nus.iss.team7.locum.Adapter.MyHistoryJobAdapter;
 import sg.nus.iss.team7.locum.Interface.RecyclerViewInterface;
 import sg.nus.iss.team7.locum.Model.JobPost;
+import sg.nus.iss.team7.locum.Utilities.JsonFieldParser;
 
 public class HistoryJobChildFragment extends Fragment implements RecyclerViewInterface{
 
@@ -104,11 +105,9 @@ public class HistoryJobChildFragment extends Fragment implements RecyclerViewInt
 
         SharedPreferences sharedPref = getActivity().getSharedPreferences("FL_Shared_Pref", MODE_PRIVATE);
         String userDetails = sharedPref.getString("FL_Details", "no value");
-        // TODO: change userid hardcoding
-        //String id = JsonFieldParser.getField(userDetails, "id");
+        String id = JsonFieldParser.getField(userDetails, "id");
 
-        // TODO: change API method
-        Call<ArrayList<JobPost>> call = api.getJobHistory(1);
+        Call<ArrayList<JobPost>> call = api.getJobHistory(Integer.parseInt(id));
 
         call.enqueue(new Callback<ArrayList<JobPost>>() {
             @Override
