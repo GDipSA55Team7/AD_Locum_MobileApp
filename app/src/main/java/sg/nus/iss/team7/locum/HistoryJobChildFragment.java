@@ -49,21 +49,6 @@ public class HistoryJobChildFragment extends Fragment implements RecyclerViewInt
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.child_fragment_history, container, false);
-//
-//        recyclerView = view.findViewById(R.id.myHistoryJobRecyclerView);
-//
-//        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(view.getContext());
-//        recyclerView.setLayoutManager(linearLayoutManager);
-//
-//        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(recyclerView.getContext(),
-//                linearLayoutManager.getOrientation());
-//        recyclerView.addItemDecoration(dividerItemDecoration);
-//
-//        adapter = new JobSearchAdapter(recyclerView.getContext(), this);
-//
-//        recyclerView.setAdapter(adapter);
-//
-//        return view;
 
         // Shimmer load effect
         shimmerFrameLayout = view.findViewById(R.id.shimmer_view_container);
