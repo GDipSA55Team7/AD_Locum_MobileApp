@@ -26,6 +26,7 @@ public class ConfirmedJobChildFragment extends Fragment implements RecyclerViewI
 
     RecyclerView recyclerView;
     MyConfirmedJobAdapter adapter;
+    JobDetailFragment jobDetailFragment;
     Button cancelBtn;
 
     String alertTitle;

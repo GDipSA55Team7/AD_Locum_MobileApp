@@ -148,7 +148,7 @@ public class JobDetailFragment extends Fragment {
                 if (response.isSuccessful()) {
                     if (status.equalsIgnoreCase("apply")) {
                         jobPost.setStatus("PENDING_ACCEPTANCE");
-                        button.setText("CANCEL");
+                        button.setEnabled(false);
                     } else if (status.equalsIgnoreCase("cancel")) {
                         jobPost.setStatus("OPEN");
                         button.setText("APPLY");

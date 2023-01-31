@@ -115,6 +115,7 @@ public class JobSearchFragment extends Fragment implements RecyclerViewInterface
                     shimmerFrameLayout.setVisibility(View.GONE);
                     swipeContainer.setRefreshing(false);
                     adapter.notifyDataSetChanged();
+
                 }
             }
 
@@ -124,5 +125,10 @@ public class JobSearchFragment extends Fragment implements RecyclerViewInterface
                 Toast.makeText(getContext(),"error getting job list", Toast.LENGTH_SHORT);
             }
         });
+    }
+
+    public void onResume () {
+        super.onResume();
+        getOpenJobs(adapter);
     }
 }
