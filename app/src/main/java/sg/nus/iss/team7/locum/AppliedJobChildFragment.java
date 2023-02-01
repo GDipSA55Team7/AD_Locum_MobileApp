@@ -30,13 +30,11 @@ import retrofit2.Retrofit;
 import sg.nus.iss.team7.locum.APICommunication.ApiMethods;
 import sg.nus.iss.team7.locum.APICommunication.RetroFitClient;
 import sg.nus.iss.team7.locum.Adapter.JobSearchAdapter;
-import sg.nus.iss.team7.locum.Adapter.MyConfirmedJobAdapter;
-import sg.nus.iss.team7.locum.Adapter.MyHistoryJobAdapter;
 import sg.nus.iss.team7.locum.Interface.RecyclerViewInterface;
 import sg.nus.iss.team7.locum.Model.JobPost;
 import sg.nus.iss.team7.locum.Utilities.JsonFieldParser;
 
-public class HistoryJobChildFragment extends Fragment implements RecyclerViewInterface{
+public class AppliedJobChildFragment extends Fragment implements RecyclerViewInterface{
 
     private RecyclerView recyclerView;
     private JobSearchAdapter adapter;
@@ -49,7 +47,7 @@ public class HistoryJobChildFragment extends Fragment implements RecyclerViewInt
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.child_fragment_history, container, false);
+        View view = inflater.inflate(R.layout.child_fragment_applied, container, false);
 
         // Shimmer load effect
         shimmerFrameLayout = view.findViewById(R.id.shimmer_view_container);
@@ -107,7 +105,7 @@ public class HistoryJobChildFragment extends Fragment implements RecyclerViewInt
         String userDetails = sharedPref.getString("FL_Details", "no value");
         String id = JsonFieldParser.getField(userDetails, "id");
 
-        Call<ArrayList<JobPost>> call = api.getJobHistory(Integer.parseInt(id));
+        Call<ArrayList<JobPost>> call = api.getJobApplied(Integer.parseInt(id));
 
         call.enqueue(new Callback<ArrayList<JobPost>>() {
             @Override
