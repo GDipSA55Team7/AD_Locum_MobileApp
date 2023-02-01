@@ -96,7 +96,7 @@ public class JobDetailActivity extends AppCompatActivity {
     }
 
     private void setStatusBar() {
-        if(jobPost.getStatus().equalsIgnoreCase("PENDING_ACCEPTANCE")) {
+        if(jobPost.getStatus().equalsIgnoreCase("PENDING_CONFIRMATION_BY_CLINIC")) {
             statusText.setText("APPLIED");
             statusText.setBackgroundTintList(getColorStateList(R.color.status_mid));
         } else if (jobPost.getStatus().equalsIgnoreCase("OPEN")) {

@@ -2,8 +2,6 @@ package sg.nus.iss.team7.locum;
 
 import static android.content.Context.MODE_PRIVATE;
 
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
@@ -15,10 +13,8 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.viewmodel.CreationExtras;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -35,10 +31,9 @@ import retrofit2.Retrofit;
 import sg.nus.iss.team7.locum.APICommunication.ApiMethods;
 import sg.nus.iss.team7.locum.APICommunication.RetroFitClient;
 import sg.nus.iss.team7.locum.Adapter.JobSearchAdapter;
-import sg.nus.iss.team7.locum.Adapter.MyConfirmedJobAdapter;
-import sg.nus.iss.team7.locum.Interface.CancelButtonInterface;
 import sg.nus.iss.team7.locum.Interface.RecyclerViewInterface;
 import sg.nus.iss.team7.locum.Model.JobPost;
+import sg.nus.iss.team7.locum.Utilities.JsonFieldParser;
 
 public class ConfirmedJobChildFragment extends Fragment implements RecyclerViewInterface{
 
@@ -51,7 +46,7 @@ public class ConfirmedJobChildFragment extends Fragment implements RecyclerViewI
     private SwipeRefreshLayout swipeContainer;
 
     RecyclerView recyclerView;
-    MyConfirmedJobAdapter adapter;
+    //MyConfirmedJobAdapter adapter;
     JobDetailFragment jobDetailFragment;
     Button cancelBtn;
 
@@ -106,7 +101,7 @@ public class ConfirmedJobChildFragment extends Fragment implements RecyclerViewI
 
         // Load object from API to recycler view
         adapter = new JobSearchAdapter(recyclerView.getContext(), this);
-        getOpenJobs(adapter);
+        getJobs(adapter);
         recyclerView.setAdapter(adapter);
 
         // Set listener for swipe up to reload
@@ -114,7 +109,7 @@ public class ConfirmedJobChildFragment extends Fragment implements RecyclerViewI
 
             @Override
             public void onRefresh() {
-                getOpenJobs(adapter);
+                getJobs(adapter);
             }
         });
 
@@ -129,7 +124,7 @@ public class ConfirmedJobChildFragment extends Fragment implements RecyclerViewI
         startActivity(intent);
     }
 
-    public void getOpenJobs(JobSearchAdapter adapter) {
+    public void getJobs(JobSearchAdapter adapter) {
 
         // API call
         Retrofit retrofit = RetroFitClient.getClient(RetroFitClient.BASE_URL);
@@ -137,11 +132,10 @@ public class ConfirmedJobChildFragment extends Fragment implements RecyclerViewI
 
         SharedPreferences sharedPref = getActivity().getSharedPreferences("FL_Shared_Pref", MODE_PRIVATE);
         String userDetails = sharedPref.getString("FL_Details", "no value");
-        // TODO: change userid hardcoding
-        //String id = JsonFieldParser.getField(userDetails, "id");
 
-        // TODO: change API method
-        Call<ArrayList<JobPost>> call = api.getJobConfirmed(2);
+        String id = JsonFieldParser.getField(userDetails, "id");
+
+        Call<ArrayList<JobPost>> call = api.getJobConfirmed(Integer.parseInt(id));
 
         call.enqueue(new Callback<ArrayList<JobPost>>() {
             @Override
