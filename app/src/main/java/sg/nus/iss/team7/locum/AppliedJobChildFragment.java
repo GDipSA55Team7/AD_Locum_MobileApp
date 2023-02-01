@@ -71,7 +71,7 @@ public class AppliedJobChildFragment extends Fragment implements RecyclerViewInt
 
         // Load object from API to recycler view
         adapter = new JobSearchAdapter(recyclerView.getContext(), this);
-        getOpenJobs(adapter);
+        getJobs(adapter);
         recyclerView.setAdapter(adapter);
 
         // Set listener for swipe up to reload
@@ -79,7 +79,7 @@ public class AppliedJobChildFragment extends Fragment implements RecyclerViewInt
 
             @Override
             public void onRefresh() {
-                getOpenJobs(adapter);
+                getJobs(adapter);
             }
         });
 
@@ -95,7 +95,7 @@ public class AppliedJobChildFragment extends Fragment implements RecyclerViewInt
         startActivity(intent);
     }
 
-    public void getOpenJobs(JobSearchAdapter adapter) {
+    public void getJobs(JobSearchAdapter adapter) {
 
         // API call
         Retrofit retrofit = RetroFitClient.getClient(RetroFitClient.BASE_URL);

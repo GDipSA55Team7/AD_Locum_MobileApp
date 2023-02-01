@@ -4,9 +4,11 @@ import static android.content.Context.MODE_PRIVATE;
 import static android.view.View.GONE;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
@@ -107,9 +109,11 @@ public class JobDetailFragment extends Fragment {
         button = view.findViewById(R.id.jobDetailBtn);
         if (jobPost.getStatus().equalsIgnoreCase("OPEN")) {
             button.setText("APPLY");
-        } else if (jobPost.getStatus().equalsIgnoreCase("PENDING_ACCEPTANCE")){
+        } else if (jobPost.getStatus().equalsIgnoreCase("PENDING_CONFIRMATION_BY_CLINIC")){
             button.setText("CANCEL");
-        } else if ((jobPost.getStatus().startsWith("COMPLETED"))) {
+        } else if(jobPost.getStatus().equalsIgnoreCase("ACCEPTED")){
+            button.setText("CANCEL");
+        } else if ((jobPost.getStatus().startsWith("COMPLETED")) || jobPost.getStatus().equalsIgnoreCase("CANCELLED")) {
             button.setVisibility(GONE);
         }
 
@@ -118,9 +122,8 @@ public class JobDetailFragment extends Fragment {
             public void onClick(View v) {
                 if (jobPost.getStatus().equalsIgnoreCase("OPEN")) {
                     setJobStatus("apply");
-                } else if (jobPost.getStatus().equalsIgnoreCase("PENDING_ACCEPTANCE")){
-                    setJobStatus("cancel");
-
+                } else if (jobPost.getStatus().equalsIgnoreCase("PENDING_CONFIRMATION_BY_CLINIC") || jobPost.getStatus().equalsIgnoreCase("ACCEPTED")){
+                    showCancelDialogue();
                 }
             }
         });
@@ -147,7 +150,7 @@ public class JobDetailFragment extends Fragment {
             public void onResponse(Call<JobPost> call, Response<JobPost> response) {
                 if (response.isSuccessful()) {
                     if (status.equalsIgnoreCase("apply")) {
-                        jobPost.setStatus("PENDING_ACCEPTANCE");
+                        jobPost.setStatus("PENDING_CONFIRMATION_BY_CLINIC");
                         button.setEnabled(false);
                     } else if (status.equalsIgnoreCase("cancel")) {
                         jobPost.setStatus("OPEN");
@@ -160,8 +163,31 @@ public class JobDetailFragment extends Fragment {
             @Override
             public void onFailure(Call<JobPost> call, Throwable t) {
                 t.printStackTrace();
-                Toast.makeText(getContext(), "error setting job status", Toast.LENGTH_SHORT);
+                Toast.makeText(getContext(), "Error setting job status", Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    public void showCancelDialogue() {
+        String alertMsg=getString(R.string.cancelMsg);
+        String alertTitle=getString(R.string.cancelAlertTitle);
+
+        AlertDialog.Builder dlg = new AlertDialog.Builder(getContext())
+                .setTitle(alertTitle)
+                .setMessage(alertMsg)
+                .setPositiveButton(R.string.yes,new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Toast.makeText(getContext(), "Application was successfully cancelled", Toast.LENGTH_SHORT).show();
+                        setJobStatus("cancel");
+                    }
+                })
+                .setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Toast.makeText(getContext(), "Application was not cancelled", Toast.LENGTH_SHORT).show();
+                    }
+                });
+        dlg.show();
     }
 }

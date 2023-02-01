@@ -6,7 +6,7 @@
     <string name="Freelancer_Shared_Pref">FL_Shared_Pref</string>
     <string name="Freelancer_Details">FL_Details</string>
     <string name="cancelAlertTitle">Cancel</string>
-    <string name="cancelMsg">You confirm to cancel the job ?</string>
+    <string name="cancelMsg">Confirm cancellation?</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
 </resources>
