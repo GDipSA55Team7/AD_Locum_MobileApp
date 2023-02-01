@@ -70,6 +70,7 @@ public class JobSearchAdapter extends RecyclerView.Adapter<JobSearchAdapter.MyVi
 
     public void setMyList(ArrayList<JobPost> list) {
         this.myList = list;
+        notifyDataSetChanged();
     }
 
     @NonNull

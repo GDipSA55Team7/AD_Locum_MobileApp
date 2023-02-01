@@ -3,23 +3,25 @@ package sg.nus.iss.team7.locum;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.PersistableBundle;
 import android.view.MenuItem;
+import android.widget.TextView;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
 
+import sg.nus.iss.team7.locum.Utilities.JsonFieldParser;
+
 public class MainActivity extends AppCompatActivity {
 
-    BottomNavigationView bottomNavigationView;
-
+    private BottomNavigationView bottomNavigationView;
     private int saveState;
-
-    HomeFragment homeFragment = new HomeFragment();
-    JobSearchFragment jobSearchFragment = new JobSearchFragment();
-    MyJobsFragment myJobsFragment = new MyJobsFragment();
-    SettingsFragment settingsFragment = new SettingsFragment();
+    private HomeFragment homeFragment = new HomeFragment();
+    private JobSearchFragment jobSearchFragment = new JobSearchFragment();
+    private MyJobsFragment myJobsFragment = new MyJobsFragment();
+    private SettingsFragment settingsFragment = new SettingsFragment();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,6 +29,14 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         bottomNavigationView = findViewById(R.id.bottomNavigationView);
+
+        SharedPreferences sharedPref = getSharedPreferences("FL_Shared_Pref", MODE_PRIVATE);
+        String userDetails = sharedPref.getString("FL_Details", "no value");
+
+        String name = JsonFieldParser.getField(userDetails, "name");
+
+        TextView topBarText = findViewById(R.id.nameBar);
+        topBarText.setText("Hello, " + name);
 
 
         if(savedInstanceState!=null) {

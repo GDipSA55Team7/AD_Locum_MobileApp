@@ -38,24 +38,11 @@ import sg.nus.iss.team7.locum.Utilities.JsonFieldParser;
 public class ConfirmedJobChildFragment extends Fragment implements RecyclerViewInterface{
 
     private JobSearchAdapter adapter;
-
     private ArrayList<JobPost> responseList = new ArrayList<JobPost>();
-
     private ShimmerFrameLayout shimmerFrameLayout;
-
     private SwipeRefreshLayout swipeContainer;
+    private RecyclerView recyclerView;
 
-    RecyclerView recyclerView;
-    //MyConfirmedJobAdapter adapter;
-    JobDetailFragment jobDetailFragment;
-    Button cancelBtn;
-
-    //MyConfirmedJobAdapter adapter;
-
-//    Button cancelBtn;
-//
-//    String alertTitle;
-//    String alertMsg;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -146,7 +133,6 @@ public class ConfirmedJobChildFragment extends Fragment implements RecyclerViewI
                     shimmerFrameLayout.stopShimmer();
                     shimmerFrameLayout.setVisibility(View.GONE);
                     swipeContainer.setRefreshing(false);
-                    adapter.notifyDataSetChanged();
                 }
             }
 
@@ -156,6 +142,11 @@ public class ConfirmedJobChildFragment extends Fragment implements RecyclerViewI
                 Toast.makeText(getContext(),"error getting job list", Toast.LENGTH_SHORT);
             }
         });
+    }
+
+    public void onResume () {
+        super.onResume();
+        getJobs(adapter);
     }
 //    @Override
 //    public void onButtonClick(int position){

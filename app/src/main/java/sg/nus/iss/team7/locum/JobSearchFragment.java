@@ -1,8 +1,11 @@
 package sg.nus.iss.team7.locum;
 
+import static android.widget.NumberPicker.OnScrollListener.SCROLL_STATE_TOUCH_SCROLL;
+import static androidx.recyclerview.widget.RecyclerView.SCROLL_STATE_IDLE;
 import static java.lang.Thread.sleep;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.widget.SearchView;
 import androidx.core.content.ContextCompat;
 import androidx.core.view.ViewCompat;
 import androidx.fragment.app.Fragment;
@@ -11,6 +14,8 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.InsetDrawable;
@@ -40,16 +45,32 @@ import sg.nus.iss.team7.locum.Model.JobPost;
 
 public class JobSearchFragment extends Fragment implements RecyclerViewInterface{
 
-    ArrayList<JobPost> responseList = new ArrayList<>();
+    private ArrayList<JobPost> responseList = new ArrayList<>();
     private ShimmerFrameLayout shimmerFrameLayout;
     private SwipeRefreshLayout swipeContainer;
     private JobSearchAdapter adapter;
-
-    RecyclerView recyclerView;
+    private SearchView searchView;
+    private RecyclerView recyclerView;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.activity_job_search, container, false);
+
+        // Set up search bar
+        searchView = view.findViewById(R.id.searchView);
+        searchView.clearFocus();
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                filterList(newText);
+                return true;
+            }
+        });
 
         // Shimmer load effect
         shimmerFrameLayout = view.findViewById(R.id.shimmer_view_container);
@@ -82,6 +103,32 @@ public class JobSearchFragment extends Fragment implements RecyclerViewInterface
         return view;
     }
 
+    private void filterList(String text) {
+        if (text.length() >= 3 || text.isEmpty()) {
+            ArrayList<JobPost> filteredList = new ArrayList<>();
+            for (JobPost jobPost : responseList) {
+                if (!filteredList.contains(jobPost)) {
+                    if (jobPost.getClinic().getName().toLowerCase().contains(text.toLowerCase())) {
+                        filteredList.add(jobPost);
+                    }
+                    else if (jobPost.getDescription().toLowerCase().contains(text.toLowerCase())) {
+                        filteredList.add(jobPost);
+                    }
+                    else if (jobPost.getClinic().getAddress().toLowerCase().contains(text.toLowerCase())) {
+                        filteredList.add(jobPost);
+                    }
+                }
+            }
+
+            if (filteredList.isEmpty()) {
+                Toast.makeText(getContext(), "No results found", Toast.LENGTH_SHORT).show();
+            } else {
+                adapter.setMyList(filteredList);
+            }
+        }
+
+    }
+
     @Override
     public void onItemClick(int position) {
         // load job details on item click
@@ -108,8 +155,6 @@ public class JobSearchFragment extends Fragment implements RecyclerViewInterface
                     shimmerFrameLayout.stopShimmer();
                     shimmerFrameLayout.setVisibility(View.GONE);
                     swipeContainer.setRefreshing(false);
-                    adapter.notifyDataSetChanged();
-
                 }
             }
 
@@ -123,6 +168,7 @@ public class JobSearchFragment extends Fragment implements RecyclerViewInterface
 
     public void onResume () {
         super.onResume();
+        searchView.setQuery("", false);
         getOpenJobs(adapter);
     }
 }

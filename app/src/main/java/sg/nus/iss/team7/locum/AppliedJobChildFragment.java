@@ -119,7 +119,6 @@ public class AppliedJobChildFragment extends Fragment implements RecyclerViewInt
                     shimmerFrameLayout.stopShimmer();
                     shimmerFrameLayout.setVisibility(View.GONE);
                     swipeContainer.setRefreshing(false);
-                    adapter.notifyDataSetChanged();
                 }
             }
 
@@ -130,5 +129,10 @@ public class AppliedJobChildFragment extends Fragment implements RecyclerViewInt
                 Toast.makeText(getContext(),"error getting job list", Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    public void onResume () {
+        super.onResume();
+        getJobs(adapter);
     }
 }
