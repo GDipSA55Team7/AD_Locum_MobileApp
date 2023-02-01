@@ -10,7 +10,6 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.Toast;
 
 import androidx.core.content.ContextCompat;
@@ -35,49 +34,20 @@ import sg.nus.iss.team7.locum.Interface.RecyclerViewInterface;
 import sg.nus.iss.team7.locum.Model.JobPost;
 import sg.nus.iss.team7.locum.Utilities.JsonFieldParser;
 
-public class ConfirmedJobChildFragment extends Fragment implements RecyclerViewInterface{
+public class AppliedJobChildFragment extends Fragment implements RecyclerViewInterface{
 
+    private RecyclerView recyclerView;
     private JobSearchAdapter adapter;
-
     private ArrayList<JobPost> responseList = new ArrayList<JobPost>();
-
     private ShimmerFrameLayout shimmerFrameLayout;
-
     private SwipeRefreshLayout swipeContainer;
 
-    RecyclerView recyclerView;
-    //MyConfirmedJobAdapter adapter;
-    JobDetailFragment jobDetailFragment;
-    Button cancelBtn;
 
-    //MyConfirmedJobAdapter adapter;
-
-//    Button cancelBtn;
-//
-//    String alertTitle;
-//    String alertMsg;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.child_fragment_confirmed, container, false);
-
-//        recyclerView = view.findViewById(R.id.myConfirmedJobRecyclerView);
-//
-//        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(view.getContext());
-//        recyclerView.setLayoutManager(linearLayoutManager);
-//
-//        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(recyclerView.getContext(),
-//                linearLayoutManager.getOrientation());
-//        recyclerView.addItemDecoration(dividerItemDecoration);
-//
-//        adapter = new MyConfirmedJobAdapter(recyclerView.getContext(), this);
-//
-//        recyclerView.setAdapter(adapter);
-//
-//        adapter.buttonSetOnclick(this::onButtonClick);
-//
-//        return view;
+        View view = inflater.inflate(R.layout.child_fragment_applied, container, false);
 
         // Shimmer load effect
         shimmerFrameLayout = view.findViewById(R.id.shimmer_view_container);
@@ -88,7 +58,7 @@ public class ConfirmedJobChildFragment extends Fragment implements RecyclerViewI
         swipeContainer.setColorSchemeResources(R.color.app_main_blue);
 
         // Set up recycler view
-        recyclerView = view.findViewById(R.id.myConfirmedJobRecyclerView);
+        recyclerView = view.findViewById(R.id.myHistoryJobRecyclerView);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(view.getContext());
         recyclerView.setLayoutManager(linearLayoutManager);
 
@@ -118,6 +88,7 @@ public class ConfirmedJobChildFragment extends Fragment implements RecyclerViewI
 
     @Override
     public void onItemClick(int position) {
+        // load job details on item click
         Intent intent = new Intent(getContext(), JobDetailActivity.class);
         int itemId = (int) adapter.getItemId(position);
         intent.putExtra("itemId", itemId);
@@ -130,13 +101,15 @@ public class ConfirmedJobChildFragment extends Fragment implements RecyclerViewI
         Retrofit retrofit = RetroFitClient.getClient(RetroFitClient.BASE_URL);
         ApiMethods api = retrofit.create(ApiMethods.class);
 
+        // Get user id from shared preference
         SharedPreferences sharedPref = getActivity().getSharedPreferences("FL_Shared_Pref", MODE_PRIVATE);
         String userDetails = sharedPref.getString("FL_Details", "no value");
-
         String id = JsonFieldParser.getField(userDetails, "id");
 
-        Call<ArrayList<JobPost>> call = api.getJobConfirmed(Integer.parseInt(id));
+        // Construct api call with api method
+        Call<ArrayList<JobPost>> call = api.getJobApplied(Integer.parseInt(id));
 
+        // Send API request to spring server
         call.enqueue(new Callback<ArrayList<JobPost>>() {
             @Override
             public void onResponse(Call<ArrayList<JobPost>> call, Response<ArrayList<JobPost>> response) {
@@ -150,35 +123,12 @@ public class ConfirmedJobChildFragment extends Fragment implements RecyclerViewI
                 }
             }
 
+            // Display toast if server error
             @Override
             public void onFailure(Call<ArrayList<JobPost>> call, Throwable t) {
                 t.printStackTrace();
-                Toast.makeText(getContext(),"error getting job list", Toast.LENGTH_SHORT);
+                Toast.makeText(getContext(),"error getting job list", Toast.LENGTH_SHORT).show();
             }
         });
     }
-//    @Override
-//    public void onButtonClick(int position){
-//
-//        alertMsg=getString(R.string.cancelMsg);
-//        alertTitle=getString(R.string.cancelAlertTitle);
-//
-//                AlertDialog.Builder dlg = new AlertDialog.Builder(getContext())
-//                        .setTitle(alertTitle)
-//                        .setMessage(alertMsg)
-//                        .setPositiveButton(R.string.yes,new DialogInterface.OnClickListener() {
-//                            @Override
-//                            public void onClick(DialogInterface dialog, int which) {
-//                                Toast.makeText(getContext(), "Cancel successfully", Toast.LENGTH_SHORT).show();
-//                            }
-//                        })
-//                        .setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
-//                            @Override
-//                            public void onClick(DialogInterface dialog, int which) {
-//                                Toast.makeText(getContext(), "Not cancel", Toast.LENGTH_SHORT).show();
-//                            }
-//                        });
-//                dlg.show();
-//    }
-
 }

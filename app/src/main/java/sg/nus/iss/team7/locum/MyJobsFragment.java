@@ -24,7 +24,7 @@ public class MyJobsFragment extends Fragment {
     private ViewPager viewPager;
     private FmPagerAdapter pagerAdapter;
     private ArrayList<Fragment> fragments = new ArrayList<>();
-    private String[] titles = new String[]{"CONFIRMED","HISTORY"};
+    private String[] titles = new String[]{"APPLIED","CONFIRMED","HISTORY"};
 
 
 
@@ -35,6 +35,7 @@ public class MyJobsFragment extends Fragment {
         viewPager = (ViewPager) view.findViewById(R.id.viewpager);
 
         if(fragments.isEmpty()) {
+            fragments.add(new AppliedJobChildFragment());
             fragments.add(new ConfirmedJobChildFragment());
             fragments.add(new HistoryJobChildFragment());
         }

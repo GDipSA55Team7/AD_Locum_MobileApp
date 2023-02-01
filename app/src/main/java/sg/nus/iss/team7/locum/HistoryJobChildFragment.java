@@ -30,10 +30,9 @@ import retrofit2.Retrofit;
 import sg.nus.iss.team7.locum.APICommunication.ApiMethods;
 import sg.nus.iss.team7.locum.APICommunication.RetroFitClient;
 import sg.nus.iss.team7.locum.Adapter.JobSearchAdapter;
-import sg.nus.iss.team7.locum.Adapter.MyConfirmedJobAdapter;
-import sg.nus.iss.team7.locum.Adapter.MyHistoryJobAdapter;
 import sg.nus.iss.team7.locum.Interface.RecyclerViewInterface;
 import sg.nus.iss.team7.locum.Model.JobPost;
+import sg.nus.iss.team7.locum.Utilities.JsonFieldParser;
 
 public class HistoryJobChildFragment extends Fragment implements RecyclerViewInterface{
 
@@ -49,21 +48,6 @@ public class HistoryJobChildFragment extends Fragment implements RecyclerViewInt
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.child_fragment_history, container, false);
-//
-//        recyclerView = view.findViewById(R.id.myHistoryJobRecyclerView);
-//
-//        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(view.getContext());
-//        recyclerView.setLayoutManager(linearLayoutManager);
-//
-//        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(recyclerView.getContext(),
-//                linearLayoutManager.getOrientation());
-//        recyclerView.addItemDecoration(dividerItemDecoration);
-//
-//        adapter = new JobSearchAdapter(recyclerView.getContext(), this);
-//
-//        recyclerView.setAdapter(adapter);
-//
-//        return view;
 
         // Shimmer load effect
         shimmerFrameLayout = view.findViewById(R.id.shimmer_view_container);
@@ -87,7 +71,7 @@ public class HistoryJobChildFragment extends Fragment implements RecyclerViewInt
 
         // Load object from API to recycler view
         adapter = new JobSearchAdapter(recyclerView.getContext(), this);
-        getOpenJobs(adapter);
+        getJobs(adapter);
         recyclerView.setAdapter(adapter);
 
         // Set listener for swipe up to reload
@@ -95,7 +79,7 @@ public class HistoryJobChildFragment extends Fragment implements RecyclerViewInt
 
             @Override
             public void onRefresh() {
-                getOpenJobs(adapter);
+                getJobs(adapter);
             }
         });
 
@@ -111,7 +95,7 @@ public class HistoryJobChildFragment extends Fragment implements RecyclerViewInt
         startActivity(intent);
     }
 
-    public void getOpenJobs(JobSearchAdapter adapter) {
+    public void getJobs(JobSearchAdapter adapter) {
 
         // API call
         Retrofit retrofit = RetroFitClient.getClient(RetroFitClient.BASE_URL);
@@ -119,11 +103,9 @@ public class HistoryJobChildFragment extends Fragment implements RecyclerViewInt
 
         SharedPreferences sharedPref = getActivity().getSharedPreferences("FL_Shared_Pref", MODE_PRIVATE);
         String userDetails = sharedPref.getString("FL_Details", "no value");
-        // TODO: change userid hardcoding
-        //String id = JsonFieldParser.getField(userDetails, "id");
+        String id = JsonFieldParser.getField(userDetails, "id");
 
-        // TODO: change API method
-        Call<ArrayList<JobPost>> call = api.getJobHistory(1);
+        Call<ArrayList<JobPost>> call = api.getJobHistory(Integer.parseInt(id));
 
         call.enqueue(new Callback<ArrayList<JobPost>>() {
             @Override
@@ -141,7 +123,7 @@ public class HistoryJobChildFragment extends Fragment implements RecyclerViewInt
             @Override
             public void onFailure(Call<ArrayList<JobPost>> call, Throwable t) {
                 t.printStackTrace();
-                Toast.makeText(getContext(),"error getting job list", Toast.LENGTH_SHORT);
+                Toast.makeText(getContext(),"error getting job list", Toast.LENGTH_SHORT).show();
             }
         });
     }

@@ -1,5 +1,9 @@
 package sg.nus.iss.team7.locum.Adapter;
 
+import static androidx.core.content.ContextCompat.getColorStateList;
+
+import static java.security.AccessController.getContext;
+
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,9 +13,14 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import org.w3c.dom.Text;
+
 import java.text.ParseException;
 import java.util.ArrayList;
 
+import sg.nus.iss.team7.locum.JobDetailFragment;
+import sg.nus.iss.team7.locum.JobSearchFragment;
+import sg.nus.iss.team7.locum.MainActivity;
 import sg.nus.iss.team7.locum.Model.JobPost;
 import sg.nus.iss.team7.locum.R;
 import sg.nus.iss.team7.locum.Interface.RecyclerViewInterface;
@@ -22,13 +31,15 @@ public class JobSearchAdapter extends RecyclerView.Adapter<JobSearchAdapter.MyVi
 
     Context context;
     ArrayList<JobPost> myList;
+    JobPost jobPost;
 
     public JobSearchAdapter(Context context, RecyclerViewInterface recyclerViewInterface) {
         this.recyclerViewInterface = recyclerViewInterface;
+        this.context = context;
     }
 
     public static class MyViewHolder extends RecyclerView.ViewHolder {
-        public TextView date, full_rate, hour_rate, time_start, time_end, job_name, clinic_name, address;
+        public TextView date, full_rate, hour_rate, time_start, time_end, job_name, clinic_name, address, status;
 
         public MyViewHolder(@NonNull View view, RecyclerViewInterface recyclerViewInterface) {
             super(view);
@@ -40,6 +51,7 @@ public class JobSearchAdapter extends RecyclerView.Adapter<JobSearchAdapter.MyVi
             job_name = (TextView) view.findViewById(R.id.job_name);
             clinic_name = (TextView) view.findViewById(R.id.clinic_name);
             address = (TextView) view.findViewById(R.id.address);
+            status = (TextView) view.findViewById(R.id.status);
 
             view.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -73,7 +85,7 @@ public class JobSearchAdapter extends RecyclerView.Adapter<JobSearchAdapter.MyVi
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
 
-        JobPost jobPost = myList.get(position);
+        jobPost = myList.get(position);
 
         String addressStr = jobPost.getClinic().getAddress() + ", " + jobPost.getClinic().getPostalCode();
         String hourRateStr = "$" + jobPost.getRatePerHour().toString() + "/HR";
@@ -99,6 +111,7 @@ public class JobSearchAdapter extends RecyclerView.Adapter<JobSearchAdapter.MyVi
         holder.full_rate.setText(fullRateStr);
         holder.address.setText(addressStr);
         holder.job_name.setText(jobPost.getDescription());
+        setStatusBar(holder);
     }
 
     @Override
@@ -112,5 +125,22 @@ public class JobSearchAdapter extends RecyclerView.Adapter<JobSearchAdapter.MyVi
     @Override
     public long getItemId(int position) {
         return myList.get(position).getId();
+    }
+
+    private void setStatusBar(@NonNull MyViewHolder holder) {
+
+        if(jobPost.getStatus().equalsIgnoreCase("PENDING_CONFIRMATION_BY_CLINIC")) {
+            holder.status.setText("APPLIED");
+            holder.status.setBackgroundTintList(getColorStateList(context,R.color.status_mid));
+        } else if (jobPost.getStatus().equalsIgnoreCase("OPEN")) {
+            holder.status.setText("OPEN");
+            holder.status.setBackgroundTintList(getColorStateList(context, R.color.status_green));
+        } else if(jobPost.getStatus().equalsIgnoreCase("ACCEPTED")){
+            holder.status.setText("ACCEPTED");
+            holder.status.setBackgroundTintList(getColorStateList(context, R.color.darker_grey));
+        }else if (jobPost.getStatus().startsWith("COMPLETED")) {
+            holder.status.setText("COMPLETED");
+            holder.status.setBackgroundTintList(getColorStateList(context, R.color.darker_grey));
+        }
     }
 }

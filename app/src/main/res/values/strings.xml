@@ -47,7 +47,7 @@
     <string name="LeavingApplicationPrompt">Are you sure you want to exit?</string>
 
     <string name="cancelAlertTitle">Cancel</string>
-    <string name="cancelMsg">You confirm to cancel the job ?</string>
+    <string name="cancelMsg">Confirm cancellation?</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
 </resources>
