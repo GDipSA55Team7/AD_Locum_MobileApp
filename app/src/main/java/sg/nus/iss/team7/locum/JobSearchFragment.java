@@ -40,7 +40,7 @@ import sg.nus.iss.team7.locum.Model.JobPost;
 
 public class JobSearchFragment extends Fragment implements RecyclerViewInterface{
 
-    ArrayList<JobPost> responseList = new ArrayList<JobPost>();
+    ArrayList<JobPost> responseList = new ArrayList<>();
     private ShimmerFrameLayout shimmerFrameLayout;
     private SwipeRefreshLayout swipeContainer;
     private JobSearchAdapter adapter;
@@ -77,13 +77,7 @@ public class JobSearchFragment extends Fragment implements RecyclerViewInterface
         recyclerView.setAdapter(adapter);
 
         // Set listener for swipe up to reload
-        swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-
-            @Override
-            public void onRefresh() {
-                getOpenJobs(adapter);
-            }
-        });
+        swipeContainer.setOnRefreshListener(() -> getOpenJobs(adapter));
 
         return view;
     }
@@ -115,14 +109,20 @@ public class JobSearchFragment extends Fragment implements RecyclerViewInterface
                     shimmerFrameLayout.setVisibility(View.GONE);
                     swipeContainer.setRefreshing(false);
                     adapter.notifyDataSetChanged();
+
                 }
             }
 
             @Override
             public void onFailure(Call<ArrayList<JobPost>> call, Throwable t) {
                 t.printStackTrace();
-                Toast.makeText(getContext(),"error getting job list", Toast.LENGTH_SHORT);
+                Toast.makeText(getContext(),"error getting job list", Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    public void onResume () {
+        super.onResume();
+        getOpenJobs(adapter);
     }
 }

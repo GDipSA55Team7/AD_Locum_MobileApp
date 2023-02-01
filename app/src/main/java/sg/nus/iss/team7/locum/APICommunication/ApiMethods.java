@@ -41,4 +41,7 @@ public interface ApiMethods {
     @GET("/api/jobs/confirmed?")
     Call<ArrayList<JobPost>> getJobConfirmed(@Query("id") int userId);
 
+    @GET("/api/jobs/applied?")
+    Call<ArrayList<JobPost>> getJobApplied(@Query("id") int userId);
+
 }

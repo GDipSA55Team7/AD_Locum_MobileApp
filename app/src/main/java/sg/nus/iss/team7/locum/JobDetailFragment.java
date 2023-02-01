@@ -161,10 +161,10 @@ public class JobDetailFragment extends Fragment {
 
         SharedPreferences sharedPref = getActivity().getSharedPreferences("FL_Shared_Pref", MODE_PRIVATE);
         String userDetails = sharedPref.getString("FL_Details", "no value");
-        // TODO: change userid hardcoding
-        //String id = JsonFieldParser.getField(userDetails, "id");
 
-        Call<JobPost> call = api.setJobStatus(jobPost.getId().toString(), status, "1");
+        String id = JsonFieldParser.getField(userDetails, "id");
+
+        Call<JobPost> call = api.setJobStatus(jobPost.getId().toString(), status, id);
 
         call.enqueue(new Callback<JobPost>() {
             @Override
@@ -172,7 +172,7 @@ public class JobDetailFragment extends Fragment {
                 if (response.isSuccessful()) {
                     if (status.equalsIgnoreCase("apply")) {
                         jobPost.setStatus("PENDING_ACCEPTANCE");
-                        button.setText("CANCEL");
+                        button.setEnabled(false);
                     } else if (status.equalsIgnoreCase("cancel")) {
                         jobPost.setStatus("OPEN");
                         button.setText("APPLY");

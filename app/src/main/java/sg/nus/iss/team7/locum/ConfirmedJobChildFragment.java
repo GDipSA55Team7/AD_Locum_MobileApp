@@ -51,6 +51,9 @@ public class ConfirmedJobChildFragment extends Fragment implements RecyclerViewI
     private SwipeRefreshLayout swipeContainer;
 
     RecyclerView recyclerView;
+    MyConfirmedJobAdapter adapter;
+    JobDetailFragment jobDetailFragment;
+    Button cancelBtn;
 
     //MyConfirmedJobAdapter adapter;
 
