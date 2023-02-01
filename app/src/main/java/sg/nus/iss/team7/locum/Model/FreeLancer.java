@@ -6,7 +6,8 @@ import android.os.Parcelable;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class FreeLancer implements Parcelable {
+
+public class FreeLancer implements Parcelable{
 
     @SerializedName("id")
     @Expose
@@ -147,4 +148,7 @@ public class FreeLancer implements Parcelable {
             return new FreeLancer[size];
         }
     };
+
+
+
 }

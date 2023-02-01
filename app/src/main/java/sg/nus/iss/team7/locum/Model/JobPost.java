@@ -3,10 +3,9 @@ package sg.nus.iss.team7.locum.Model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import androidx.annotation.NonNull;
-
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
+
 
 public class JobPost implements Parcelable {
 
@@ -61,13 +60,22 @@ public class JobPost implements Parcelable {
             totalRate = in.readDouble();
         }
         status = in.readString();
-        clinic = in.readParcelable(clinic.getClass().getClassLoader());
-        if (in.readByte() == 0) {
-            clinicUser = null;
-            freelancer = null;
-        } else {
-            clinicUser = in.readParcelable(freelancer.getClass().getClassLoader());
-            freelancer = in.readParcelable(freelancer.getClass().getClassLoader());
+
+        if(clinic != null){
+            clinic = in.readParcelable(clinic.getClass().getClassLoader());
+            if (in.readByte() == 0) {
+                clinicUser = null;
+                freelancer = null;
+            } else {
+//                if(clinicUser != null){
+//                    clinicUser = in.readParcelable(freelancer.getClass().getClassLoader());
+//                }
+//                if(freelancer != null){
+//                    freelancer = in.readParcelable(freelancer.getClass().getClassLoader());
+//                }
+                clinicUser = in.readParcelable(freelancer.getClass().getClassLoader());
+                freelancer = in.readParcelable(freelancer.getClass().getClassLoader());
+            }
         }
     }
 
@@ -113,6 +121,7 @@ public class JobPost implements Parcelable {
             dest.writeByte((byte) 1);
             dest.writeValue(freelancer);
         }
+
     }
 
     @Override
@@ -212,5 +221,20 @@ public class JobPost implements Parcelable {
         this.clinic = clinic;
     }
 
+    @Override
+    public String toString() {
+        return "JobPost{" +
+                "id=" + id +
+                ", description='" + description + '\'' +
+                ", startDateTime='" + startDateTime + '\'' +
+                ", endDateTime='" + endDateTime + '\'' +
+                ", ratePerHour=" + ratePerHour +
+                ", totalRate=" + totalRate +
+                ", status='" + status + '\'' +
+                ", clinicUser=" + clinicUser +
+                ", freelancer=" + freelancer +
+                ", clinic=" + clinic +
+                '}';
+    }
 }
 

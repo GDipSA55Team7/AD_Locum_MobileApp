@@ -62,7 +62,7 @@ public class EditProfileActivity extends AppCompatActivity {
             if(!allFieldsValid()){
                 createDialogForValidationFailed(getResources().getString(R.string.AllFieldsAreValid));
             }
-            //proceed to update
+            //proceed to update if fields are valid
             else{
 
                 Retrofit retrofit = RetroFitClient.getClient(RetroFitClient.BASE_URL);
@@ -91,8 +91,10 @@ public class EditProfileActivity extends AppCompatActivity {
                         if(response.isSuccessful()){
                             if(response.code() == 200){
                                 Toast.makeText(getApplicationContext(),"Update Success ",Toast.LENGTH_SHORT).show();
+
                                 //if register is successful, store in shared Pref
                                 storeFLDetailsInSharedPref(fl);
+
                                 //redirect
                                 Intent intent = new Intent(EditProfileActivity.this, MainActivity.class);
                                 startActivity(intent);

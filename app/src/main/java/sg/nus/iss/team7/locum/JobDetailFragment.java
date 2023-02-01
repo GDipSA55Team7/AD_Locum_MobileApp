@@ -4,8 +4,10 @@ import static android.content.Context.MODE_PRIVATE;
 import static android.view.View.GONE;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.Bundle;
 
 import androidx.appcompat.app.AlertDialog;
@@ -15,6 +17,7 @@ import androidx.lifecycle.ViewModelProvider;
 import android.os.Parcelable;
 import android.preference.PreferenceManager;
 import android.text.method.ScrollingMovementMethod;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,6 +25,10 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.airbnb.lottie.LottieAnimationView;
+import com.google.gson.Gson;
+
+import java.io.Serializable;
 import java.text.ParseException;
 import java.util.ArrayList;
 
@@ -31,7 +38,9 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import sg.nus.iss.team7.locum.APICommunication.ApiMethods;
 import sg.nus.iss.team7.locum.APICommunication.RetroFitClient;
+import sg.nus.iss.team7.locum.Model.FreeLancer;
 import sg.nus.iss.team7.locum.Model.JobPost;
+import sg.nus.iss.team7.locum.Model.PaymentDTO;
 import sg.nus.iss.team7.locum.Utilities.DatetimeParser;
 import sg.nus.iss.team7.locum.Utilities.JsonFieldParser;
 import sg.nus.iss.team7.locum.ViewModel.ItemViewModel;
@@ -109,12 +118,56 @@ public class JobDetailFragment extends Fragment {
         button = view.findViewById(R.id.jobDetailBtn);
         if (jobPost.getStatus().equalsIgnoreCase("OPEN")) {
             button.setText("APPLY");
-        } else if (jobPost.getStatus().equalsIgnoreCase("PENDING_CONFIRMATION_BY_CLINIC")){
+        } else if (jobPost.getStatus().equalsIgnoreCase("PENDING_CONFIRMATION_BY_CLINIC")) {
             button.setText("CANCEL");
-        } else if(jobPost.getStatus().equalsIgnoreCase("ACCEPTED")){
+        } else if (jobPost.getStatus().equalsIgnoreCase("ACCEPTED")) {
             button.setText("CANCEL");
-        } else if ((jobPost.getStatus().startsWith("COMPLETED")) || jobPost.getStatus().equalsIgnoreCase("CANCELLED")) {
+        } else if (jobPost.getStatus().equalsIgnoreCase("CANCELLED")) {
             button.setVisibility(GONE);
+        }
+        //else if ((jobPost.getStatus().startsWith("COMPLETED")) || jobPost.getStatus().equalsIgnoreCase("CANCELLED")) {
+            //button.setVisibility(GONE);
+        //}
+        else if (jobPost.getStatus().startsWith("COMPLETED") || jobPost.getStatus().equalsIgnoreCase("Processed_Payment") ) {
+
+            button.setText("PAYMENT DETAILS");
+
+            //If pending payment
+            if(jobPost.getStatus().contains("PENDING_PAYMENT")){
+                //Hide payment Success animation
+//                LottieAnimationView paymentSuccessAnimation = (LottieAnimationView) view.findViewById(R.id.paymentSuccessAnimation);
+//                paymentSuccessAnimation.setVisibility(GONE);
+
+                //Show payment pending animation
+                LottieAnimationView paymentProcessingAnimation = (LottieAnimationView) view.findViewById(R.id.paymentProcessingAnimation);
+                paymentProcessingAnimation.setVisibility(View.VISIBLE);
+
+                //update text
+                TextView textView = (TextView) view.findViewById(R.id.paymentStatus);
+                textView.setText("Pending");
+                textView.setVisibility(View.VISIBLE);
+                textView.setTextColor(Color.parseColor("#0070ba"));
+                TextView paymentStatusTxt = (TextView) view.findViewById(R.id.paymentStatusText);
+                paymentStatusTxt.setVisibility(View.VISIBLE);
+            }
+            //if payment success
+            else{
+                //Hide payment processing animation
+//                LottieAnimationView paymentProcessingAnimation = (LottieAnimationView) view.findViewById(R.id.paymentProcessingAnimation);
+//                paymentProcessingAnimation.setVisibility(GONE);
+
+                //Show payment success animation
+                LottieAnimationView paymentSuccessAnimation = (LottieAnimationView) view.findViewById(R.id.paymentSuccessAnimation);
+                paymentSuccessAnimation.setVisibility(View.VISIBLE);
+
+                //update text
+                TextView paymentStatus = (TextView) view.findViewById(R.id.paymentStatus);
+                paymentStatus.setText("Completed");
+                paymentStatus.setTextColor(Color.parseColor("#22b573"));
+                paymentStatus.setVisibility(View.VISIBLE);
+                TextView paymentStatusTxt = (TextView) view.findViewById(R.id.paymentStatusText);
+                paymentStatusTxt.setVisibility(View.VISIBLE);
+            }
         }
 
         button.setOnClickListener(new View.OnClickListener() {
@@ -124,6 +177,34 @@ public class JobDetailFragment extends Fragment {
                     setJobStatus("apply");
                 } else if (jobPost.getStatus().equalsIgnoreCase("PENDING_CONFIRMATION_BY_CLINIC") || jobPost.getStatus().equalsIgnoreCase("ACCEPTED")){
                     showCancelDialogue();
+                }
+                else if ((jobPost.getStatus().startsWith("COMPLETED"))) {
+
+                    Gson gson = new Gson();
+                    SharedPreferences sharedPreferences = getActivity().getSharedPreferences(getResources().getString(R.string.Freelancer_Shared_Pref), MODE_PRIVATE);
+                    String json = sharedPreferences.getString(getResources().getString(R.string.Freelancer_Details), "");
+                    FreeLancer fl = gson.fromJson(json, FreeLancer.class);
+
+                    PaymentDTO paymentDTO = new PaymentDTO(
+                            jobPost.getId(),
+                            jobPost.getRatePerHour(),
+                            jobPost.getTotalRate(),
+                            jobPost.getDescription(),
+                            jobPost.getStartDateTime(),
+                            jobPost.getEndDateTime(),
+                            jobPost.getClinic().getName(),
+                            jobPost.getClinic().getAddress(),
+                            jobPost.getClinic().getPostalCode(),
+                            jobPost.getClinic().getContact(),
+                            jobPost.getClinic().getHcicode(),
+                            fl.getName(),
+                            fl.getEmail(),
+                            fl.getContact(),
+                            fl.getMedicalLicenseNo()
+                    );
+                    Intent intent = new Intent(getActivity(),PaymentDetailsActivity.class);
+                    intent.putExtra("paymentDetails", paymentDTO);
+                    startActivity(intent);
                 }
             }
         });

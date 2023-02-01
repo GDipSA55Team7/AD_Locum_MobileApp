@@ -45,11 +45,13 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
+        //If Logged In, direct to MainActivity
         if(isLoggedIn()) {
             Intent intent = new Intent(LoginActivity.this,MainActivity.class);
             startActivity(intent);
             finish();
         }
+
         initElementsAndListeners();
 
         mLoginBtn.setOnClickListener(v -> {
@@ -165,7 +167,6 @@ public class LoginActivity extends AppCompatActivity {
         mPassword.setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
         mPassword.setTransformationMethod(new PasswordTransformationMethod());
 
-
         listenerForLengthValidation(mUserName,getResources().getString(R.string.UserName),3,12);
         listenerForLengthValidation(mPassword,getResources().getString(R.string.Password),5,15);
 
@@ -193,6 +194,7 @@ public class LoginActivity extends AppCompatActivity {
     }
     private void listenerForLengthValidation(final EditText editTxt,final String fieldName,final int minChar,final int maxChar){
         editTxt.addTextChangedListener(new TextWatcher() {
+
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
             }
