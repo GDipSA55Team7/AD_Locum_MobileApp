@@ -38,4 +38,7 @@ public interface ApiMethods {
     @GET("/api/jobs/history?")
     Call<ArrayList<JobPost>> getJobHistory(@Query("id") int userId);
 
+    @GET("/api/jobs/confirmed?")
+    Call<ArrayList<JobPost>> getJobConfirmed(@Query("id") int userId);
+
 }

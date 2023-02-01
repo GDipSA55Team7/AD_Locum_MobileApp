@@ -4,9 +4,11 @@ import static android.content.Context.MODE_PRIVATE;
 import static android.view.View.GONE;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
@@ -109,6 +111,8 @@ public class JobDetailFragment extends Fragment {
             button.setText("APPLY");
         } else if (jobPost.getStatus().equalsIgnoreCase("PENDING_ACCEPTANCE")){
             button.setText("CANCEL");
+        } else if(jobPost.getStatus().equalsIgnoreCase("ACCEPTED")){
+            button.setText("CANCEL");
         } else if ((jobPost.getStatus().startsWith("COMPLETED"))) {
             button.setVisibility(GONE);
         }
@@ -120,7 +124,27 @@ public class JobDetailFragment extends Fragment {
                     setJobStatus("apply");
                 } else if (jobPost.getStatus().equalsIgnoreCase("PENDING_ACCEPTANCE")){
                     setJobStatus("cancel");
+                } else if (jobPost.getStatus().equalsIgnoreCase("ACCEPTED")){
+                    String alertMsg=getString(R.string.cancelMsg);
+                    String alertTitle=getString(R.string.cancelAlertTitle);
 
+                    AlertDialog.Builder dlg = new AlertDialog.Builder(getContext())
+                        .setTitle(alertTitle)
+                        .setMessage(alertMsg)
+                        .setPositiveButton(R.string.yes,new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                Toast.makeText(getContext(), "Cancel successfully", Toast.LENGTH_SHORT).show();
+                                setJobStatus("cancel");
+                            }
+                        })
+                        .setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                Toast.makeText(getContext(), "Not cancel", Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                    dlg.show();
                 }
             }
         });

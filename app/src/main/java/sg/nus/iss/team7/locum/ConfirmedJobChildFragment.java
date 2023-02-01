@@ -1,8 +1,13 @@
 package sg.nus.iss.team7.locum;
 
+import static android.content.Context.MODE_PRIVATE;
+
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.InsetDrawable;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,45 +16,104 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.viewmodel.CreationExtras;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import com.facebook.shimmer.ShimmerFrameLayout;
+
+import java.util.ArrayList;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import sg.nus.iss.team7.locum.APICommunication.ApiMethods;
+import sg.nus.iss.team7.locum.APICommunication.RetroFitClient;
 import sg.nus.iss.team7.locum.Adapter.JobSearchAdapter;
 import sg.nus.iss.team7.locum.Adapter.MyConfirmedJobAdapter;
 import sg.nus.iss.team7.locum.Interface.CancelButtonInterface;
 import sg.nus.iss.team7.locum.Interface.RecyclerViewInterface;
+import sg.nus.iss.team7.locum.Model.JobPost;
 
-public class ConfirmedJobChildFragment extends Fragment implements RecyclerViewInterface,CancelButtonInterface{
+public class ConfirmedJobChildFragment extends Fragment implements RecyclerViewInterface{
+
+    private JobSearchAdapter adapter;
+
+    private ArrayList<JobPost> responseList = new ArrayList<JobPost>();
+
+    private ShimmerFrameLayout shimmerFrameLayout;
+
+    private SwipeRefreshLayout swipeContainer;
 
     RecyclerView recyclerView;
-    MyConfirmedJobAdapter adapter;
-    Button cancelBtn;
 
-    String alertTitle;
-    String alertMsg;
+    //MyConfirmedJobAdapter adapter;
+
+//    Button cancelBtn;
+//
+//    String alertTitle;
+//    String alertMsg;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.child_fragment_confirmed, container, false);
 
-        recyclerView = view.findViewById(R.id.myConfirmedJobRecyclerView);
+//        recyclerView = view.findViewById(R.id.myConfirmedJobRecyclerView);
+//
+//        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(view.getContext());
+//        recyclerView.setLayoutManager(linearLayoutManager);
+//
+//        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(recyclerView.getContext(),
+//                linearLayoutManager.getOrientation());
+//        recyclerView.addItemDecoration(dividerItemDecoration);
+//
+//        adapter = new MyConfirmedJobAdapter(recyclerView.getContext(), this);
+//
+//        recyclerView.setAdapter(adapter);
+//
+//        adapter.buttonSetOnclick(this::onButtonClick);
+//
+//        return view;
 
+        // Shimmer load effect
+        shimmerFrameLayout = view.findViewById(R.id.shimmer_view_container);
+        shimmerFrameLayout.startShimmer();
+
+        // Set up swipe up to reload list
+        swipeContainer = (SwipeRefreshLayout) view.findViewById(R.id.swipeContainer);
+        swipeContainer.setColorSchemeResources(R.color.app_main_blue);
+
+        // Set up recycler view
+        recyclerView = view.findViewById(R.id.myConfirmedJobRecyclerView);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(view.getContext());
         recyclerView.setLayoutManager(linearLayoutManager);
 
-        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(recyclerView.getContext(),
-                linearLayoutManager.getOrientation());
+        // Add dividers to recycler view
+        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(recyclerView.getContext(), linearLayoutManager.getOrientation());
+        Drawable dividerDrawable = ContextCompat.getDrawable(getContext(), R.drawable.divider);
+        InsetDrawable insetDivider = new InsetDrawable(dividerDrawable, 40, 0, 40, 0);
+        dividerItemDecoration.setDrawable(insetDivider);
         recyclerView.addItemDecoration(dividerItemDecoration);
 
-        adapter = new MyConfirmedJobAdapter(recyclerView.getContext(), this);
-
+        // Load object from API to recycler view
+        adapter = new JobSearchAdapter(recyclerView.getContext(), this);
+        getOpenJobs(adapter);
         recyclerView.setAdapter(adapter);
 
-        adapter.buttonSetOnclick(this::onButtonClick);
+        // Set listener for swipe up to reload
+        swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+
+            @Override
+            public void onRefresh() {
+                getOpenJobs(adapter);
+            }
+        });
 
         return view;
     }
@@ -61,28 +125,63 @@ public class ConfirmedJobChildFragment extends Fragment implements RecyclerViewI
         intent.putExtra("itemId", itemId);
         startActivity(intent);
     }
-    @Override
-    public void onButtonClick(int position){
 
-        alertMsg=getString(R.string.cancelMsg);
-        alertTitle=getString(R.string.cancelAlertTitle);
+    public void getOpenJobs(JobSearchAdapter adapter) {
 
-                AlertDialog.Builder dlg = new AlertDialog.Builder(getContext())
-                        .setTitle(alertTitle)
-                        .setMessage(alertMsg)
-                        .setPositiveButton(R.string.yes,new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                Toast.makeText(getContext(), "Cancel successfully", Toast.LENGTH_SHORT).show();
-                            }
-                        })
-                        .setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                Toast.makeText(getContext(), "Not cancel", Toast.LENGTH_SHORT).show();
-                            }
-                        });
-                dlg.show();
+        // API call
+        Retrofit retrofit = RetroFitClient.getClient(RetroFitClient.BASE_URL);
+        ApiMethods api = retrofit.create(ApiMethods.class);
+
+        SharedPreferences sharedPref = getActivity().getSharedPreferences("FL_Shared_Pref", MODE_PRIVATE);
+        String userDetails = sharedPref.getString("FL_Details", "no value");
+        // TODO: change userid hardcoding
+        //String id = JsonFieldParser.getField(userDetails, "id");
+
+        // TODO: change API method
+        Call<ArrayList<JobPost>> call = api.getJobConfirmed(2);
+
+        call.enqueue(new Callback<ArrayList<JobPost>>() {
+            @Override
+            public void onResponse(Call<ArrayList<JobPost>> call, Response<ArrayList<JobPost>> response) {
+                if (response.isSuccessful()) {
+                    responseList = response.body();
+                    adapter.setMyList(responseList);
+                    shimmerFrameLayout.stopShimmer();
+                    shimmerFrameLayout.setVisibility(View.GONE);
+                    swipeContainer.setRefreshing(false);
+                    adapter.notifyDataSetChanged();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ArrayList<JobPost>> call, Throwable t) {
+                t.printStackTrace();
+                Toast.makeText(getContext(),"error getting job list", Toast.LENGTH_SHORT);
+            }
+        });
     }
+//    @Override
+//    public void onButtonClick(int position){
+//
+//        alertMsg=getString(R.string.cancelMsg);
+//        alertTitle=getString(R.string.cancelAlertTitle);
+//
+//                AlertDialog.Builder dlg = new AlertDialog.Builder(getContext())
+//                        .setTitle(alertTitle)
+//                        .setMessage(alertMsg)
+//                        .setPositiveButton(R.string.yes,new DialogInterface.OnClickListener() {
+//                            @Override
+//                            public void onClick(DialogInterface dialog, int which) {
+//                                Toast.makeText(getContext(), "Cancel successfully", Toast.LENGTH_SHORT).show();
+//                            }
+//                        })
+//                        .setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
+//                            @Override
+//                            public void onClick(DialogInterface dialog, int which) {
+//                                Toast.makeText(getContext(), "Not cancel", Toast.LENGTH_SHORT).show();
+//                            }
+//                        });
+//                dlg.show();
+//    }
 
 }
