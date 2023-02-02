@@ -7,7 +7,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class RetroFitClient {
 
-    public static final String BASE_URL = "https://8005-111-65-57-249.ap.ngrok.io"; // api address
+    public static final String BASE_URL = "https://7ee5-111-65-45-169.ap.ngrok.io"; // api address
     private static Retrofit retrofit = null;
 
     public static synchronized Retrofit getClient(String url) {
