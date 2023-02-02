@@ -1,5 +1,5 @@
-package sg.nus.iss.team7.locum.Model;
 
+package sg.nus.iss.team7.locum.Model;
 
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -120,5 +120,4 @@ public class Clinic implements Parcelable {
     public void setHcicode(String hcicode) {
         this.hcicode = hcicode;
     }
-
 }

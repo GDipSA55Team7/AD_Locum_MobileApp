@@ -204,6 +204,37 @@
             app:layout_constraintTop_toBottomOf="@+id/jobDescriptionHeader"
             app:layout_constraintVertical_bias="0.077" />
 
+        <TextView
+            android:id="@+id/paymentStatusText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="Payment Status : "
+            android:textSize="15dp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toTopOf="@+id/jobDetailBtn"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintLeft_toLeftOf="@+id/addInfo"
+            app:layout_constraintRight_toLeftOf="@+id/paymentStatus"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/addInfo"
+            android:layout_marginTop="5dp"
+            android:visibility="gone"
+            />
+
+        <TextView
+            android:id="@+id/paymentStatus"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="4dp"
+            android:text="Processing"
+            android:textColor="#0070ba"
+            android:textSize="15sp"
+            app:layout_constraintTop_toTopOf="@+id/paymentStatusText"
+            app:layout_constraintLeft_toRightOf="@+id/paymentStatusText"
+            android:visibility="gone"
+           />
+
         <Button
             style="@style/Widget.MaterialComponents.Button.Icon"
             android:id="@+id/jobDetailBtn"
@@ -216,7 +247,35 @@
             app:layout_constraintTop_toBottomOf="@+id/addInfo"
             app:layout_constraintVertical_bias="0.279" />
 
+        <com.airbnb.lottie.LottieAnimationView
+            android:id="@+id/paymentProcessingAnimation"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            android:layout_marginStart="52dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/paymentStatusText"
+            app:layout_constraintTop_toBottomOf="@+id/paymentStatusText"
+            app:layout_constraintVertical_bias="0.44"
+            app:lottie_autoPlay="true"
+            app:lottie_loop="true"
+            app:lottie_rawRes="@raw/payment_processing"
+            android:visibility="gone"
+            />
 
+        <com.airbnb.lottie.LottieAnimationView
+            android:id="@+id/paymentSuccessAnimation"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            android:layout_marginStart="60dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/paymentStatusText"
+            app:layout_constraintTop_toBottomOf="@+id/paymentStatusText"
+            app:layout_constraintVertical_bias="0.543"
+            app:lottie_autoPlay="true"
+            app:lottie_loop="true"
+            app:lottie_rawRes="@raw/payment_success"
+            android:visibility="gone"
+            />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </FrameLayout>
