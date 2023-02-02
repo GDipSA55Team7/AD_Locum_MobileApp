@@ -15,6 +15,9 @@ public class JobPost implements Parcelable {
     @SerializedName("description")
     @Expose
     private String description;
+    @SerializedName("title")
+    @Expose
+    private String title;
     @SerializedName("startDateTime")
     @Expose
     private String startDateTime;
@@ -46,6 +49,7 @@ public class JobPost implements Parcelable {
         } else {
             id = in.readInt();
         }
+        title = in.readString();
         description = in.readString();
         startDateTime = in.readString();
         endDateTime = in.readString();
@@ -87,6 +91,7 @@ public class JobPost implements Parcelable {
             dest.writeByte((byte) 1);
             dest.writeInt(id);
         }
+        dest.writeString(title);
         dest.writeString(description);
         dest.writeString(startDateTime);
         dest.writeString(endDateTime);
@@ -155,6 +160,14 @@ public class JobPost implements Parcelable {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
     }
 
     public String getStartDateTime() {

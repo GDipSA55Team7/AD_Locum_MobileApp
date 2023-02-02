@@ -111,7 +111,7 @@ public class JobSearchAdapter extends RecyclerView.Adapter<JobSearchAdapter.MyVi
         holder.clinic_name.setText(jobPost.getClinic().getName());
         holder.full_rate.setText(fullRateStr);
         holder.address.setText(addressStr);
-        holder.job_name.setText(jobPost.getDescription());
+        holder.job_name.setText(jobPost.getTitle());
         setStatusBar(holder);
     }
 

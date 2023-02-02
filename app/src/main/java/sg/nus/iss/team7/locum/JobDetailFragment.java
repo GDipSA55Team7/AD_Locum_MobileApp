@@ -3,7 +3,6 @@ package sg.nus.iss.team7.locum;
 import static android.content.Context.MODE_PRIVATE;
 import static android.view.View.GONE;
 
-import android.content.Context;
 import android.content.Intent;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
@@ -15,9 +14,7 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
 import android.os.Parcelable;
-import android.preference.PreferenceManager;
 import android.text.method.ScrollingMovementMethod;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,9 +25,7 @@ import android.widget.Toast;
 import com.airbnb.lottie.LottieAnimationView;
 import com.google.gson.Gson;
 
-import java.io.Serializable;
 import java.text.ParseException;
-import java.util.ArrayList;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -50,7 +45,7 @@ public class JobDetailFragment extends Fragment {
     ItemViewModel viewModel;
     JobPost jobPost;
     TextView addInfo;
-    TextView description;
+    TextView title;
     TextView startTime;
     TextView endTime;
     TextView totalTime;
@@ -81,8 +76,8 @@ public class JobDetailFragment extends Fragment {
         String hourRateStr = "$" + jobPost.getRatePerHour().toString() + "/HR";
         String fullRateStr = "$" + jobPost.getTotalRate().toString();
 
-        description = view.findViewById(R.id.title);
-        description.setText(jobPost.getDescription());
+        title = view.findViewById(R.id.title);
+        title.setText(jobPost.getTitle());
 
         startTime = view.findViewById(R.id.startTime);
         try {
@@ -112,6 +107,7 @@ public class JobDetailFragment extends Fragment {
         totalRate.setText(fullRateStr);
 
         addInfo = view.findViewById(R.id.addInfo);
+        addInfo.setText(jobPost.getDescription());
         addInfo.setMovementMethod(new ScrollingMovementMethod());
 
         // Set button text according to job post status
