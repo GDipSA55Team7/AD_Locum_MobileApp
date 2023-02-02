@@ -3,8 +3,6 @@ package sg.nus.iss.team7.locum.Model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import androidx.annotation.NonNull;
-
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
@@ -50,6 +48,9 @@ public class FreeLancer implements Parcelable {
         return id;
     }
 
+    public void setId(String id) {
+        this.id = id;
+    }
 
     public String getErrorsFieldString() {
         return errorsFieldString;

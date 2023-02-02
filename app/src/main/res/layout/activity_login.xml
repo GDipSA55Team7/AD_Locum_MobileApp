@@ -1,24 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical"
-    android:background="@color/white"
+    android:layout_height="match_parent"
+    android:layout_width="match_parent"
     tools:context=".LoginActivity">
-
-
-<!--    <com.airbnb.lottie.LottieAnimationView-->
-<!--        android:id="@+id/doctor_login"-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        app:lottie_rawRes="@raw/doctor_login"-->
-<!--        app:lottie_autoPlay="true"-->
-<!--        app:lottie_loop="true"-->
-<!--        android:gravity="center"-->
-<!--        android:layout_gravity="center"-->
-<!--        />-->
 
     <ImageView
         android:id="@+id/splashImg"
@@ -26,9 +13,12 @@
         android:layout_height="150dp"
         android:layout_gravity="center"
         android:gravity="center"
-        android:layout_marginTop="100dp"
-        android:background="@drawable/splash_screen_img"
-        android:src="@drawable/splash_screen_img"
+        android:layout_marginTop="50dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:background="@drawable/login_img"
+        android:src="@drawable/login_img"
         />
 
 
@@ -39,6 +29,10 @@
         android:drawablePadding="10dp"
         android:hint="Enter Your Username"
         android:inputType="text"
+        app:layout_constraintTop_toBottomOf="@+id/splashImg"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/password"
         style="@style/loginFieldStyle"
         />
 
@@ -49,44 +43,79 @@
         android:drawablePadding="10dp"
         android:hint="Enter Your Password"
         android:inputType="textPassword"
+        app:layout_constraintTop_toBottomOf="@+id/username"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/login"
         style="@style/loginFieldStyle"
         />
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="horizontal"
-        android:layout_marginBottom="50dp"
+    <Button
+        android:id="@+id/login"
+        android:layout_width="150dp"
+        android:layout_height="60dp"
+        android:text="LOGIN"
+        android:textSize="15sp"
         android:layout_marginTop="50dp"
-        android:layout_marginStart="20dp"
-        android:layout_marginEnd="20dp"
-        >
+        android:layout_marginStart="15dp"
+        android:layout_marginEnd="15dp"
+        app:layout_constraintTop_toBottomOf="@+id/password"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/register"
+        style="@style/Widget.MaterialComponents.Button.Icon"
+        />
 
-        <Button
-            android:id="@+id/login"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:layout_marginStart="15dp"
-            android:layout_marginEnd="15dp"
-            android:layout_gravity="top"
-            android:text="LOG IN"
-            style="@style/btnstyle1"
-            />
-
-        <Button
-            android:id="@+id/register"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="15dp"
-            android:layout_marginEnd="15dp"
-            android:layout_gravity="top"
-            android:text="REGISTER"
-            style="@style/btnstyle1"
-            />
-
-    </LinearLayout>
+    <Button
+        android:id="@+id/register"
+        android:layout_width="150dp"
+        android:layout_height="60dp"
+        android:text="REGISTER"
+        android:textSize="15sp"
+        android:layout_marginTop="50dp"
+        app:layout_constraintTop_toBottomOf="@+id/password"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/login"
+        style="@style/Widget.MaterialComponents.Button.Icon"
+        />
 
 
-</LinearLayout>
+    <!--    <LinearLayout-->
+    <!--        android:layout_width="match_parent"-->
+    <!--        android:layout_height="wrap_content"-->
+    <!--        android:layout_marginStart="20dp"-->
+    <!--        android:layout_marginTop="50dp"-->
+    <!--        android:layout_marginBottom="50dp"-->
+    <!--        android:layout_marginEnd="20dp"-->
+    <!--        android:orientation="horizontal">-->
+
+    <!--        <Button-->
+    <!--            android:id="@+id/login"-->
+    <!--            style="@style/btnstyle1"-->
+    <!--            android:layout_width="0dp"-->
+    <!--            android:layout_height="wrap_content"-->
+    <!--            android:layout_gravity="top"-->
+    <!--            android:layout_marginStart="15dp"-->
+    <!--            android:layout_marginEnd="15dp"-->
+    <!--            android:layout_weight="1"-->
+    <!--            android:text="LOG IN" />-->
+
+    <!--        <Button-->
+    <!--            android:id="@+id/register"-->
+    <!--            style="@style/btnstyle1"-->
+    <!--            android:layout_width="0dp"-->
+    <!--            android:layout_height="wrap_content"-->
+    <!--            android:layout_gravity="top"-->
+    <!--            android:layout_marginStart="15dp"-->
+    <!--            android:layout_marginEnd="15dp"-->
+    <!--            android:layout_weight="1"-->
+    <!--            android:text="REGISTER" />-->
+
+    <!--    </LinearLayout>-->
+
+    <!--    <Button-->
+    <!--        android:id="@+id/passwordReset"-->
+    <!--        style="@style/btnstyle1"-->
+    <!--        android:layout_width="wrap_content"-->
+    <!--        android:layout_height="wrap_content"-->
+    <!--        android:text="RESET PASSWORD" />-->
+</androidx.constraintlayout.widget.ConstraintLayout>

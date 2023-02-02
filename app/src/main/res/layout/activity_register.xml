@@ -15,7 +15,6 @@
         android:gravity="center"
         android:layout_marginTop="23dp"
         android:textSize="25dp"
-        android:textColor="@color/black"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         />
@@ -89,29 +88,31 @@
         android:layout_marginEnd="20dp"
         >
 
-    <Button
-        android:id="@+id/register"
-        android:layout_width="0dp"
-        android:layout_weight="1"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="15dp"
-        android:layout_marginEnd="15dp"
-        android:layout_gravity="top"
-        android:text="REGISTER"
-        style="@style/btnstyle1"
-        />
+        <Button
+            android:id="@+id/register"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="15dp"
+            android:layout_marginEnd="15dp"
+            android:layout_gravity="top"
+            android:textSize="15sp"
+            android:text="REGISTER"
+            style="@style/Widget.MaterialComponents.Button.Icon"
+            />
 
-    <Button
-        android:id="@+id/reset"
-        android:layout_width="0dp"
-        android:layout_weight="1"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="15dp"
-        android:layout_marginEnd="15dp"
-        android:layout_gravity="top"
-        android:text="RESET"
-        style="@style/btnstyle1"
-        />
+        <Button
+            android:id="@+id/reset"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="15dp"
+            android:layout_marginEnd="15dp"
+            android:layout_gravity="top"
+            android:textSize="15sp"
+            android:text="RESET"
+            style="@style/Widget.MaterialComponents.Button.Icon"
+            />
 
     </LinearLayout>
 

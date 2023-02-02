@@ -15,8 +15,6 @@ public class SplashScreenActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash_screen);
-        //startSplashAnimation();
-
 
         // Use a thread to delay the splash screen for 2.5 seconds
         new Handler().postDelayed(new Runnable() {
@@ -28,10 +26,4 @@ public class SplashScreenActivity extends AppCompatActivity {
             }
         }, 2500); // 2.5 seconds delay
     }
-
-//    private void startSplashAnimation(){
-//        ImageView imageView = findViewById(R.id.splashImg);
-//        Animation animation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.slide);
-//        imageView.startAnimation(animation);
-//    }
 }
