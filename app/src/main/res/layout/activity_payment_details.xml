@@ -6,20 +6,21 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".PaymentDetailsActivity"
+    android:orientation="vertical"
     tools:ignore="MissingClass">
 
-<!--    <WebView-->
-<!--        android:id="@+id/webview"-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="match_parent" />-->
+
 
     <com.github.barteksc.pdfviewer.PDFView
         android:id="@+id/pdfView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="700dp"/>
+    <Button
+        android:id="@+id/download_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="Download PDF" />
 
-<!--    <ImageView-->
-<!--        android:id="@+id/pdf_image_view"-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="match_parent" />-->
+
 </LinearLayout>

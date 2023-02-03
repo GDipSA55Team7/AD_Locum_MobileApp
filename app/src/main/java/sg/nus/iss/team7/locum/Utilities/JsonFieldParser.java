@@ -9,6 +9,7 @@ public class JsonFieldParser {
     public static String getField(String jsonString, String fieldName) {
         Gson gson = new Gson();
         JsonObject jsonObject = gson.fromJson(jsonString, JsonObject.class);
+
         JsonElement element = jsonObject.get(fieldName);
         if (element == null) {
             return null;

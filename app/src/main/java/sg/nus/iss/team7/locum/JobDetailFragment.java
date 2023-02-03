@@ -3,21 +3,13 @@ package sg.nus.iss.team7.locum;
 import static android.content.Context.MODE_PRIVATE;
 import static android.view.View.GONE;
 
-import android.content.Context;
-import android.content.Intent;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
-
-import androidx.appcompat.app.AlertDialog;
-import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProvider;
-
 import android.os.Parcelable;
-import android.preference.PreferenceManager;
 import android.text.method.ScrollingMovementMethod;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,12 +17,14 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AlertDialog;
+import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
+
 import com.airbnb.lottie.LottieAnimationView;
 import com.google.gson.Gson;
 
-import java.io.Serializable;
 import java.text.ParseException;
-import java.util.ArrayList;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -40,7 +34,7 @@ import sg.nus.iss.team7.locum.APICommunication.ApiMethods;
 import sg.nus.iss.team7.locum.APICommunication.RetroFitClient;
 import sg.nus.iss.team7.locum.Model.FreeLancer;
 import sg.nus.iss.team7.locum.Model.JobPost;
-import sg.nus.iss.team7.locum.Model.PaymentDTO;
+import sg.nus.iss.team7.locum.Model.PaymentDetailsDTO;
 import sg.nus.iss.team7.locum.Utilities.DatetimeParser;
 import sg.nus.iss.team7.locum.Utilities.JsonFieldParser;
 import sg.nus.iss.team7.locum.ViewModel.ItemViewModel;
@@ -134,9 +128,6 @@ public class JobDetailFragment extends Fragment {
 
             //If pending payment
             if(jobPost.getStatus().contains("PENDING_PAYMENT")){
-                //Hide payment Success animation
-//                LottieAnimationView paymentSuccessAnimation = (LottieAnimationView) view.findViewById(R.id.paymentSuccessAnimation);
-//                paymentSuccessAnimation.setVisibility(GONE);
 
                 //Show payment pending animation
                 LottieAnimationView paymentProcessingAnimation = (LottieAnimationView) view.findViewById(R.id.paymentProcessingAnimation);
@@ -152,9 +143,6 @@ public class JobDetailFragment extends Fragment {
             }
             //if payment success
             else{
-                //Hide payment processing animation
-//                LottieAnimationView paymentProcessingAnimation = (LottieAnimationView) view.findViewById(R.id.paymentProcessingAnimation);
-//                paymentProcessingAnimation.setVisibility(GONE);
 
                 //Show payment success animation
                 LottieAnimationView paymentSuccessAnimation = (LottieAnimationView) view.findViewById(R.id.paymentSuccessAnimation);
@@ -185,25 +173,49 @@ public class JobDetailFragment extends Fragment {
                     String json = sharedPreferences.getString(getResources().getString(R.string.Freelancer_Details), "");
                     FreeLancer fl = gson.fromJson(json, FreeLancer.class);
 
-                    PaymentDTO paymentDTO = new PaymentDTO(
+
+                    PaymentDetailsDTO paymentDetailsDTO = new PaymentDetailsDTO(
                             jobPost.getId(),
                             jobPost.getRatePerHour(),
                             jobPost.getTotalRate(),
+                            jobPost.getAdditionalFeeListString(),
                             jobPost.getDescription(),
                             jobPost.getStartDateTime(),
                             jobPost.getEndDateTime(),
+
                             jobPost.getClinic().getName(),
                             jobPost.getClinic().getAddress(),
                             jobPost.getClinic().getPostalCode(),
                             jobPost.getClinic().getContact(),
                             jobPost.getClinic().getHcicode(),
+
                             fl.getName(),
                             fl.getEmail(),
                             fl.getContact(),
                             fl.getMedicalLicenseNo()
                     );
+
+//                    PaymentDTO paymentDTO = new PaymentDTO(
+//                            jobPost.getId(),
+//                            jobPost.getRatePerHour(),
+//                            jobPost.getTotalRate(),
+//                            jobPost.getAdditionalFeeListString(),
+//                            jobPost.getDescription(),
+//                            jobPost.getStartDateTime(),
+//                            jobPost.getEndDateTime(),
+//                            jobPost.getClinic().getName(),
+//                            jobPost.getClinic().getAddress(),
+//                            jobPost.getClinic().getPostalCode(),
+//                            jobPost.getClinic().getContact(),
+//                            jobPost.getClinic().getHcicode(),
+//                            fl.getName(),
+//                            fl.getEmail(),
+//                            fl.getContact(),
+//                            fl.getMedicalLicenseNo()
+//                    );
                     Intent intent = new Intent(getActivity(),PaymentDetailsActivity.class);
-                    intent.putExtra("paymentDetails", paymentDTO);
+                    intent.putExtra("paymentDetails", paymentDetailsDTO);
+                    System.out.println("before send paymentDTO to paymentActivity"+ paymentDetailsDTO);
                     startActivity(intent);
                 }
             }

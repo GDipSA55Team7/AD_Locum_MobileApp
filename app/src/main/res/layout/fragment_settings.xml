@@ -3,54 +3,36 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".SettingsFragment">
 
     <!-- TODO: Update blank fragment layout -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation ="vertical"
-        >
-
+        android:orientation ="vertical"  >
         <TextView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="0dp"
+            android:layout_weight = "3"
             android:text="SETTINGS"
             android:layout_gravity="center"
             android:gravity="center"
-            android:textSize="35dp"
-            android:layout_marginTop="90dp"
+            android:textSize="30dp"
+            android:layout_marginTop="20dp"
             android:textStyle="bold"
-            android:textColor="@color/app_main_blue"
-            />
-
-        <Button
-        android:id="@+id/editProfile"
-        android:layout_height="wrap_content"
-        android:layout_width="250dp"
-        android:text="EDIT PROFILE"
-        android:layout_gravity="center"
-        android:gravity="center"
-        android:textSize="25dp"
-        android:layout_marginTop="50dp"
-        style="@style/Widget.MaterialComponents.Button.Icon"
         />
 
-    <Button
-        android:id="@+id/logOut"
-        android:layout_height="wrap_content"
-        android:layout_width="250dp"
-        android:text="LOGOUT"
-        android:layout_gravity="center"
-        android:gravity="center"
-        android:textSize="25dp"
-        android:layout_marginTop="50dp"
-        style="@style/Widget.MaterialComponents.Button.Icon"
-        />
+        <ListView
+            android:id="@+id/settingsListView"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="10"
+            android:divider="@android:color/transparent"
+            android:dividerHeight="5.0sp"
+            >
+        </ListView>
+
     </LinearLayout>
-
-
 
 
 

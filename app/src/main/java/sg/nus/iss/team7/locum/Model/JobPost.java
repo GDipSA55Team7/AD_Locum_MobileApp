@@ -40,6 +40,10 @@ public class JobPost implements Parcelable {
     @Expose
     private Clinic clinic;
 
+    @SerializedName("additionalFeeListString")
+    @Expose
+    private String additionalFeeListString;
+
     protected JobPost(Parcel in) {
         if (in.readByte() == 0) {
             id = null;
@@ -60,23 +64,18 @@ public class JobPost implements Parcelable {
             totalRate = in.readDouble();
         }
         status = in.readString();
-
+        additionalFeeListString = in.readString();
         if(clinic != null){
             clinic = in.readParcelable(clinic.getClass().getClassLoader());
             if (in.readByte() == 0) {
                 clinicUser = null;
                 freelancer = null;
             } else {
-//                if(clinicUser != null){
-//                    clinicUser = in.readParcelable(freelancer.getClass().getClassLoader());
-//                }
-//                if(freelancer != null){
-//                    freelancer = in.readParcelable(freelancer.getClass().getClassLoader());
-//                }
                 clinicUser = in.readParcelable(freelancer.getClass().getClassLoader());
                 freelancer = in.readParcelable(freelancer.getClass().getClassLoader());
             }
         }
+
     }
 
     @Override
@@ -103,6 +102,7 @@ public class JobPost implements Parcelable {
             dest.writeDouble(totalRate);
         }
         dest.writeString(status);
+        dest.writeString(additionalFeeListString);
         if (clinic == null) {
             dest.writeByte((byte) 0);
         } else {
@@ -140,6 +140,14 @@ public class JobPost implements Parcelable {
             return new JobPost[size];
         }
     };
+
+    public String getAdditionalFeeListString() {
+        return additionalFeeListString;
+    }
+
+    public void setAdditionalFeeListString(String additionalFeeListString) {
+        this.additionalFeeListString = additionalFeeListString;
+    }
 
     public Integer getId() {
         return id;
@@ -220,6 +228,7 @@ public class JobPost implements Parcelable {
     public void setClinic(Clinic clinic) {
         this.clinic = clinic;
     }
+
 
     @Override
     public String toString() {
