@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="app_main_blue">#34548b</color>
+    <color name="app_main_blue">#343a40</color>
     <color name="app_sec_blue">#b3c7d5</color>
     <color name="status_green">#98ee99</color>
     <color name="status_mid">#FCAE1E</color>
