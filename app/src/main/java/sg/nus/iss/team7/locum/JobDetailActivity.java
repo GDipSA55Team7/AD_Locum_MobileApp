@@ -105,7 +105,10 @@ public class JobDetailActivity extends AppCompatActivity {
         } else if(jobPost.getStatus().equalsIgnoreCase("ACCEPTED")){
             statusText.setText("ACCEPTED");
             statusText.setBackgroundTintList(getColorStateList(R.color.darker_grey));
-        }else if (jobPost.getStatus().startsWith("COMPLETED")) {
+        } else if(jobPost.getStatus().equalsIgnoreCase("CANCELLED")){
+            statusText.setText("CANCELLED");
+            statusText.setBackgroundTintList(getColorStateList(R.color.darker_grey));
+        }  if (jobPost.getStatus().startsWith("COMPLETED")) {
             statusText.setText("COMPLETED");
             statusText.setBackgroundTintList(getColorStateList(R.color.darker_grey));
         }

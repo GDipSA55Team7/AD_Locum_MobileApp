@@ -4,6 +4,7 @@ import static android.content.Context.MODE_PRIVATE;
 import static android.view.View.GONE;
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -179,7 +180,7 @@ public class JobDetailFragment extends Fragment {
                     String json = sharedPreferences.getString(getResources().getString(R.string.Freelancer_Details), "");
                     FreeLancer fl = gson.fromJson(json, FreeLancer.class);
 
-                    PaymentDTO paymentDTO = new PaymentDTO(
+                    PaymentDetailsDTO paymentDTO = new PaymentDetailsDTO(
                             jobPost.getId(),
                             jobPost.getRatePerHour(),
                             jobPost.getTotalRate(),
@@ -198,8 +199,8 @@ public class JobDetailFragment extends Fragment {
                             fl.getMedicalLicenseNo()
                     );
                     Intent intent = new Intent(getActivity(),PaymentDetailsActivity.class);
-                    intent.putExtra("paymentDetails", paymentDetailsDTO);
-                    System.out.println("before send paymentDTO to paymentActivity"+ paymentDetailsDTO);
+                    intent.putExtra("paymentDetails", paymentDTO);
+                    System.out.println("before send paymentDTO to paymentActivity"+ paymentDTO);
                     startActivity(intent);
                 }
             }
