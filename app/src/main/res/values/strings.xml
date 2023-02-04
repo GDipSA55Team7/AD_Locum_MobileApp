@@ -46,6 +46,8 @@
     <string name="LeavingApplication">Leaving Application</string>
     <string name="LeavingApplicationPrompt">Are you sure you want to exit?</string>
 
+
+    <string name="EditProfile">Edit Profile</string>
     <string name="LogOut">Log Out</string>
     <string name="LogOutPrompt">Are you sure you want to logout?</string>
 

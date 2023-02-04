@@ -2,6 +2,7 @@ package sg.nus.iss.team7.locum;
 
 import static android.content.Context.MODE_PRIVATE;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -13,10 +14,10 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.google.gson.Gson;
+import sg.nus.iss.team7.locum.Adapter.SettingsListAdapter;
 
 public class SettingsFragment extends Fragment {
 
@@ -29,34 +30,42 @@ public class SettingsFragment extends Fragment {
 
         // Inflate the layout for this fragment
         View view =  inflater.inflate(R.layout.fragment_settings, container, false);
-        editProfileLink = view.findViewById(R.id.editProfile);
-        logOutLink = view.findViewById(R.id.logOut);
-        editProfileLink.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getContext(),EditProfileActivity.class);
-                startActivity(intent);
-            }
-        });
-        logOutLink.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                new AlertDialog.Builder(getContext())
-                        .setIcon(R.drawable.ic_exit_application)
-                        .setTitle(getResources().getString(R.string.LogOut))
-                        .setMessage(getResources().getString(R.string.LogOutPrompt))
-                        .setCancelable(false)
-                        .setPositiveButton(getResources().getString(R.string.Yes), (dialog, id) ->
-                                {
-                                    clearSharedPref();
-                                    getActivity().finish();
-                                }
-                        )
-                        .setNegativeButton(getResources().getString(R.string.No), null)
-                        .show();
 
-            }
-        });
+        ListView list = (ListView) view.findViewById(R.id.settingsListView);
+        String[] values = {"Edit Profile", "Log Out"};
+        Integer[] images = {R.drawable.ic_editprofile_settings, R.drawable.ic_logout_settings};
+        SettingsListAdapter adapter = new SettingsListAdapter((Activity) getContext(), values, images);
+        list.setAdapter(adapter);
+
+
+//        editProfileLink = view.findViewById(R.id.editProfile);
+//        logOutLink = view.findViewById(R.id.logOut);
+//        editProfileLink.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                Intent intent = new Intent(getContext(),EditProfileActivity.class);
+//                startActivity(intent);
+//            }
+//        });
+//        logOutLink.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                new AlertDialog.Builder(getContext())
+//                        .setIcon(R.drawable.ic_exit_application)
+//                        .setTitle(getResources().getString(R.string.LogOut))
+//                        .setMessage(getResources().getString(R.string.LogOutPrompt))
+//                        .setCancelable(false)
+//                        .setPositiveButton(getResources().getString(R.string.Yes), (dialog, id) ->
+//                                {
+//                                    clearSharedPref();
+//                                    getActivity().finish();
+//                                }
+//                        )
+//                        .setNegativeButton(getResources().getString(R.string.No), null)
+//                        .show();
+//
+//            }
+//        });
         return view;
     }
 

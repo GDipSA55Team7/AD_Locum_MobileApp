@@ -3,16 +3,10 @@ package sg.nus.iss.team7.locum;
 import static android.content.Context.MODE_PRIVATE;
 import static android.view.View.GONE;
 
-import android.content.Intent;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
-
-import androidx.appcompat.app.AlertDialog;
-import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProvider;
-
 import android.os.Parcelable;
 import android.text.method.ScrollingMovementMethod;
 import android.view.LayoutInflater;
@@ -21,6 +15,10 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.appcompat.app.AlertDialog;
+import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.airbnb.lottie.LottieAnimationView;
 import com.google.gson.Gson;
@@ -35,7 +33,7 @@ import sg.nus.iss.team7.locum.APICommunication.ApiMethods;
 import sg.nus.iss.team7.locum.APICommunication.RetroFitClient;
 import sg.nus.iss.team7.locum.Model.FreeLancer;
 import sg.nus.iss.team7.locum.Model.JobPost;
-import sg.nus.iss.team7.locum.Model.PaymentDTO;
+import sg.nus.iss.team7.locum.Model.PaymentDetailsDTO;
 import sg.nus.iss.team7.locum.Utilities.DatetimeParser;
 import sg.nus.iss.team7.locum.Utilities.JsonFieldParser;
 import sg.nus.iss.team7.locum.ViewModel.ItemViewModel;
@@ -185,6 +183,7 @@ public class JobDetailFragment extends Fragment {
                             jobPost.getId(),
                             jobPost.getRatePerHour(),
                             jobPost.getTotalRate(),
+                            jobPost.getAdditionalFeeListString(),
                             jobPost.getDescription(),
                             jobPost.getStartDateTime(),
                             jobPost.getEndDateTime(),
@@ -199,7 +198,8 @@ public class JobDetailFragment extends Fragment {
                             fl.getMedicalLicenseNo()
                     );
                     Intent intent = new Intent(getActivity(),PaymentDetailsActivity.class);
-                    intent.putExtra("paymentDetails", paymentDTO);
+                    intent.putExtra("paymentDetails", paymentDetailsDTO);
+                    System.out.println("before send paymentDTO to paymentActivity"+ paymentDetailsDTO);
                     startActivity(intent);
                 }
             }
