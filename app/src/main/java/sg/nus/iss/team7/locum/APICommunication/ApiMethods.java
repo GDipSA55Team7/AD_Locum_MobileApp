@@ -46,4 +46,8 @@ public interface ApiMethods {
     @GET("/api/jobs/applied?")
     Call<ArrayList<JobPost>> getJobApplied(@Query("id") int userId);
 
+    @POST("/api/sendtoken?")
+    Call<ResponseBody> sendDeviceToken(  @Query("token") String token);
+
+
 }

@@ -32,6 +32,7 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import sg.nus.iss.team7.locum.APICommunication.ApiMethods;
 import sg.nus.iss.team7.locum.APICommunication.RetroFitClient;
+import sg.nus.iss.team7.locum.FireBase.FirebaseTokenUtils;
 import sg.nus.iss.team7.locum.Model.FreeLancer;
 
 public class LoginActivity extends AppCompatActivity {
@@ -47,6 +48,9 @@ public class LoginActivity extends AppCompatActivity {
 
         //If Logged In, direct to MainActivity
         if(isLoggedIn()) {
+
+           FirebaseTokenUtils.retrieveDeviceTokenAndSendToServer();
+
             Intent intent = new Intent(LoginActivity.this,MainActivity.class);
             startActivity(intent);
             finish();

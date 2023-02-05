@@ -39,9 +39,11 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.text.ParseException;
 
 
 import sg.nus.iss.team7.locum.Model.PaymentDetailsDTO;
+import sg.nus.iss.team7.locum.Utilities.DatetimeParser;
 import sg.nus.iss.team7.locum.Utilities.PdfService;
 
 public class PaymentDetailsActivity extends AppCompatActivity {
@@ -179,11 +181,16 @@ public class PaymentDetailsActivity extends AppCompatActivity {
         }
     }
 
-    private void createPDFDoc(Document document, PaymentDetailsDTO paymentDTO) {
+    private void createPDFDoc(Document document, PaymentDetailsDTO paymentDTO) throws ParseException {
 
         Double ratePerHr;
-        Integer numOfHours = 2;
         String totalTo2DP,ratePerHrTo2DP,subTotalTo2DP;
+
+        String jobDurationString = DatetimeParser.getHoursBetween(paymentDTO.getJobStartDateTime(),paymentDTO.getJobEndDateTime());
+        String removedExtraTxt = jobDurationString.substring(0,jobDurationString.indexOf(" "));
+        //Log.e("removedHr",removedHrs );
+        Double jobDurationRoundedToHalfHr =Math.round(Double.valueOf(removedExtraTxt) * 2) / 2.0;
+        //Log.e("jobDurationinHrs", String.valueOf(jobDurationRoundedToHalfHr));
 
         //rate
         ratePerHr = paymentDTO.getJobRatePerHr();
@@ -272,15 +279,17 @@ public class PaymentDetailsActivity extends AppCompatActivity {
         Log.e("desc",paymentDTO.getJobDescription());
         Log.e("start",paymentDTO.getJobStartDateTime());
         Log.e("end",paymentDTO.getJobEndDateTime());
+
         //total rate
-        Double subTotal = numOfHours * ratePerHr;
+        Double subTotal = jobDurationRoundedToHalfHr * ratePerHr;
         subTotalTo2DP = String.format("%.2f", subTotal);
+        String jobDurationRoundedToHalfHrStr = String.format("%.1f", jobDurationRoundedToHalfHr);
 
         billTable.addCell(getBillRowCell("1"));
         billTable.addCell(getBillRowCell("Basic Consultation"));
         billTable.addCell(getBillRowCell(invoiceDesc));
         billTable.addCell(getBillRowCell(ratePerHrTo2DP));
-        billTable.addCell(getBillRowCell(numOfHours.toString()));
+        billTable.addCell(getBillRowCell(jobDurationRoundedToHalfHrStr));
         billTable.addCell(getBillRowCell(subTotalTo2DP));
 
         Double Total = subTotal;

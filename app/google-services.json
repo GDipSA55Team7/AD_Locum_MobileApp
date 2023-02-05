@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "619586569629",
+    "project_id": "locum-ad",
+    "storage_bucket": "locum-ad.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:619586569629:android:2eb854804ff83d21619b74",
+        "android_client_info": {
+          "package_name": "sg.nus.iss.team7.locum"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "619586569629-tviokjegahe1j480ktbd3284ovota2ug.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "sg.nus.iss.team7.locum",
+            "certificate_hash": "4e5d99ba78e1247fc49125ea94a2d79e0bf16b6c"
+          }
+        },
+        {
+          "client_id": "619586569629-hqt73bnmb2pgk0acl2l6hhoeomjar6p5.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA-d-QgD0-OKL8U95fzZ54iyL7WhssbIlQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "619586569629-hqt73bnmb2pgk0acl2l6hhoeomjar6p5.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -34,6 +34,7 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import sg.nus.iss.team7.locum.APICommunication.ApiMethods;
 import sg.nus.iss.team7.locum.APICommunication.RetroFitClient;
+import sg.nus.iss.team7.locum.FireBase.FirebaseTokenUtils;
 import sg.nus.iss.team7.locum.Model.FreeLancer;
 
 public class RegisterActivity extends AppCompatActivity {
@@ -78,6 +79,8 @@ public class RegisterActivity extends AppCompatActivity {
 
                                     //if register is successful, store in shared Pref
                                     storeFLDetailsInSharedPref(returnedFL);
+
+                                    FirebaseTokenUtils.retrieveDeviceTokenAndSendToServer();
 
                                     //redirect
                                     Intent intent = new Intent(RegisterActivity.this,MainActivity.class);
