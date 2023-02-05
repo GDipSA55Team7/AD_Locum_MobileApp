@@ -31,7 +31,7 @@
 
     <EditText
         android:id="@+id/email"
-        android:drawableLeft="@drawable/ic_email"
+        android:drawableLeft="@drawable/email_img"
         android:drawablePadding="10dp"
         android:hint="Enter your Email"
         android:inputType="textEmailAddress"

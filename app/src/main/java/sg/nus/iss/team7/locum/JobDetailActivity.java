@@ -1,15 +1,38 @@
 package sg.nus.iss.team7.locum;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
+import android.Manifest;
+import android.app.Activity;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.location.Address;
+import android.location.Geocoder;
+import android.net.Uri;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.IOException;
 import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.List;
+
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.PolylineOptions;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -30,6 +53,19 @@ public class JobDetailActivity extends AppCompatActivity {
     private TextView addressText;
     private TextView statusText;
 
+    private ImageView addressImg;
+
+    private ImageView phoneImg;
+
+    private ImageView emailImg;
+
+    private String addressStr;
+
+    private static final String FINE_LOCATION = android.Manifest.permission.ACCESS_FINE_LOCATION;
+    private static final String COARSE_LOCATION = android.Manifest.permission.ACCESS_COARSE_LOCATION;
+    private static final int LOCATION_PERMISSION_REQUEST_CODE = 1234;
+
+    private Boolean mLocationPermissionGranted = false;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -45,6 +81,7 @@ public class JobDetailActivity extends AppCompatActivity {
         viewModel.getSelectedItem().observe(this, jobPost -> {
             setStatusBar();
         });
+
 
     }
 
@@ -67,7 +104,9 @@ public class JobDetailActivity extends AppCompatActivity {
                     addressText = (TextView) findViewById(R.id.address);
                     statusText = (TextView) findViewById(R.id.status);
 
-                    String addressStr = jobPost.getClinic().getAddress() + ", " + jobPost.getClinic().getPostalCode();
+                    addressStr = jobPost.getClinic().getAddress() + ", " + jobPost.getClinic().getPostalCode();
+                    String phoneNo = jobPost.getClinic().getContact();
+                    String emailAddress = jobPost.getClinic().getEmail();
 
                     clinicNameText.setText(jobPost.getClinic().getName());
                     addressText.setText(addressStr);
@@ -81,6 +120,33 @@ public class JobDetailActivity extends AppCompatActivity {
                         e.printStackTrace();
                     }
 
+                    phoneImg = (ImageView) findViewById(R.id.phoneIcon);
+                    phoneImg.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+
+                            callPhone(phoneNo);
+
+                        }
+                    });
+
+                    emailImg = (ImageView) findViewById(R.id.emailIcon);
+
+                    emailImg.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            sendEmail(emailAddress);
+                        }
+                    });
+
+                    addressImg = (ImageView) findViewById(R.id.addressIcon);
+                    addressImg.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            getLocationPermission();
+                        }
+                    });
+
                     // Pass the data to fragment
                     Fragment jobDetailFragment = JobDetailFragment.newInstance(jobPost);
                     getSupportFragmentManager().beginTransaction().replace(R.id.container, jobDetailFragment).commit();
@@ -93,6 +159,69 @@ public class JobDetailActivity extends AppCompatActivity {
                 Toast.makeText(getApplicationContext(),"error getting job", Toast.LENGTH_SHORT);
             }
         });
+    }
+
+    public void callPhone(String phoneNo){
+
+        Uri uri = Uri.parse("tel:"+phoneNo);
+        Intent intent = new Intent(Intent.ACTION_DIAL, uri);
+        if (intent.resolveActivity(getPackageManager()) != null)
+        {
+            startActivity(intent);
+        }
+
+    }
+
+    public void sendEmail(String emailAddress){
+
+        Uri uri = Uri.parse("mailto:"+ emailAddress);
+        Intent intent = new Intent(Intent.ACTION_SENDTO, uri);
+        intent.putExtra(Intent.EXTRA_SUBJECT, getString(R.string.email_subject));
+        if (intent.resolveActivity(getPackageManager()) != null) {
+            startActivity(intent);
+        }
+    }
+
+    private void getLocationPermission(){
+        String[] permissions = {android.Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION};
+
+        if(ContextCompat.checkSelfPermission(this.getApplicationContext(),FINE_LOCATION) ==
+                PackageManager.PERMISSION_GRANTED){
+            if(ContextCompat.checkSelfPermission(this.getApplicationContext(),COARSE_LOCATION) ==
+                    PackageManager.PERMISSION_GRANTED){
+                mLocationPermissionGranted = true;
+                initMap();
+            }
+        }
+        else {
+            ActivityCompat.requestPermissions(this,permissions,LOCATION_PERMISSION_REQUEST_CODE);
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[]
+            permissions, @NonNull int[] grantResults){
+        mLocationPermissionGranted = false ;
+
+        switch (requestCode){
+            case LOCATION_PERMISSION_REQUEST_CODE:{
+                if(grantResults.length > 0){
+                    for(int i = 0; i<grantResults.length; i++){
+                        if(grantResults[i] != PackageManager.PERMISSION_GRANTED){
+                            mLocationPermissionGranted = false;
+                            return;
+                        }
+                    }
+                    mLocationPermissionGranted = true;
+                    initMap();
+                }
+            }
+        }
+    }
+
+    public void initMap(){
+        Fragment mapsFragment = new MapsFragment(mLocationPermissionGranted,addressStr,jobPost);
+        getSupportFragmentManager().beginTransaction().replace(R.id.container,mapsFragment).commit();
     }
 
     private void setStatusBar() {
@@ -110,4 +239,6 @@ public class JobDetailActivity extends AppCompatActivity {
             statusText.setBackgroundTintList(getColorStateList(R.color.darker_grey));
         }
     }
+
+
 }
