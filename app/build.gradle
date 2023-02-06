@@ -9,9 +9,15 @@ android {
     defaultConfig {
         applicationId "sg.nus.iss.team7.locum"
         minSdk 29
-        targetSdk 29
+        targetSdk 31
         versionCode 1
         versionName "1.0"
+        // Load credentials.
+//        def properties = new Properties()
+//        file("../local.properties").withInputStream { properties.load(it) }
+//
+//        // Share the key with your `AndroidManifest.xml`
+//        manifestPlaceholders = [MAPS_APY_KEY: "\"\\\"\\\\\\\"\\\\\\\\\\\\\\\"${properties.getProperty('MAPS_APY_KEY')}\\\\\\\\\\\\\\\"\\\\\\\"\\\"\""]
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -22,9 +28,13 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
+    }
+    buildFeatures {
+        viewBinding true
     }
 }
 

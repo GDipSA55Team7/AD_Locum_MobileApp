@@ -228,6 +228,7 @@ public class JobDetailFragment extends Fragment {
             public void onResponse(Call<JobPost> call, Response<JobPost> response) {
                 if (response.isSuccessful()) {
                     if (status.equalsIgnoreCase("apply")) {
+                        //todo check if any job application on same timing
                         jobPost.setStatus("PENDING_CONFIRMATION_BY_CLINIC");
                         button.setEnabled(false);
                     } else if (status.equalsIgnoreCase("cancel")) {

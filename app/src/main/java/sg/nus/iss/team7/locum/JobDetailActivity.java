@@ -113,11 +113,16 @@ public class JobDetailActivity extends AppCompatActivity {
 
                     setStatusBar();
 
-
+                    String dateTextString = null;
+                    
                     try {
-                        dateText.setText(DatetimeParser.parseDate(jobPost.getStartDateTime()));
+                        dateTextString = DatetimeParser.parseDate(jobPost.getStartDateTime()) + ", " + DatetimeParser.parseDay(jobPost.getStartDateTime());
                     } catch (ParseException e) {
                         e.printStackTrace();
+                    }
+                    
+                    if (dateTextString != null) {
+                        dateText.setText(dateTextString);
                     }
 
                     phoneImg = (ImageView) findViewById(R.id.phoneIcon);
@@ -200,14 +205,15 @@ public class JobDetailActivity extends AppCompatActivity {
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[]
-            permissions, @NonNull int[] grantResults){
-        mLocationPermissionGranted = false ;
+            permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        mLocationPermissionGranted = false;
 
-        switch (requestCode){
-            case LOCATION_PERMISSION_REQUEST_CODE:{
-                if(grantResults.length > 0){
-                    for(int i = 0; i<grantResults.length; i++){
-                        if(grantResults[i] != PackageManager.PERMISSION_GRANTED){
+        switch (requestCode) {
+            case LOCATION_PERMISSION_REQUEST_CODE: {
+                if (grantResults.length > 0) {
+                    for (int i = 0; i < grantResults.length; i++) {
+                        if (grantResults[i] != PackageManager.PERMISSION_GRANTED) {
                             mLocationPermissionGranted = false;
                             return;
                         }

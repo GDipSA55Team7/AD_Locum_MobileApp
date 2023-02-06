@@ -56,7 +56,8 @@
     <string name="cancelMsg">Confirm cancellation?</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
-    
+
     <string name="email_subject">Apply for the job posted</string>
+    <string name="title_activity_maps">MapsActivity</string>
 
 </resources>
