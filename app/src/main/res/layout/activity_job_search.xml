@@ -44,7 +44,9 @@
             <include layout="@layout/loading_job_search_list_item"/>
             <include layout="@layout/loading_job_search_list_item"/>
             <include layout="@layout/loading_job_search_list_item"/>
-            <include layout="@layout/loading_job_search_list_item"/>
+
+            <include layout="@layout/loading_job_search_list_item" />
+
             <include layout="@layout/loading_job_search_list_item"/>
             <include layout="@layout/loading_job_search_list_item"/>
             <include layout="@layout/loading_job_search_list_item"/>

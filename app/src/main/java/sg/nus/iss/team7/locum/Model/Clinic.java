@@ -24,6 +24,10 @@ public class Clinic implements Parcelable {
     @SerializedName("contact")
     @Expose
     private String contact;
+
+    @SerializedName("email")
+    @Expose
+    private String email;
     @SerializedName("hcicode")
     @Expose
     private String hcicode;
@@ -120,4 +124,8 @@ public class Clinic implements Parcelable {
     public void setHcicode(String hcicode) {
         this.hcicode = hcicode;
     }
+
+    public String getEmail() { return email; }
+
+    public void setEmail(String email) { this.email = email; }
 }

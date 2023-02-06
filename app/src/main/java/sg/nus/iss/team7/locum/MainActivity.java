@@ -32,13 +32,13 @@ public class MainActivity extends AppCompatActivity {
 
         SharedPreferences sharedPref = getSharedPreferences("FL_Shared_Pref", MODE_PRIVATE);
         String userDetails = sharedPref.getString("FL_Details", "no value");
+        if(userDetails!="no value") {
+            String name = JsonFieldParser.getField(userDetails, "name");
 
-        String name = JsonFieldParser.getField(userDetails, "name");
+            TextView topBarText = findViewById(R.id.nameBar);
+            topBarText.setText("Hello, " + name);
 
-        TextView topBarText = findViewById(R.id.nameBar);
-        topBarText.setText("Hello, " + name);
-
-
+        }
         if(savedInstanceState!=null) {
             bottomNavigationView.setSelectedItemId(saveState);
         } else {
