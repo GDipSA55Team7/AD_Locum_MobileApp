@@ -25,6 +25,14 @@ public class DatetimeParser {
         return timeFormat.format(date);
     }
 
+    public static String parseDay(String datetimeStr) throws ParseException {
+        SimpleDateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm");
+        SimpleDateFormat dayFormat = new SimpleDateFormat("EEE");
+
+        Date date = inputFormat.parse(datetimeStr);
+        return dayFormat.format(date);
+    }
+
     public static String getHoursBetween(String datetime1, String datetime2) throws ParseException {
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm");
         Date date1 = dateFormat.parse(datetime1);

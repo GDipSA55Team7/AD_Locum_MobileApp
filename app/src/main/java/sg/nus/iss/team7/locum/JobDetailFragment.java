@@ -44,7 +44,7 @@ public class JobDetailFragment extends Fragment {
     ItemViewModel viewModel;
     JobPost jobPost;
     TextView addInfo;
-    TextView description;
+    TextView title;
     TextView startTime;
     TextView endTime;
     TextView totalTime;
@@ -75,8 +75,8 @@ public class JobDetailFragment extends Fragment {
         String hourRateStr = "$" + jobPost.getRatePerHour().toString() + "/HR";
         String fullRateStr = "$" + jobPost.getTotalRate().toString();
 
-        description = view.findViewById(R.id.title);
-        description.setText(jobPost.getDescription());
+        title = view.findViewById(R.id.title);
+        title.setText(jobPost.getTitle());
 
         startTime = view.findViewById(R.id.startTime);
         try {
@@ -106,6 +106,7 @@ public class JobDetailFragment extends Fragment {
         totalRate.setText(fullRateStr);
 
         addInfo = view.findViewById(R.id.addInfo);
+        addInfo.setText(jobPost.getDescription());
         addInfo.setMovementMethod(new ScrollingMovementMethod());
 
         // Set button text according to job post status
@@ -128,6 +129,9 @@ public class JobDetailFragment extends Fragment {
 
             //If pending payment
             if(jobPost.getStatus().contains("PENDING_PAYMENT")){
+                //Hide payment Success animation
+//                LottieAnimationView paymentSuccessAnimation = (LottieAnimationView) view.findViewById(R.id.paymentSuccessAnimation);
+//                paymentSuccessAnimation.setVisibility(GONE);
 
                 //Show payment pending animation
                 LottieAnimationView paymentProcessingAnimation = (LottieAnimationView) view.findViewById(R.id.paymentProcessingAnimation);
@@ -143,6 +147,9 @@ public class JobDetailFragment extends Fragment {
             }
             //if payment success
             else{
+                //Hide payment processing animation
+//                LottieAnimationView paymentProcessingAnimation = (LottieAnimationView) view.findViewById(R.id.paymentProcessingAnimation);
+//                paymentProcessingAnimation.setVisibility(GONE);
 
                 //Show payment success animation
                 LottieAnimationView paymentSuccessAnimation = (LottieAnimationView) view.findViewById(R.id.paymentSuccessAnimation);
@@ -173,8 +180,7 @@ public class JobDetailFragment extends Fragment {
                     String json = sharedPreferences.getString(getResources().getString(R.string.Freelancer_Details), "");
                     FreeLancer fl = gson.fromJson(json, FreeLancer.class);
 
-
-                    PaymentDetailsDTO paymentDetailsDTO = new PaymentDetailsDTO(
+                    PaymentDetailsDTO paymentDTO = new PaymentDetailsDTO(
                             jobPost.getId(),
                             jobPost.getRatePerHour(),
                             jobPost.getTotalRate(),
@@ -182,40 +188,19 @@ public class JobDetailFragment extends Fragment {
                             jobPost.getDescription(),
                             jobPost.getStartDateTime(),
                             jobPost.getEndDateTime(),
-
                             jobPost.getClinic().getName(),
                             jobPost.getClinic().getAddress(),
                             jobPost.getClinic().getPostalCode(),
                             jobPost.getClinic().getContact(),
                             jobPost.getClinic().getHcicode(),
-
                             fl.getName(),
                             fl.getEmail(),
                             fl.getContact(),
                             fl.getMedicalLicenseNo()
                     );
-
-//                    PaymentDTO paymentDTO = new PaymentDTO(
-//                            jobPost.getId(),
-//                            jobPost.getRatePerHour(),
-//                            jobPost.getTotalRate(),
-//                            jobPost.getAdditionalFeeListString(),
-//                            jobPost.getDescription(),
-//                            jobPost.getStartDateTime(),
-//                            jobPost.getEndDateTime(),
-//                            jobPost.getClinic().getName(),
-//                            jobPost.getClinic().getAddress(),
-//                            jobPost.getClinic().getPostalCode(),
-//                            jobPost.getClinic().getContact(),
-//                            jobPost.getClinic().getHcicode(),
-//                            fl.getName(),
-//                            fl.getEmail(),
-//                            fl.getContact(),
-//                            fl.getMedicalLicenseNo()
-//                    );
                     Intent intent = new Intent(getActivity(),PaymentDetailsActivity.class);
-                    intent.putExtra("paymentDetails", paymentDetailsDTO);
-                    System.out.println("before send paymentDTO to paymentActivity"+ paymentDetailsDTO);
+                    intent.putExtra("paymentDetails", paymentDTO);
+                    System.out.println("before send paymentDTO to paymentActivity"+ paymentDTO);
                     startActivity(intent);
                 }
             }
@@ -243,6 +228,7 @@ public class JobDetailFragment extends Fragment {
             public void onResponse(Call<JobPost> call, Response<JobPost> response) {
                 if (response.isSuccessful()) {
                     if (status.equalsIgnoreCase("apply")) {
+                        //todo check if any job application on same timing
                         jobPost.setStatus("PENDING_CONFIRMATION_BY_CLINIC");
                         button.setEnabled(false);
                     } else if (status.equalsIgnoreCase("cancel")) {

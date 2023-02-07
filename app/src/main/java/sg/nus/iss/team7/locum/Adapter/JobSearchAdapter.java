@@ -111,7 +111,7 @@ public class JobSearchAdapter extends RecyclerView.Adapter<JobSearchAdapter.MyVi
         holder.clinic_name.setText(jobPost.getClinic().getName());
         holder.full_rate.setText(fullRateStr);
         holder.address.setText(addressStr);
-        holder.job_name.setText(jobPost.getDescription());
+        holder.job_name.setText(jobPost.getTitle());
         setStatusBar(holder);
     }
 
@@ -138,6 +138,9 @@ public class JobSearchAdapter extends RecyclerView.Adapter<JobSearchAdapter.MyVi
             holder.status.setBackgroundTintList(getColorStateList(context, R.color.status_green));
         } else if(jobPost.getStatus().equalsIgnoreCase("ACCEPTED")){
             holder.status.setText("ACCEPTED");
+            holder.status.setBackgroundTintList(getColorStateList(context, R.color.darker_grey));
+        } else if(jobPost.getStatus().equalsIgnoreCase("CANCELLED")){
+            holder.status.setText("CANCELLED");
             holder.status.setBackgroundTintList(getColorStateList(context, R.color.darker_grey));
         }else if (jobPost.getStatus().startsWith("COMPLETED")) {
             holder.status.setText("COMPLETED");
