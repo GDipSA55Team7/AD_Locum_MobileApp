@@ -7,7 +7,7 @@ import android.util.Log;
 public class PaymentDetailsDTO implements Parcelable {
     private Integer jobId;
     private Double jobRatePerHr,jobTotalRate;
-    private String jobDescription,jobStartDateTime,jobEndDateTime,jobAdditionalFees;
+    private String jobDescription,jobStartDateTime,jobEndDateTime,jobAdditionalFees,jobPaymentDate,jobPaymentRefNo;
     private String clinicName,clinicAddress,clinicPostalCode,clinicContact,clinicHciCode;
     private String flName,flEmail,flContact,flMedicalLicenseNo;
 
@@ -33,6 +33,11 @@ public class PaymentDetailsDTO implements Parcelable {
         Log.d("PaymentDetailsDTO", "Writing jobStartDateTime: " + this.jobStartDateTime);
         dest.writeString(this.jobEndDateTime);
         Log.d("PaymentDetailsDTO", "Writing jobEndDateTime: " + this.jobEndDateTime);
+        dest.writeString(this.jobPaymentDate);
+        Log.d("PaymentDetailsDTO", "Writing jobPaymentDate: " + this.jobPaymentDate);
+        dest.writeString(this.jobPaymentRefNo);
+        Log.d("PaymentDetailsDTO", "Writing jobPaymentRefNo " + this.jobPaymentRefNo);
+
 
 
         dest.writeString(this.clinicName);
@@ -57,29 +62,29 @@ public class PaymentDetailsDTO implements Parcelable {
     }
 
 
-    public void readFromParcel(Parcel source) {
-        this.jobId = (Integer) source.readValue(Integer.class.getClassLoader());
-        this.jobRatePerHr = (Double) source.readValue(Double.class.getClassLoader());
-        this.jobTotalRate = (Double) source.readValue(Double.class.getClassLoader());
-        this.jobAdditionalFees = source.readString();
-        this.jobDescription = source.readString();
-        this.jobStartDateTime = source.readString();
-        this.jobEndDateTime = source.readString();
-
-        this.clinicName = source.readString();
-        this.clinicAddress = source.readString();
-        this.clinicPostalCode = source.readString();
-        this.clinicContact = source.readString();
-        this.clinicHciCode = source.readString();
-
-        this.flName = source.readString();
-        this.flEmail = source.readString();
-        this.flContact = source.readString();
-        this.flMedicalLicenseNo = source.readString();
-    }
+//    public void readFromParcel(Parcel source) {
+//        this.jobId = (Integer) source.readValue(Integer.class.getClassLoader());
+//        this.jobRatePerHr = (Double) source.readValue(Double.class.getClassLoader());
+//        this.jobTotalRate = (Double) source.readValue(Double.class.getClassLoader());
+//        this.jobAdditionalFees = source.readString();
+//        this.jobDescription = source.readString();
+//        this.jobStartDateTime = source.readString();
+//        this.jobEndDateTime = source.readString();
+//
+//        this.clinicName = source.readString();
+//        this.clinicAddress = source.readString();
+//        this.clinicPostalCode = source.readString();
+//        this.clinicContact = source.readString();
+//        this.clinicHciCode = source.readString();
+//
+//        this.flName = source.readString();
+//        this.flEmail = source.readString();
+//        this.flContact = source.readString();
+//        this.flMedicalLicenseNo = source.readString();
+//    }
 
     public PaymentDetailsDTO(Integer jobId, Double jobRatePerHr, Double jobTotalRate, String jobAdditionalFees, String jobDescription,
-                             String jobStartDateTime, String jobEndDateTime,
+                             String jobStartDateTime, String jobEndDateTime,String jobPaymentDate,String jobPaymentRefNo,
                              String clinicName, String clinicAddress, String clinicPostalCode, String clinicContact, String clinicHciCode,
                              String flName, String flEmail, String flContact, String flMedicalLicenseNo) {
         this.jobId = jobId;
@@ -89,6 +94,8 @@ public class PaymentDetailsDTO implements Parcelable {
         this.jobDescription = jobDescription;
         this.jobStartDateTime = jobStartDateTime;
         this.jobEndDateTime = jobEndDateTime;
+        this.jobPaymentDate = jobPaymentDate;
+        this.jobPaymentRefNo = jobPaymentRefNo;
 
         this.clinicName = clinicName;
         this.clinicAddress = clinicAddress;
@@ -100,6 +107,7 @@ public class PaymentDetailsDTO implements Parcelable {
         this.flEmail = flEmail;
         this.flContact = flContact;
         this.flMedicalLicenseNo = flMedicalLicenseNo;
+
     }
 
     protected PaymentDetailsDTO(Parcel in) {
@@ -119,7 +127,10 @@ public class PaymentDetailsDTO implements Parcelable {
         Log.d("PaymentDetailsDTO", "jobStartDateTime: " + this.jobStartDateTime);
         this.jobEndDateTime = in.readString();
         Log.d("PaymentDetailsDTO", "jobEndDateTime: " + this.jobEndDateTime);
-
+        this.jobPaymentDate = in.readString();
+        Log.d("PaymentDetailsDTO", "jobPaymentDate: " + this.jobPaymentDate);
+        this.jobPaymentRefNo = in.readString();
+        Log.d("PaymentDetailsDTO", "jobPaymentRefNo: " + this.jobPaymentRefNo);
 
         this.clinicName = in.readString();
         Log.d("PaymentDetailsDTO", "clinicName: " + this.clinicName);
@@ -139,6 +150,8 @@ public class PaymentDetailsDTO implements Parcelable {
         Log.d("PaymentDetailsDTO", "flContact: " + this.flContact);
         this.flMedicalLicenseNo = in.readString();
         Log.d("PaymentDetailsDTO", "flMedicalLicenseNo: " + this.flMedicalLicenseNo);
+
+
     }
     public static final Parcelable.Creator<PaymentDetailsDTO> CREATOR = new Parcelable.Creator<PaymentDetailsDTO>() {
         @Override
@@ -279,5 +292,21 @@ public class PaymentDetailsDTO implements Parcelable {
 
     public void setFlMedicalLicenseNo(String flMedicalLicenseNo) {
         this.flMedicalLicenseNo = flMedicalLicenseNo;
+    }
+
+    public String getJobPaymentDate() {
+        return jobPaymentDate;
+    }
+
+    public void setJobPaymentDate(String jobPaymentDate) {
+        this.jobPaymentDate = jobPaymentDate;
+    }
+
+    public String getJobPaymentRefNo() {
+        return jobPaymentRefNo;
+    }
+
+    public void setJobPaymentRefNo(String jobPaymentRefNo) {
+        this.jobPaymentRefNo = jobPaymentRefNo;
     }
 }

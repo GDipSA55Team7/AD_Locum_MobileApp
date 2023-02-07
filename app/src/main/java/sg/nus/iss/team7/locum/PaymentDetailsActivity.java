@@ -181,7 +181,7 @@ public class PaymentDetailsActivity extends AppCompatActivity {
     private void createPDFDoc(Document document, PaymentDetailsDTO paymentDTO) throws ParseException {
 
         Double ratePerHr;
-        String totalTo2DP,ratePerHrTo2DP,subTotalTo2DP;
+        String totalTo2DP,ratePerHrTo2DP,subTotalTo2DP,paymentDate,paymentRefNo;
 
         String jobDurationString = DatetimeParser.getHoursBetween(paymentDTO.getJobStartDateTime(),paymentDTO.getJobEndDateTime());
         String removedExtraTxt = jobDurationString.substring(0,jobDurationString.indexOf(" "));
@@ -196,12 +196,22 @@ public class PaymentDetailsActivity extends AppCompatActivity {
         PdfPTable irdTable = new PdfPTable(2);
         irdTable.addCell(getIRDCell("Invoice No"));
         irdTable.addCell(getIRDCell("Invoice Date"));
-
-
+        if(paymentDTO.getJobPaymentDate() == null){
+            paymentDate = "N.A.";
+        }
+        else{
+            paymentDate = paymentDTO.getJobPaymentDate();
+        }
+        if(paymentDTO.getJobPaymentRefNo() == null){
+            paymentRefNo  = "N.A.";
+        }
+        else{
+            paymentRefNo  = paymentDTO.getJobPaymentRefNo();
+        }
 
         //hardcode need to fix
-        irdTable.addCell(getIRDCell("Payment Reference")); // pass invoice number
-        irdTable.addCell(getIRDCell("Payment Date")); // pass invoice date
+        irdTable.addCell(getIRDCell(paymentRefNo)); // pass invoice number
+        irdTable.addCell(getIRDCell(paymentDate)); // pass invoice date
 
         PdfPTable irhTable = new PdfPTable(3);
         irhTable.setWidthPercentage(100);
@@ -237,7 +247,7 @@ public class PaymentDetailsActivity extends AppCompatActivity {
         clinicContact.setIndentationLeft(20);
         Paragraph clinicAddress = new Paragraph("Address : " + paymentDTO.getClinicAddress());
         clinicAddress.setIndentationLeft(20);
-        Paragraph clinicPostalCode = new Paragraph("Medical License No. : " + paymentDTO.getFlMedicalLicenseNo());
+        Paragraph clinicPostalCode = new Paragraph("Postal Code. : " + paymentDTO.getClinicPostalCode());
         clinicPostalCode.setIndentationLeft(20);
         Paragraph clinicHCICode = new Paragraph("HCI Code : " + paymentDTO.getClinicHciCode());
         clinicHCICode.setIndentationLeft(20);

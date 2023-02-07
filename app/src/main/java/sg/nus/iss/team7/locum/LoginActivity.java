@@ -81,12 +81,14 @@ public class LoginActivity extends AppCompatActivity {
 
                     if (!usernameInput.isEmpty() && !passwordInput.isEmpty()) {
 
+                        Retrofit retrofit = RetroFitClient.getClient(RetroFitClient.BASE_URL);
+                        ApiMethods api = retrofit.create(ApiMethods.class);
+
                         //coming from notifications, loginuser must match notification target user
                         Intent intentNotificationUser = getIntent();
                         if (intentNotificationUser.hasExtra("notificationTargetUserName")) {
                             notificationTargetUserName = intentNotificationUser.getStringExtra("notificationTargetUserName");
                             if (notificationTargetUserName != null && !notificationTargetUserName.equals("")) {
-                                Log.e("Notification", "InputUserName must tally with notificationUserName : " + notificationTargetUserName);
                                 // loginusername do not match notificationtargetusername
                                 if (!usernameInput.equals(notificationTargetUserName)) {
                                     createDialogForLoginFailed("Notification not meant the username you tried to login with");
@@ -94,12 +96,11 @@ public class LoginActivity extends AppCompatActivity {
 
                                 //matches, proceed with login
                                 else {
-                                    Log.e("Try to login onclick notification", "loginusername matches notificationtarget");
+                                    Log.e("Try to login From Notification", "loginusername matches notificationtarget, logging in as  " + notificationTargetUserName);
                                     FreeLancer checkFLlogin = new FreeLancer();
                                     checkFLlogin.setUsername(usernameInput);
                                     checkFLlogin.setPassword(passwordInput);
-                                    Retrofit retrofit = RetroFitClient.getClient(RetroFitClient.BASE_URL);
-                                    ApiMethods api = retrofit.create(ApiMethods.class);
+
                                     Call<FreeLancer> loginFLCall = api.loginFreeLancer(checkFLlogin);
                                     loginFLCall.enqueue(new Callback<FreeLancer>() {
                                         @Override
@@ -107,22 +108,22 @@ public class LoginActivity extends AppCompatActivity {
                                             if (response.isSuccessful() && response.code() == 200) {
                                                 FreeLancer existingFL = response.body();
                                                 if (existingFL != null && existingFL.getName() != null) {
-                                                    Log.e("login after click on notification", "login success by server");
+                                                    Log.e("Try to login From Notification", "login success ");
                                                     Toast.makeText(getApplicationContext(), getResources().getString(R.string.LoginSuccess) + existingFL.getName(), Toast.LENGTH_SHORT).show();
+
                                                     //if login is successful, store in shared Pref
-                                                    //storeFLDetailsInSharedPref(existingFL);
                                                     SharedPrefUtility.storeFLDetailsInSharedPref(getApplicationContext(), existingFL);
 
                                                     //register device token with springboot server
                                                     FirebaseTokenUtils.sendTokenToServerOnLogin(existingFL.getUsername(),getApplicationContext());
 
+                                                    Log.e("Try to login From Notification", "route from LoginActivity to JobDetailsActivity and pass jobId");
                                                     //send jobid to jobDetailsActivity retrieve jobdetails
                                                     Integer jobId = intentNotificationUser.getIntExtra("itemId", 0);
                                                     Intent intent = new Intent(LoginActivity.this, JobDetailActivity.class);
                                                     intent.putExtra("itemId", jobId);
                                                     startActivity(intent);
                                                 }
-
                                             }
                                             else {
                                                 int statusCode = response.code();
@@ -146,14 +147,13 @@ public class LoginActivity extends AppCompatActivity {
                         }
                     }
 
-                    //standard login
+                    //standard login (not from notification)
                     else if (notificationTargetUserName.equals("")) {
-                        Log.e("standard login", "yes ");
+                        Log.e("standard login", "username : " + notificationTargetUserName);
                         FreeLancer checkFLlogin = new FreeLancer();
                         checkFLlogin.setUsername(usernameInput);
                         checkFLlogin.setPassword(passwordInput);
-                        Retrofit retrofit = RetroFitClient.getClient(RetroFitClient.BASE_URL);
-                        ApiMethods api = retrofit.create(ApiMethods.class);
+
                         Call<FreeLancer> loginFLCall = api.loginFreeLancer(checkFLlogin);
                         loginFLCall.enqueue(new Callback<FreeLancer>() {
                             @Override
@@ -162,8 +162,8 @@ public class LoginActivity extends AppCompatActivity {
                                     FreeLancer existingFL = response.body();
                                     if (existingFL != null && existingFL.getName() != null) {
                                         Toast.makeText(getApplicationContext(), getResources().getString(R.string.LoginSuccess) + existingFL.getName(), Toast.LENGTH_SHORT).show();
+
                                         //if login is successful, store in shared Pref
-                                        //storeFLDetailsInSharedPref(existingFL);
                                         SharedPrefUtility.storeFLDetailsInSharedPref(getApplicationContext(),existingFL);
 
                                         //register device token with springboot server
@@ -304,5 +304,4 @@ public class LoginActivity extends AppCompatActivity {
                 .setPositiveButton(getResources().getString(R.string.Ok), (dialog, id) -> dialog.dismiss())
                 .show();
     }
-
 }

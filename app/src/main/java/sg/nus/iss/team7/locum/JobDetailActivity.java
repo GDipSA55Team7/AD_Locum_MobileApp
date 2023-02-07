@@ -42,8 +42,10 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import sg.nus.iss.team7.locum.APICommunication.ApiMethods;
 import sg.nus.iss.team7.locum.APICommunication.RetroFitClient;
+import sg.nus.iss.team7.locum.Model.FreeLancer;
 import sg.nus.iss.team7.locum.Model.JobPost;
 import sg.nus.iss.team7.locum.Utilities.DatetimeParser;
+import sg.nus.iss.team7.locum.Utilities.SharedPrefUtility;
 import sg.nus.iss.team7.locum.ViewModel.ItemViewModel;
 
 public class JobDetailActivity extends AppCompatActivity {
@@ -78,10 +80,11 @@ public class JobDetailActivity extends AppCompatActivity {
         //If came from notifications,check login status
         if (intent.hasExtra("fromNotification")) {
             Log.e("from notification", "for username : " + intent.getStringExtra("notificationTargetUserName"));
-            // If not Logged In, redirectToLoginActivity
 
+            // If not Logged In, redirectToLoginActivity
             if (!isLoggedIn()) {
-                Log.e("from notification", "not logged, in so route to loginactivity");
+                Log.e("from notification", "not logged, route from jobDetailsActivity to loginActivity");
+                Log.e("from notification", "embed notificationTargetUser and  itemId/jobId, route from jobDetailsActivity to loginActivity");
                 // loginUserName must match notificationTargetUserName for login
                 String notficationForUsername = intent.getStringExtra("notificationTargetUserName");
                 int itemId = intent.getIntExtra("itemId", 0);
@@ -89,6 +92,8 @@ public class JobDetailActivity extends AppCompatActivity {
             }
             //If came from notification and already logged in,proceed to get job
             else {
+                FreeLancer loggedInFl = SharedPrefUtility.readFromSharedPref(getApplicationContext());
+                Log.e("from notification", "already logged in as :" + loggedInFl.getUsername() + " so proceed to fetch jobdetails");
                 int itemId = intent.getIntExtra("itemId", 0);
                 getJobById(itemId);
 
@@ -275,6 +280,7 @@ public class JobDetailActivity extends AppCompatActivity {
             statusText.setBackgroundTintList(getColorStateList(R.color.darker_grey));
         }
     }
+
     private boolean isLoggedIn() {
         SharedPreferences userDetailsSharedPref = getSharedPreferences(getResources().getString(R.string.Freelancer_Shared_Pref), MODE_PRIVATE);
         return userDetailsSharedPref.contains(getResources().getString(R.string.Freelancer_Details));

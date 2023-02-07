@@ -24,6 +24,13 @@ public class JobPost implements Parcelable {
     @SerializedName("endDateTime")
     @Expose
     private String endDateTime;
+    @SerializedName("paymentDate")
+    @Expose
+    private String paymentDate;
+    @SerializedName("paymentRefNo")
+    @Expose
+    private String paymentRefNo;
+
     @SerializedName("ratePerHour")
     @Expose
     private Double ratePerHour;
@@ -57,6 +64,16 @@ public class JobPost implements Parcelable {
         description = in.readString();
         startDateTime = in.readString();
         endDateTime = in.readString();
+        if (in.readByte() == 0) {
+            paymentDate = null;
+        } else {
+            paymentDate = in.readString();
+        }
+        if (in.readByte() == 0) {
+            paymentRefNo = null;
+        } else {
+            paymentRefNo = in.readString();
+        }
         if (in.readByte() == 0) {
             ratePerHour = null;
         } else {
@@ -94,6 +111,8 @@ public class JobPost implements Parcelable {
         dest.writeString(description);
         dest.writeString(startDateTime);
         dest.writeString(endDateTime);
+        dest.writeString(paymentDate);
+        dest.writeString(paymentRefNo);
         if (ratePerHour == null) {
             dest.writeByte((byte) 0);
         } else {
@@ -242,6 +261,21 @@ public class JobPost implements Parcelable {
         this.clinic = clinic;
     }
 
+    public String getPaymentDate() {
+        return paymentDate;
+    }
+
+    public void setPaymentDate(String paymentDate) {
+        this.paymentDate = paymentDate;
+    }
+
+    public String getPaymentRefNo() {
+        return paymentRefNo;
+    }
+
+    public void setPaymentRefNo(String paymentRefNo) {
+        this.paymentRefNo = paymentRefNo;
+    }
 
     @Override
     public String toString() {

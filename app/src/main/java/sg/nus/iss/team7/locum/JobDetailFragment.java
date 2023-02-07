@@ -188,6 +188,8 @@ public class JobDetailFragment extends Fragment {
                             jobPost.getDescription(),
                             jobPost.getStartDateTime(),
                             jobPost.getEndDateTime(),
+                            jobPost.getPaymentDate(),
+                            jobPost.getPaymentRefNo(),
                             jobPost.getClinic().getName(),
                             jobPost.getClinic().getAddress(),
                             jobPost.getClinic().getPostalCode(),
@@ -198,6 +200,8 @@ public class JobDetailFragment extends Fragment {
                             fl.getContact(),
                             fl.getMedicalLicenseNo()
                     );
+
+
                     Intent intent = new Intent(getActivity(),PaymentDetailsActivity.class);
                     intent.putExtra("paymentDetails", paymentDTO);
                     System.out.println("before send paymentDTO to paymentActivity"+ paymentDTO);
