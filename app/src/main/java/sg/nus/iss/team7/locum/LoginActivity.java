@@ -13,6 +13,7 @@ import android.text.Editable;
 import android.text.InputType;
 import android.text.TextWatcher;
 import android.text.method.PasswordTransformationMethod;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -34,12 +35,14 @@ import sg.nus.iss.team7.locum.APICommunication.ApiMethods;
 import sg.nus.iss.team7.locum.APICommunication.RetroFitClient;
 import sg.nus.iss.team7.locum.FireBase.FirebaseTokenUtils;
 import sg.nus.iss.team7.locum.Model.FreeLancer;
+import sg.nus.iss.team7.locum.Utilities.SharedPrefUtility;
 
 public class LoginActivity extends AppCompatActivity {
 
     EditText mUserName,mPassword;
     Button mLoginBtn,mRegisterBtn;
     Map<String,Boolean> mapFieldToValidStatus = new HashMap<>();
+    String notificationTargetUserName = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,87 +51,151 @@ public class LoginActivity extends AppCompatActivity {
 
         //If Logged In, direct to MainActivity
         if(isLoggedIn()) {
-
-           FirebaseTokenUtils.retrieveDeviceTokenAndSendToServer();
-
-            Intent intent = new Intent(LoginActivity.this,MainActivity.class);
-            startActivity(intent);
-            finish();
+            FreeLancer loggedInFL = SharedPrefUtility.readFromSharedPref(getApplicationContext());
+            FirebaseTokenUtils.sendTokenToServerOnLogin(loggedInFL.getUsername(),getApplicationContext());
+            launchMainActivity();
         }
 
         initElementsAndListeners();
 
         mLoginBtn.setOnClickListener(v -> {
-            String usernameInput = mUserName.getText().toString().trim();
-            String passwordInput = mPassword.getText().toString().trim();
+                    String usernameInput = mUserName.getText().toString().trim();
+                    String passwordInput = mPassword.getText().toString().trim();
 
-            //check if fields are empty
-            if(usernameInput.isEmpty()){
-                mUserName.setError(getResources().getString(R.string.UserName));
-            }
-            if(passwordInput.isEmpty()){
-                mPassword.setError(getResources().getString(R.string.Password));
-            }
-            if(usernameInput.isEmpty() || passwordInput.isEmpty()){
-                new AlertDialog.Builder(LoginActivity.this)
-                        .setIcon(R.drawable.ic_exit_application)
-                        .setTitle(getResources().getString(R.string.LoginFailed))
-                        .setMessage(getResources().getString(R.string.LoginFailedUserNameAndPasswordEmpty))
-                        .setCancelable(true)
-                        .setPositiveButton(getResources().getString(R.string.Ok), (dialog, id) -> dialog.dismiss())
-                        .show();
-            }
+                    //check if fields are empty
+                    if (usernameInput.isEmpty()) {
+                        mUserName.setError(getResources().getString(R.string.UserName));
+                    }
+                    if (passwordInput.isEmpty()) {
+                        mPassword.setError(getResources().getString(R.string.Password));
+                    }
+                    if (usernameInput.isEmpty() || passwordInput.isEmpty()) {
+                        new AlertDialog.Builder(LoginActivity.this)
+                                .setIcon(R.drawable.ic_exit_application)
+                                .setTitle(getResources().getString(R.string.LoginFailed))
+                                .setMessage(getResources().getString(R.string.LoginFailedUserNameAndPasswordEmpty))
+                                .setCancelable(true)
+                                .setPositiveButton(getResources().getString(R.string.Ok), (dialog, id) -> dialog.dismiss())
+                                .show();
+                    }
 
-            if(!usernameInput.isEmpty() && !passwordInput.isEmpty()){
-                Retrofit retrofit = RetroFitClient.getClient(RetroFitClient.BASE_URL);
-                ApiMethods api = retrofit.create(ApiMethods.class);
+                    if (!usernameInput.isEmpty() && !passwordInput.isEmpty()) {
 
-                FreeLancer checkFLlogin = new FreeLancer();
-                checkFLlogin.setUsername(usernameInput);
-                checkFLlogin.setPassword(passwordInput);
-                Call<FreeLancer> loginFLCall = api.loginFreeLancer(checkFLlogin);
-                loginFLCall.enqueue(new Callback<FreeLancer>() {
-                    @Override
-                    public void onResponse(@NonNull Call<FreeLancer> call, @NonNull Response<FreeLancer> response) {
-                        if(response.isSuccessful() && response.code() == 200){
-                            FreeLancer existingFL = response.body();
-                            if(existingFL != null && existingFL.getName() != null){
-                                Toast.makeText(getApplicationContext(),getResources().getString(R.string.LoginSuccess) + existingFL.getName(),Toast.LENGTH_SHORT).show();
-                                //if login is successful, store in shared Pref
-                                storeFLDetailsInSharedPref(existingFL);
+                        //coming from notifications, loginuser must match notification target user
+                        Intent intentNotificationUser = getIntent();
+                        if (intentNotificationUser.hasExtra("notificationTargetUserName")) {
+                            notificationTargetUserName = intentNotificationUser.getStringExtra("notificationTargetUserName");
+                            if (notificationTargetUserName != null && !notificationTargetUserName.equals("")) {
+                                Log.e("Notification", "InputUserName must tally with notificationUserName : " + notificationTargetUserName);
+                                // loginusername do not match notificationtargetusername
+                                if (!usernameInput.equals(notificationTargetUserName)) {
+                                    createDialogForLoginFailed("Notification not meant the username you tried to login with");
+                                }
 
-                                Intent intent = new Intent(LoginActivity.this,MainActivity.class);
-                                startActivity(intent);
-                                finish();
-                            }
+                                //matches, proceed with login
+                                else {
+                                    Log.e("Try to login onclick notification", "loginusername matches notificationtarget");
+                                    FreeLancer checkFLlogin = new FreeLancer();
+                                    checkFLlogin.setUsername(usernameInput);
+                                    checkFLlogin.setPassword(passwordInput);
+                                    Retrofit retrofit = RetroFitClient.getClient(RetroFitClient.BASE_URL);
+                                    ApiMethods api = retrofit.create(ApiMethods.class);
+                                    Call<FreeLancer> loginFLCall = api.loginFreeLancer(checkFLlogin);
+                                    loginFLCall.enqueue(new Callback<FreeLancer>() {
+                                        @Override
+                                        public void onResponse(@NonNull Call<FreeLancer> call, @NonNull Response<FreeLancer> response) {
+                                            if (response.isSuccessful() && response.code() == 200) {
+                                                FreeLancer existingFL = response.body();
+                                                if (existingFL != null && existingFL.getName() != null) {
+                                                    Log.e("login after click on notification", "login success by server");
+                                                    Toast.makeText(getApplicationContext(), getResources().getString(R.string.LoginSuccess) + existingFL.getName(), Toast.LENGTH_SHORT).show();
+                                                    //if login is successful, store in shared Pref
+                                                    //storeFLDetailsInSharedPref(existingFL);
+                                                    SharedPrefUtility.storeFLDetailsInSharedPref(getApplicationContext(), existingFL);
 
-                        }
-                        else {
-                            int statusCode = response.code();
-                            if (statusCode == 500) {
-                                createDialogForLoginFailed(getResources().getString(R.string.InternalServerError));
-                            }
-                            else if (statusCode == 404){
-                                createDialogForLoginFailed(getResources().getString(R.string.NoSuchRegisteredUser));
+                                                    //register device token with springboot server
+                                                    FirebaseTokenUtils.sendTokenToServerOnLogin(existingFL.getUsername(),getApplicationContext());
+
+                                                    //send jobid to jobDetailsActivity retrieve jobdetails
+                                                    Integer jobId = intentNotificationUser.getIntExtra("itemId", 0);
+                                                    Intent intent = new Intent(LoginActivity.this, JobDetailActivity.class);
+                                                    intent.putExtra("itemId", jobId);
+                                                    startActivity(intent);
+                                                }
+
+                                            }
+                                            else {
+                                                int statusCode = response.code();
+                                                if (statusCode == 500) {
+                                                    createDialogForLoginFailed(getResources().getString(R.string.InternalServerError));
+                                                } else if (statusCode == 404) {
+                                                    createDialogForLoginFailed(getResources().getString(R.string.NoSuchRegisteredUser));
+                                                }
+                                            }
+                                        }
+                                        @Override
+                                        public void onFailure(@NonNull Call<FreeLancer> call, @NonNull Throwable t) {
+                                            if (t instanceof IOException) {
+                                                createDialogForLoginFailed(getResources().getString(R.string.NetworkFailure));
+                                            } else {
+                                                createDialogForLoginFailed(getResources().getString(R.string.JSONParsingIssue));
+                                            }
+                                        }
+                                });
                             }
                         }
                     }
-                    @Override
-                    public void onFailure(@NonNull Call<FreeLancer> call, @NonNull Throwable t) {
-                        if (t instanceof IOException) {
-                            createDialogForLoginFailed(getResources().getString(R.string.NetworkFailure));
-                        }
-                        else {
-                            createDialogForLoginFailed(getResources().getString(R.string.JSONParsingIssue));
-                        }
-                    }
-                });
-            }
-        });
 
+                    //standard login
+                    else if (notificationTargetUserName.equals("")) {
+                        Log.e("standard login", "yes ");
+                        FreeLancer checkFLlogin = new FreeLancer();
+                        checkFLlogin.setUsername(usernameInput);
+                        checkFLlogin.setPassword(passwordInput);
+                        Retrofit retrofit = RetroFitClient.getClient(RetroFitClient.BASE_URL);
+                        ApiMethods api = retrofit.create(ApiMethods.class);
+                        Call<FreeLancer> loginFLCall = api.loginFreeLancer(checkFLlogin);
+                        loginFLCall.enqueue(new Callback<FreeLancer>() {
+                            @Override
+                            public void onResponse(@NonNull Call<FreeLancer> call, @NonNull Response<FreeLancer> response) {
+                                if (response.isSuccessful() && response.code() == 200) {
+                                    FreeLancer existingFL = response.body();
+                                    if (existingFL != null && existingFL.getName() != null) {
+                                        Toast.makeText(getApplicationContext(), getResources().getString(R.string.LoginSuccess) + existingFL.getName(), Toast.LENGTH_SHORT).show();
+                                        //if login is successful, store in shared Pref
+                                        //storeFLDetailsInSharedPref(existingFL);
+                                        SharedPrefUtility.storeFLDetailsInSharedPref(getApplicationContext(),existingFL);
+
+                                        //register device token with springboot server
+                                        FirebaseTokenUtils.sendTokenToServerOnLogin(existingFL.getUsername(),getApplicationContext());
+
+                                        //go to mainactivity for standardlogin
+                                        launchMainActivity();
+                                    }
+                                }
+                                else {
+                                    int statusCode = response.code();
+                                    if (statusCode == 500) {
+                                        createDialogForLoginFailed(getResources().getString(R.string.InternalServerError));
+                                    } else if (statusCode == 404) {
+                                        createDialogForLoginFailed(getResources().getString(R.string.NoSuchRegisteredUser));
+                                    }
+                                }
+                            }
+                            @Override
+                            public void onFailure(@NonNull Call<FreeLancer> call, @NonNull Throwable t) {
+                                if (t instanceof IOException) {
+                                    createDialogForLoginFailed(getResources().getString(R.string.NetworkFailure));
+                                } else {
+                                    createDialogForLoginFailed(getResources().getString(R.string.JSONParsingIssue));
+                                }
+                            }
+                        });
+                    }
+                }
+            });
         mRegisterBtn.setOnClickListener(v -> launchRegisterActivity());
     }
-
     // Comfirmation prompt for exiting app
     @Override
     public void onBackPressed() {
@@ -141,7 +208,13 @@ public class LoginActivity extends AppCompatActivity {
                 .setNegativeButton(getResources().getString(R.string.No), null)
                 .show();
     }
-
+    @Override
+    protected void onResume() {
+        if(isLoggedIn()){
+            launchMainActivity();
+        }
+        super.onResume();
+    }
     // Hide softkeyboard on element loses focus
     @Override
     public boolean dispatchTouchEvent(MotionEvent event) {
@@ -159,7 +232,6 @@ public class LoginActivity extends AppCompatActivity {
         }
         return super.dispatchTouchEvent( event );
     }
-
     private boolean isLoggedIn(){
         SharedPreferences userDetailsSharedPref = getSharedPreferences(getResources().getString(R.string.Freelancer_Shared_Pref),MODE_PRIVATE);
         return userDetailsSharedPref.contains(getResources().getString(R.string.Freelancer_Details));
@@ -176,6 +248,15 @@ public class LoginActivity extends AppCompatActivity {
 
         mLoginBtn = findViewById(R.id.login);
         mRegisterBtn = findViewById(R.id.register);
+    }
+    private void launchMainActivity(){
+        Intent intent = new Intent(LoginActivity.this,MainActivity.class);
+        startActivity(intent);
+        finish();
+    }
+    private void launchRegisterActivity(){
+        Intent intent = new Intent(LoginActivity.this,RegisterActivity.class);
+        startActivity(intent);
     }
     private boolean validateLength(EditText editTxt, String fieldName, int minChar, int maxChar){
 
@@ -214,17 +295,6 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
     }
-    private void launchRegisterActivity(){
-        Intent intent = new Intent(LoginActivity.this,RegisterActivity.class);
-        startActivity(intent);
-    }
-
-    private void storeFLDetailsInSharedPref(FreeLancer freeLancer){
-        Gson gson = new Gson();
-        String json = gson.toJson(freeLancer);
-        SharedPreferences sharedPreferences = getSharedPreferences(getResources().getString(R.string.Freelancer_Shared_Pref), MODE_PRIVATE);
-        sharedPreferences.edit().putString(getResources().getString(R.string.Freelancer_Details), json).apply();
-    }
     private void createDialogForLoginFailed(String msg){
         new AlertDialog.Builder(LoginActivity.this)
                 .setIcon(R.drawable.ic_exit_application)
@@ -234,4 +304,5 @@ public class LoginActivity extends AppCompatActivity {
                 .setPositiveButton(getResources().getString(R.string.Ok), (dialog, id) -> dialog.dismiss())
                 .show();
     }
+
 }

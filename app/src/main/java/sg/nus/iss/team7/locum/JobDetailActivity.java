@@ -10,11 +10,13 @@ import androidx.lifecycle.ViewModelProvider;
 import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -72,17 +74,42 @@ public class JobDetailActivity extends AppCompatActivity {
         setContentView(R.layout.activity_job_detail);
 
         Intent intent = getIntent();
-        int itemId = intent.getIntExtra("itemId", 0);
 
-        getJobById(itemId);
+        //If came from notifications,check login status
+        if (intent.hasExtra("fromNotification")) {
+            Log.e("from notification", "for username : " + intent.getStringExtra("notificationTargetUserName"));
+            // If not Logged In, redirectToLoginActivity
 
-        // listener to update status in UI if job is applied
-        viewModel = new ViewModelProvider(this).get(ItemViewModel.class);
-        viewModel.getSelectedItem().observe(this, jobPost -> {
-            setStatusBar();
-        });
+            if (!isLoggedIn()) {
+                Log.e("from notification", "not logged, in so route to loginactivity");
+                // loginUserName must match notificationTargetUserName for login
+                String notficationForUsername = intent.getStringExtra("notificationTargetUserName");
+                int itemId = intent.getIntExtra("itemId", 0);
+                launchLoginActivity(notficationForUsername, Integer.valueOf(itemId));
+            }
+            //If came from notification and already logged in,proceed to get job
+            else {
+                int itemId = intent.getIntExtra("itemId", 0);
+                getJobById(itemId);
 
+                // listener to update status in UI if job is applied
+                viewModel = new ViewModelProvider(this).get(ItemViewModel.class);
+                viewModel.getSelectedItem().observe(this, jobPost -> {
+                    setStatusBar();
+                });
+            }
+        }
+        //not from notification,proceed to fetch jobdetails
+        else {
+            int itemId = intent.getIntExtra("itemId", 0);
+            getJobById(itemId);
 
+            // listener to update status in UI if job is applied
+            viewModel = new ViewModelProvider(this).get(ItemViewModel.class);
+            viewModel.getSelectedItem().observe(this, jobPost -> {
+                setStatusBar();
+            });
+        }
     }
 
     public void getJobById(int id) {
@@ -114,13 +141,13 @@ public class JobDetailActivity extends AppCompatActivity {
                     setStatusBar();
 
                     String dateTextString = null;
-                    
+
                     try {
                         dateTextString = DatetimeParser.parseDate(jobPost.getStartDateTime()) + ", " + DatetimeParser.parseDay(jobPost.getStartDateTime());
                     } catch (ParseException e) {
                         e.printStackTrace();
                     }
-                    
+
                     if (dateTextString != null) {
                         dateText.setText(dateTextString);
                     }
@@ -248,6 +275,19 @@ public class JobDetailActivity extends AppCompatActivity {
             statusText.setBackgroundTintList(getColorStateList(R.color.darker_grey));
         }
     }
+    private boolean isLoggedIn() {
+        SharedPreferences userDetailsSharedPref = getSharedPreferences(getResources().getString(R.string.Freelancer_Shared_Pref), MODE_PRIVATE);
+        return userDetailsSharedPref.contains(getResources().getString(R.string.Freelancer_Details));
+    }
+
+    private void launchLoginActivity(String notficationForUsername, Integer itemId) {
+        Intent intent = new Intent(JobDetailActivity.this, LoginActivity.class);
+        intent.putExtra("notificationTargetUserName", notficationForUsername);
+        intent.putExtra("itemId", itemId);
+        startActivity(intent);
+        finish();
+    }
+
 
 
 }

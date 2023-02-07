@@ -36,7 +36,6 @@ import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
 
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.text.ParseException;
@@ -44,7 +43,6 @@ import java.text.ParseException;
 
 import sg.nus.iss.team7.locum.Model.PaymentDetailsDTO;
 import sg.nus.iss.team7.locum.Utilities.DatetimeParser;
-import sg.nus.iss.team7.locum.Utilities.PdfService;
 
 public class PaymentDetailsActivity extends AppCompatActivity {
 
@@ -130,7 +128,6 @@ public class PaymentDetailsActivity extends AppCompatActivity {
     }
 
     private void showFilePicker() {
-        System.out.println("inside file picker");
         Intent intent = new Intent(Intent.ACTION_CREATE_DOCUMENT);
         intent.addCategory(Intent.CATEGORY_OPENABLE);
         intent.setType("application/pdf");
@@ -199,7 +196,10 @@ public class PaymentDetailsActivity extends AppCompatActivity {
         PdfPTable irdTable = new PdfPTable(2);
         irdTable.addCell(getIRDCell("Invoice No"));
         irdTable.addCell(getIRDCell("Invoice Date"));
-        //hardcode
+
+
+
+        //hardcode need to fix
         irdTable.addCell(getIRDCell("Payment Reference")); // pass invoice number
         irdTable.addCell(getIRDCell("Payment Date")); // pass invoice date
 
@@ -382,20 +382,8 @@ public class PaymentDetailsActivity extends AppCompatActivity {
         summaryR.setColspan(3);
         billTable.addCell(summaryR);
 
-//            String companyInfo = "Clinic Name : " +  paymentDTO.getClinicName() + "\n"
-//                    + "Clinic Address : " + paymentDTO.getClinicAddress()   + "\n"
-//                    + "Clinic Contact : " + paymentDTO.getClinicContact()  + "\n"
-//                    + "Clinic PostalCode : " + paymentDTO.getClinicPostalCode()  + "\n"
-//                    + "Clinic HCI Code : " + paymentDTO.getClinicHciCode()  + "\n";
-
-//            PdfPTable describer = new PdfPTable(1);
-//            describer.setWidthPercentage(100);
-//            describer.addCell(getdescCell(" "));
-//            describer.addCell(getdescCell(companyInfo));
-
         document.open();
         System.out.println("doc opened..");
-        //document.add(image);
         try {
             document.add(irhTable);
             document.add(locumDetails);
@@ -465,15 +453,12 @@ public class PaymentDetailsActivity extends AppCompatActivity {
         PdfPCell cell = new PdfPCell(new Paragraph(text));
         cell.setHorizontalAlignment(Element.ALIGN_CENTER);
         cell.setPadding(5.0f);
-//        cell.setBorderWidthBottom(0);
-//        cell.setBorderWidthTop(0);
         return cell;
     }
 
     private PdfPCell getIRHCell(String text, int alignment) {
         FontSelector fs = new FontSelector();
         Font font = FontFactory.getFont(FontFactory.HELVETICA, 16);
-        /*	font.setColor(BaseColor.GRAY);*/
         fs.addFont(font);
         Phrase phrase = fs.process(text);
         PdfPCell cell = new PdfPCell(phrase);
@@ -487,7 +472,6 @@ public class PaymentDetailsActivity extends AppCompatActivity {
         PdfPCell cell = new PdfPCell(new Paragraph(text));
         cell.setHorizontalAlignment(Element.ALIGN_CENTER);
         cell.setPadding(5.0f);
-        //cell.setBorderColor(BaseColor.LIGHT_GRAY);
         cell.setBorderColor(BaseColor.BLACK);
         return cell;
     }
@@ -503,6 +487,4 @@ public class PaymentDetailsActivity extends AppCompatActivity {
         cell.setPadding(5.0f);
         return cell;
     }
-
-
 }

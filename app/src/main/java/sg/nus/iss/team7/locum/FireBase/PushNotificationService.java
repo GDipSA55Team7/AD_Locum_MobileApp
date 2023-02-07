@@ -39,30 +39,10 @@ import sg.nus.iss.team7.locum.R;
 
 public class PushNotificationService extends FirebaseMessagingService {
 
-    private static final String TAG = "PushNotificationService";
-
     @Override
     public void onCreate() {
         super.onCreate();
-        //Retrieve the current registration token
-//        FirebaseMessaging.getInstance().getToken()
-//                .addOnCompleteListener(new OnCompleteListener<String>() {
-//                    @Override
-//                    public void onComplete(@NonNull Task<String> task) {
-//                        if (!task.isSuccessful()) {
-//                            Log.e(TAG, "Fetching FCM registration token failed", task.getException());
-//                            return;
-//                        }
-//                        // Get new FCM registration token
-//                        String token = task.getResult();
-//                        // Log and toast
-//                        Log.e(TAG, "FCM registration token: " + token);
-//                        sendUpdateDeviceTokenToServer(token);
-//                    }
-//                });
     }
-
-
 
     // Data messages are handled here in onMessageReceived whether the app is in the foreground or background.
     //Notification messages are only received here in onMessageReceived when the app is in the foreground.
@@ -76,22 +56,21 @@ public class PushNotificationService extends FirebaseMessagingService {
             String title = data.get("title");
             String body = data.get("body");
             String jobid = data.get("jobid");
-            Log.e(TAG, "Data Message - Notification Title: " + title);
-            Log.e(TAG, "Data Message -Notification Body: " + body);
-            Log.e(TAG, "Data Message -Message data payload: " + remoteMessage.getData());
-            createNotification(data.get("click_action"),title,body,jobid);
+            String username = data.get("username");
+            String redirectToTargetActivity = data.get("click_action");
+            Log.e("Data Message Received -Message data payload: " , String.valueOf(remoteMessage.getData()));
+            createNotification(redirectToTargetActivity,title,body,jobid,username);
         }
-        else{
-            String title = remoteMessage.getNotification().getTitle();
-            String body = remoteMessage.getNotification().getBody();
-
-            Log.e("title from firebase",title);
-            Log.e("text from firebase",body);
-
-            createNotification("sg.nus.iss.team7.locum.JobDetailActivity",title,body,"0");
-        }
+//        else{
+//            String title = remoteMessage.getNotification().getTitle();
+//            String body = remoteMessage.getNotification().getBody();
+//
+//            Log.e("title from firebase",title);
+//            Log.e("text from firebase",body);
+//
+//            createNotification("sg.nus.iss.team7.locum.JobDetailActivity",title,body,"0");
+//        }
         super.onMessageReceived(remoteMessage);
-
     }
 
 //    /**
@@ -111,35 +90,16 @@ public class PushNotificationService extends FirebaseMessagingService {
 //        super.onNewToken(token);
 //    }
 
-    private void sendUpdateDeviceTokenToServer(String token) {
 
-        Retrofit firebaseAPI = RetroFitClient.getClient(RetroFitClient.BASE_URL);
-        ApiMethods api = firebaseAPI.create(ApiMethods.class);
-
-        Call<ResponseBody> sendDeviceTokenCall = api.sendDeviceToken(token);
-        sendDeviceTokenCall.enqueue(new Callback<ResponseBody>() {
-            @Override
-            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                if (response.isSuccessful()) {
-                    Log.e(TAG, "Token sent to server successfully");
-                } else {
-                    Log.e(TAG, "Failed to send token to server");
-                }
-            }
-            @Override
-            public void onFailure(Call<ResponseBody> call, Throwable t) {
-                Log.e(TAG, "Error sending token to server: " + t.getMessage());
-            }
-        });
-    }
-
-    private void createNotification(String activityToDirectTo,String title,String body,String jobid){
+    private void createNotification(String activityToDirectTo,String title,String body,String jobid,String username){
         final String CHANNEL_ID = "HEADS_UP_NOTIFICATION_ID";
 
         try {
             Class<?> cls = Class.forName(activityToDirectTo);
             Intent intent = new Intent(this, cls);
             intent.putExtra("itemId", Integer.valueOf( jobid));
+            intent.putExtra("notificationTargetUserName", username);
+            intent.putExtra("fromNotification", true);
             //intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             PendingIntent pendingIntent =PendingIntent.getActivity(this, jobid.hashCode(),intent,PendingIntent.FLAG_ONE_SHOT);
 

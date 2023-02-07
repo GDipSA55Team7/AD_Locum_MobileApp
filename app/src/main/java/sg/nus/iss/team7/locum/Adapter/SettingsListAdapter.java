@@ -13,8 +13,12 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.google.gson.Gson;
+
 import sg.nus.iss.team7.locum.EditProfileActivity;
+import sg.nus.iss.team7.locum.FireBase.FirebaseTokenUtils;
 import sg.nus.iss.team7.locum.LoginActivity;
+import sg.nus.iss.team7.locum.Model.FreeLancer;
 import sg.nus.iss.team7.locum.R;
 
 public class SettingsListAdapter extends ArrayAdapter<String> {
@@ -61,7 +65,9 @@ public class SettingsListAdapter extends ArrayAdapter<String> {
                             .setMessage(context.getResources().getString(R.string.LogOutPrompt))
                             .setCancelable(false)
                             .setPositiveButton(context.getResources().getString(R.string.Yes), (dialog, id) -> {
+                                FreeLancer loggedOutUser = readFromSharedPref();
                                 clearSharedPref();
+                                FirebaseTokenUtils.updateServerOnLogout(loggedOutUser.getUsername());
                                 returnToLoginActivity();
                             })
                             .setNegativeButton(context.getResources().getString(R.string.No), null)
@@ -78,5 +84,12 @@ public class SettingsListAdapter extends ArrayAdapter<String> {
     private void returnToLoginActivity(){
         Intent intent = new Intent(getContext(), LoginActivity.class);
         context.startActivity(intent);
+    }
+    private FreeLancer readFromSharedPref(){
+        Gson gson = new Gson();
+        SharedPreferences sharedPreferences = getContext().getSharedPreferences(getContext().getResources().getString(R.string.Freelancer_Shared_Pref), MODE_PRIVATE);
+        String json = sharedPreferences.getString(getContext().getResources().getString(R.string.Freelancer_Details), "");
+        FreeLancer fl = gson.fromJson(json, FreeLancer.class);
+        return fl;
     }
 }

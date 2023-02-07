@@ -36,6 +36,7 @@ import sg.nus.iss.team7.locum.APICommunication.ApiMethods;
 import sg.nus.iss.team7.locum.APICommunication.RetroFitClient;
 import sg.nus.iss.team7.locum.FireBase.FirebaseTokenUtils;
 import sg.nus.iss.team7.locum.Model.FreeLancer;
+import sg.nus.iss.team7.locum.Utilities.SharedPrefUtility;
 
 public class RegisterActivity extends AppCompatActivity {
 
@@ -78,14 +79,13 @@ public class RegisterActivity extends AppCompatActivity {
                                     Toast.makeText(getApplicationContext(), getResources().getString(R.string.RegisterSuccess) + returnedFL.getName(),Toast.LENGTH_SHORT).show();
 
                                     //if register is successful, store in shared Pref
-                                    storeFLDetailsInSharedPref(returnedFL);
+                                    SharedPrefUtility.storeFLDetailsInSharedPref(getApplicationContext(),returnedFL);
+                                    //storeFLDetailsInSharedPref(returnedFL);
 
-                                    FirebaseTokenUtils.retrieveDeviceTokenAndSendToServer();
+                                    FirebaseTokenUtils.sendTokenToServerOnLogin(returnedFL.getUsername(),getApplicationContext());
 
                                     //redirect
-                                    Intent intent = new Intent(RegisterActivity.this,MainActivity.class);
-                                    startActivity(intent);
-                                    finish();
+                                    launchMainActivity();
                                 }
                             }
                         }
@@ -144,7 +144,6 @@ public class RegisterActivity extends AppCompatActivity {
             clearAllFields(linearLayout);
         });
     }
-
 
     private void initListeners(){
 
@@ -295,13 +294,6 @@ public class RegisterActivity extends AppCompatActivity {
                 .show();
     }
 
-    private void storeFLDetailsInSharedPref(FreeLancer freeLancer){
-        Gson gson = new Gson();
-        String json = gson.toJson(freeLancer);
-        SharedPreferences sharedPreferences = getSharedPreferences(getResources().getString(R.string.Freelancer_Shared_Pref), MODE_PRIVATE);
-        sharedPreferences.edit().putString(getResources().getString(R.string.Freelancer_Details), json).apply();
-    }
-
     //hide softkeyboard on lose focus
     @Override
     public boolean dispatchTouchEvent(MotionEvent event) {
@@ -318,5 +310,11 @@ public class RegisterActivity extends AppCompatActivity {
             }
         }
         return super.dispatchTouchEvent( event );
+    }
+
+    private void launchMainActivity(){
+        Intent intent = new Intent(RegisterActivity.this,MainActivity.class);
+        startActivity(intent);
+        finish();
     }
 }
