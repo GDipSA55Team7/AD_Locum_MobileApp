@@ -27,7 +27,6 @@ public interface ApiMethods {
     @POST("/api/freelancer/update")
     Call<FreeLancer> updateFreeLancer(@Body FreeLancer fl);
 
-
     @GET("/api/jobs/allopen")
     Call<ArrayList<JobPost>> getAllOpenJobs();
 

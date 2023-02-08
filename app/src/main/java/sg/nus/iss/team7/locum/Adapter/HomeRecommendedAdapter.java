@@ -3,7 +3,10 @@ package sg.nus.iss.team7.locum.Adapter;
 import static android.view.View.GONE;
 import static androidx.core.content.ContextCompat.getColorStateList;
 
+import static java.security.AccessController.getContext;
+
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,6 +20,7 @@ import java.text.ParseException;
 import java.util.ArrayList;
 
 import sg.nus.iss.team7.locum.Interface.RecyclerViewInterface;
+import sg.nus.iss.team7.locum.JobDetailActivity;
 import sg.nus.iss.team7.locum.Model.JobPost;
 import sg.nus.iss.team7.locum.R;
 import sg.nus.iss.team7.locum.Utilities.DatetimeParser;
@@ -43,6 +47,7 @@ public class HomeRecommendedAdapter extends RecyclerView.Adapter<HomeRecommended
             clinic_name = (TextView) view.findViewById(R.id.clinic_name);
             address = (TextView) view.findViewById(R.id.address);
             similarity = (TextView) view.findViewById(R.id.similarity);
+            viewBtn = (Button) view.findViewById(R.id.viewBtn);
         }
     }
 
@@ -90,6 +95,15 @@ public class HomeRecommendedAdapter extends RecyclerView.Adapter<HomeRecommended
         holder.hour_rate.setText(hourRateStr);
         holder.clinic_name.setText(jobPost.getClinic().getName());
         holder.address.setText(addressStr);
+        holder.viewBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(context, JobDetailActivity.class);
+                int itemId = (int) jobPost.getId();
+                intent.putExtra("itemId", itemId);
+                context.startActivity(intent);
+            }
+        });
     }
 
     @Override
