@@ -35,6 +35,7 @@ import retrofit2.Retrofit;
 import sg.nus.iss.team7.locum.APICommunication.ApiMethods;
 import sg.nus.iss.team7.locum.APICommunication.RetroFitClient;
 import sg.nus.iss.team7.locum.Model.FreeLancer;
+import sg.nus.iss.team7.locum.Utilities.SharedPrefUtility;
 
 public class EditProfileActivity extends AppCompatActivity {
 
@@ -50,7 +51,8 @@ public class EditProfileActivity extends AppCompatActivity {
         initListeners();
 
         //update fields with existing profile data
-        FreeLancer fl = readFromSharedPref();
+        FreeLancer fl = SharedPrefUtility.readFromSharedPref(getApplicationContext());
+        //FreeLancer fl = readFromSharedPref();
         if(fl != null){
             displayExistingFreeLancerDetails(fl);
         }
@@ -93,7 +95,8 @@ public class EditProfileActivity extends AppCompatActivity {
                                 Toast.makeText(getApplicationContext(),"Update Success ",Toast.LENGTH_SHORT).show();
 
                                 //if register is successful, store in shared Pref
-                                storeFLDetailsInSharedPref(fl);
+                                SharedPrefUtility.storeFLDetailsInSharedPref(getApplicationContext(),fl);
+                                //storeFLDetailsInSharedPref(fl);
 
                                 //redirect
                                 Intent intent = new Intent(EditProfileActivity.this, MainActivity.class);

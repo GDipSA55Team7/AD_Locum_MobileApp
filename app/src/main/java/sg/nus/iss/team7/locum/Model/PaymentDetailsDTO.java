@@ -61,28 +61,6 @@ public class PaymentDetailsDTO implements Parcelable {
         Log.d("PaymentDetailsDTO", "Writing flMedicalLicenseNo: " + this.flMedicalLicenseNo);
     }
 
-
-//    public void readFromParcel(Parcel source) {
-//        this.jobId = (Integer) source.readValue(Integer.class.getClassLoader());
-//        this.jobRatePerHr = (Double) source.readValue(Double.class.getClassLoader());
-//        this.jobTotalRate = (Double) source.readValue(Double.class.getClassLoader());
-//        this.jobAdditionalFees = source.readString();
-//        this.jobDescription = source.readString();
-//        this.jobStartDateTime = source.readString();
-//        this.jobEndDateTime = source.readString();
-//
-//        this.clinicName = source.readString();
-//        this.clinicAddress = source.readString();
-//        this.clinicPostalCode = source.readString();
-//        this.clinicContact = source.readString();
-//        this.clinicHciCode = source.readString();
-//
-//        this.flName = source.readString();
-//        this.flEmail = source.readString();
-//        this.flContact = source.readString();
-//        this.flMedicalLicenseNo = source.readString();
-//    }
-
     public PaymentDetailsDTO(Integer jobId, Double jobRatePerHr, Double jobTotalRate, String jobAdditionalFees, String jobDescription,
                              String jobStartDateTime, String jobEndDateTime,String jobPaymentDate,String jobPaymentRefNo,
                              String clinicName, String clinicAddress, String clinicPostalCode, String clinicContact, String clinicHciCode,

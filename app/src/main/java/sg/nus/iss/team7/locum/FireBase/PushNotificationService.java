@@ -14,6 +14,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 import androidx.core.content.ContextCompat;
 
@@ -95,13 +96,32 @@ public class PushNotificationService extends FirebaseMessagingService {
         final String CHANNEL_ID = "HEADS_UP_NOTIFICATION_ID";
 
         try {
+
+            int jobHashCode = jobid.hashCode();
+
+
             Class<?> cls = Class.forName(activityToDirectTo);
             Intent intent = new Intent(this, cls);
             intent.putExtra("itemId", Integer.valueOf( jobid));
             intent.putExtra("notificationTargetUserName", username);
             intent.putExtra("fromNotification", true);
+            intent.putExtra("cancelNotificationOnSystemTray", jobHashCode);
             //intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            PendingIntent pendingIntent =PendingIntent.getActivity(this, jobid.hashCode(),intent,PendingIntent.FLAG_ONE_SHOT);
+
+
+
+            PendingIntent pendingIntent =PendingIntent.getActivity(this, jobHashCode,intent,PendingIntent.FLAG_ONE_SHOT);
+
+            NotificationCompat.Action viewAction = new NotificationCompat.Action.Builder(R.drawable.ic_notifications_status_change,"VIEW",pendingIntent)
+                    .build();
+
+
+            Intent dismissIntent = new Intent(this, DismissNotificationService.class);
+            dismissIntent.putExtra("notification_id", jobHashCode);
+            PendingIntent dismissPendingIntent = PendingIntent.getService(this, jobHashCode, dismissIntent, PendingIntent.FLAG_CANCEL_CURRENT);
+            NotificationCompat.Action DismissAction = new NotificationCompat.Action.Builder(R.drawable.ic_dismiss_notification,"DISMISS",dismissPendingIntent)
+                    .build();
+
 
             NotificationChannel channel =
                     new NotificationChannel(CHANNEL_ID, "Heads Up Notification", NotificationManager.IMPORTANCE_HIGH);
@@ -115,17 +135,27 @@ public class PushNotificationService extends FirebaseMessagingService {
             new Thread(() -> {
                 Bitmap largeIcon = BitmapFactory.decodeResource(getResources(), R.drawable.ic_notifications_status_change);
 
-                Notification.Builder notification = new Notification
-                        .Builder(this, CHANNEL_ID)
+//                Notification.Builder notification = new Notification
+//                        .Builder(this, CHANNEL_ID)
+//                        .setContentTitle(title)
+//                        .setContentText(body)
+//                        .setSmallIcon(R.drawable.ic_baseline_notifications)
+//                        .setLargeIcon(largeIcon)
+//                        .setColor(ContextCompat.getColor(this, R.color.light_grey))
+//                        .setAutoCancel(true)
+//                        .setContentIntent(pendingIntent);
+
+                NotificationCompat.Builder notification = new NotificationCompat.Builder(this, CHANNEL_ID)
                         .setContentTitle(title)
                         .setContentText(body)
                         .setSmallIcon(R.drawable.ic_baseline_notifications)
                         .setLargeIcon(largeIcon)
                         .setColor(ContextCompat.getColor(this, R.color.light_grey))
                         .setAutoCancel(true)
-                        .setContentIntent(pendingIntent);
+                        .addAction(viewAction)
+                        .addAction(DismissAction);
 
-                NotificationManagerCompat.from(this).notify(1, notification.build());
+                NotificationManagerCompat.from(this).notify(jobHashCode, notification.build());
             }).start();
 
         } catch (ClassNotFoundException e) {

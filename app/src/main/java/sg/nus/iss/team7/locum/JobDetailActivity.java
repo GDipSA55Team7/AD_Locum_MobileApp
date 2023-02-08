@@ -3,6 +3,7 @@ package sg.nus.iss.team7.locum;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
+import androidx.core.app.NotificationManagerCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
@@ -79,6 +80,9 @@ public class JobDetailActivity extends AppCompatActivity {
 
         //If came from notifications,check login status
         if (intent.hasExtra("fromNotification")) {
+            //cancel notification on systemtray
+            NotificationManagerCompat.from(this).cancel(intent.getIntExtra("cancelNotificationOnSystemTray",-1));
+
             Log.e("from notification", "for username : " + intent.getStringExtra("notificationTargetUserName"));
 
             // If not Logged In, redirectToLoginActivity
