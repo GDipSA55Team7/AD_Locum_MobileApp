@@ -42,7 +42,9 @@ public class JobPost implements Parcelable {
     @SerializedName("clinic")
     @Expose
     private Clinic clinic;
-
+    @SerializedName("similarityScore")
+    @Expose
+    private double similarity;
     @SerializedName("additionalFeeListString")
     @Expose
     private String additionalFeeListString;
@@ -53,6 +55,7 @@ public class JobPost implements Parcelable {
         } else {
             id = in.readInt();
         }
+        similarity = in.readDouble();
         title = in.readString();
         description = in.readString();
         startDateTime = in.readString();
@@ -90,6 +93,7 @@ public class JobPost implements Parcelable {
             dest.writeByte((byte) 1);
             dest.writeInt(id);
         }
+        dest.writeDouble(similarity);
         dest.writeString(title);
         dest.writeString(description);
         dest.writeString(startDateTime);
@@ -242,6 +246,13 @@ public class JobPost implements Parcelable {
         this.clinic = clinic;
     }
 
+    public double getSimilarity() {
+        return similarity;
+    }
+
+    public void setSimilarity(double similarity) {
+        this.similarity = similarity;
+    }
 
     @Override
     public String toString() {

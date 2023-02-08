@@ -49,23 +49,6 @@ public class ConfirmedJobChildFragment extends Fragment implements RecyclerViewI
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.child_fragment_confirmed, container, false);
 
-//        recyclerView = view.findViewById(R.id.myConfirmedJobRecyclerView);
-//
-//        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(view.getContext());
-//        recyclerView.setLayoutManager(linearLayoutManager);
-//
-//        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(recyclerView.getContext(),
-//                linearLayoutManager.getOrientation());
-//        recyclerView.addItemDecoration(dividerItemDecoration);
-//
-//        adapter = new MyConfirmedJobAdapter(recyclerView.getContext(), this);
-//
-//        recyclerView.setAdapter(adapter);
-//
-//        adapter.buttonSetOnclick(this::onButtonClick);
-//
-//        return view;
-
         // Shimmer load effect
         shimmerFrameLayout = view.findViewById(R.id.shimmer_view_container);
         shimmerFrameLayout.startShimmer();

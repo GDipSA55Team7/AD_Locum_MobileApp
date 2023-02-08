@@ -7,113 +7,112 @@
     tools:context=".HomeFragment"
     android:orientation="vertical">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/app_main_blue">
-
-        <androidx.appcompat.widget.SearchView
-            android:id="@+id/searchView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:layout_marginRight="8dp"
-            android:layout_marginLeft="8dp"
-            android:layout_marginBottom="8dp"
-            android:background="@drawable/search_view_bg"
-            app:queryBackground="@null"
-            app:iconifiedByDefault="false"
-            app:queryHint="Search" />
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:orientation="horizontal">
-
-
-        <TextView
-            android:id="@+id/recommendTxt"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:text="Recommend"
-            android:textColor="@color/app_main_blue"
-            android:textSize="20sp"
-            android:textStyle="bold"
-            android:padding="5dp"/>
-
-        <LinearLayout
-            android:id="@+id/filterLayout"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom"
-            android:orientation="horizontal"
-            android:paddingLeft="220dp"
-            android:paddingBottom="3dp">
-
-            <TextView
-                android:id="@+id/filterTxt"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="bottom"
-                android:text="Filter"
-                android:textSize="16sp" />
-
-            <ImageView
-                android:id="@+id/dropdown_menu"
-                android:layout_width="30dp"
-                android:layout_height="20dp"
-                android:layout_gravity="bottom"
-                android:src="@drawable/dropdown" />
-
-
-        </LinearLayout>
-
-
-
-    </LinearLayout>
-
-    <com.facebook.shimmer.ShimmerFrameLayout
-        android:id="@+id/shimmer_view_container"
+    <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
         android:layout_marginTop="5dp"
-        android:orientation="vertical"
-        app:shimmer_repeat_mode="reverse"
-        app:shimmer_duration="700">
+        android:text="Recommended Jobs"
+        android:layout_marginLeft="15dp"
+        android:textStyle="bold"
+        android:textSize="15sp"/>
 
-        <!-- Adding 7 rows of placeholders -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
-            <include layout="@layout/loading_job_search_list_item"/>
-            <include layout="@layout/loading_job_search_list_item"/>
-            <include layout="@layout/loading_job_search_list_item"/>
-
-            <include layout="@layout/loading_job_search_list_item" />
-
-            <include layout="@layout/loading_job_search_list_item"/>
-            <include layout="@layout/loading_job_search_list_item"/>
-            <include layout="@layout/loading_job_search_list_item"/>
-        </LinearLayout>
-
-    </com.facebook.shimmer.ShimmerFrameLayout>
-
-    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/swipeContainer"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp"
+        android:background="@drawable/rounded_home_bg"
+        android:backgroundTint="@color/medium_grey"
+        android:orientation="vertical">
+
+        <com.facebook.shimmer.ShimmerFrameLayout
+            android:id="@+id/shimmer_view_container"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="5dp"
+            android:orientation="vertical"
+            app:shimmer_repeat_mode="reverse"
+            app:shimmer_duration="700">
+
+            <!-- Adding 7 rows of placeholders -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+                <include layout="@layout/loading_job_search_list_item"/>
+            </LinearLayout>
+
+        </com.facebook.shimmer.ShimmerFrameLayout>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:padding="5dp"
+                android:id="@+id/recRecyclerView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" >
+            </androidx.recyclerview.widget.RecyclerView>
+
+        <TextView
+            android:id="@+id/empty_view1"
+            android:layout_width="match_parent"
+            android:layout_height="120dp"
+            android:gravity="center"
+            android:visibility="gone"
+            android:text="No recommended jobs" />
+
+    </LinearLayout>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:text="Next Job"
+        android:layout_marginLeft="15dp"
+        android:textStyle="bold"
+        android:textSize="15sp"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp"
+        android:background="@drawable/rounded_home_bg"
+        android:backgroundTint="@color/medium_grey"
+        android:orientation="vertical">
+
+        <com.facebook.shimmer.ShimmerFrameLayout
+            android:id="@+id/shimmer_view_container2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="5dp"
+            android:orientation="vertical"
+            app:shimmer_repeat_mode="reverse"
+            app:shimmer_duration="700">
+
+            <!-- Adding 7 rows of placeholders -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+                <include layout="@layout/loading_job_search_list_item"/>
+            </LinearLayout>
+
+        </com.facebook.shimmer.ShimmerFrameLayout>
 
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/jobRecyclerView"
+            android:padding="5dp"
+            android:id="@+id/nextRecyclerView"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" >
+            android:layout_height="wrap_content" >
         </androidx.recyclerview.widget.RecyclerView>
 
-    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+        <TextView
+            android:id="@+id/empty_view2"
+            android:layout_width="match_parent"
+            android:layout_height="120dp"
+            android:gravity="center"
+            android:visibility="gone"
+            android:text="No upcoming jobs" />
+
+    </LinearLayout>
 
 </LinearLayout>
