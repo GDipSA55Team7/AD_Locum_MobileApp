@@ -38,30 +38,30 @@ public class FirebaseTokenUtils {
                         String token = task.getResult();
                         Log.e("UserName: " , loginUserName);
                         Log.e("FCM registration token: " , token);
-                        sendDeviceTokenToServer(token,loginUserName);
+                        sendDeviceTokenAPICall(token,loginUserName);
                     }
                 });
     }
 
-    private static void sendDeviceTokenToServer(String token,String loginUserName ) {
-
-        System.out.println("Sending to username : " + loginUserName +" Token :" + token);
+    private static void sendDeviceTokenAPICall(String token,String loginUserName ) {
 
         Retrofit firebaseAPI = RetroFitClient.getClient(RetroFitClient.BASE_URL);
         ApiMethods api = firebaseAPI.create(ApiMethods.class);
 
         Call<ResponseBody> updateTokenOnLogin = api.onLoginUpdateServerToken(token,loginUserName);
-
         updateTokenOnLogin.enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                 if (response.isSuccessful()) {
                     Log.e(LogIn, "Token sent to server successfully");
-                } else {
-                    Log.e(LogIn, "Failed to send token to server");
+                }
+                else {
+                    int statusCode = response.code();
+                    if (statusCode == 500) {
+                        Log.e(LogIn,"Internal Server Error,failed to update token to server");
+                    }
                 }
             }
-
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
                 Log.e(LogIn, "Error sending token to server: " + t.getMessage());
@@ -84,7 +84,7 @@ public class FirebaseTokenUtils {
                 else {
                     int statusCode = response.code();
                     if (statusCode == 500) {
-                        Log.e(LogOut,"Internal Server Error,failed to update server");
+                        Log.e(LogOut,"Internal Server Error,failed to update server of logout");
                     }
                 }
             }
@@ -94,5 +94,4 @@ public class FirebaseTokenUtils {
             }
         });
     }
-
 }

@@ -14,16 +14,23 @@ public class SharedPrefUtility {
 
         Gson gson = new Gson();
         SharedPreferences sharedPreferences =  context.getSharedPreferences( context.getResources().getString(R.string.Freelancer_Shared_Pref), Context.MODE_PRIVATE);
-        String json = sharedPreferences.getString( context.getResources().getString(R.string.Freelancer_Details), "");
-        FreeLancer fl = gson.fromJson(json, FreeLancer.class);
-        return fl;
+        if(sharedPreferences.contains(context.getResources().getString(R.string.Freelancer_Details))){
+            String json = sharedPreferences.getString( context.getResources().getString(R.string.Freelancer_Details), "");
+            FreeLancer fl = gson.fromJson(json, FreeLancer.class);
+            return fl;
+        }
+        else{
+            return null;
+        }
     }
 
 
     public static void storeFLDetailsInSharedPref(Context context, FreeLancer freeLancer){
-        Gson gson = new Gson();
-        String json = gson.toJson(freeLancer);
-        SharedPreferences sharedPreferences = context.getSharedPreferences(context.getResources().getString(R.string.Freelancer_Shared_Pref), Context.MODE_PRIVATE);
-        sharedPreferences.edit().putString(context.getResources().getString(R.string.Freelancer_Details), json).apply();
+        if(freeLancer != null){
+            Gson gson = new Gson();
+            String json = gson.toJson(freeLancer);
+            SharedPreferences sharedPreferences = context.getSharedPreferences(context.getResources().getString(R.string.Freelancer_Shared_Pref), Context.MODE_PRIVATE);
+            sharedPreferences.edit().putString(context.getResources().getString(R.string.Freelancer_Details), json).apply();
+        }
     }
 }

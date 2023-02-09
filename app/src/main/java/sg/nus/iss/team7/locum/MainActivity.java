@@ -22,6 +22,7 @@ public class MainActivity extends AppCompatActivity {
     private JobSearchFragment jobSearchFragment = new JobSearchFragment();
     private MyJobsFragment myJobsFragment = new MyJobsFragment();
     private SettingsFragment settingsFragment = new SettingsFragment();
+    private JobMatchFragment jobMatchFragment = new JobMatchFragment();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,6 +61,9 @@ public class MainActivity extends AppCompatActivity {
                         return true;
                     case R.id.menuSettings:
                         getSupportFragmentManager().beginTransaction().setCustomAnimations(R.anim.fade_in, R.anim.fade_out).replace(R.id.container,settingsFragment).commit();
+                        return true;
+                    case R.id.menuRecommended:
+                        getSupportFragmentManager().beginTransaction().setCustomAnimations(R.anim.fade_in, R.anim.fade_out).replace(R.id.container,jobMatchFragment).commit();
                         return true;
                 }
 

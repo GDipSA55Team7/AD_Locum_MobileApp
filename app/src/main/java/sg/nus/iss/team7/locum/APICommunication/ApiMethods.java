@@ -25,7 +25,6 @@ public interface ApiMethods {
     @POST("/api/freelancer/update")
     Call<FreeLancer> updateFreeLancer(@Body FreeLancer fl);
 
-
     @GET("/api/jobs/allopen")
     Call<ArrayList<JobPost>> getAllOpenJobs();
 
@@ -50,5 +49,8 @@ public interface ApiMethods {
 
     @GET("/api/onlogout?")
     Call<ResponseBody> onLogoutUpdateServer(@Query("username") String username);
+
+    @GET("/api/jobs/recommended?")
+    Call<ArrayList<JobPost>> getJobRecommended(@Query("id") int userId);
 
 }

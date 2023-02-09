@@ -49,7 +49,9 @@ public class JobPost implements Parcelable {
     @SerializedName("clinic")
     @Expose
     private Clinic clinic;
-
+    @SerializedName("similarityScore")
+    @Expose
+    private double similarity;
     @SerializedName("additionalFeeListString")
     @Expose
     private String additionalFeeListString;
@@ -60,6 +62,7 @@ public class JobPost implements Parcelable {
         } else {
             id = in.readInt();
         }
+        similarity = in.readDouble();
         title = in.readString();
         description = in.readString();
         startDateTime = in.readString();
@@ -107,6 +110,7 @@ public class JobPost implements Parcelable {
             dest.writeByte((byte) 1);
             dest.writeInt(id);
         }
+        dest.writeDouble(similarity);
         dest.writeString(title);
         dest.writeString(description);
         dest.writeString(startDateTime);
@@ -276,20 +280,33 @@ public class JobPost implements Parcelable {
     public void setPaymentRefNo(String paymentRefNo) {
         this.paymentRefNo = paymentRefNo;
     }
+    public double getSimilarity() {
+        return similarity;
+    }
+
+    public void setSimilarity(double similarity) {
+        this.similarity = similarity;
+    }
+
 
     @Override
     public String toString() {
         return "JobPost{" +
                 "id=" + id +
                 ", description='" + description + '\'' +
+                ", title='" + title + '\'' +
                 ", startDateTime='" + startDateTime + '\'' +
                 ", endDateTime='" + endDateTime + '\'' +
+                ", paymentDate='" + paymentDate + '\'' +
+                ", paymentRefNo='" + paymentRefNo + '\'' +
                 ", ratePerHour=" + ratePerHour +
                 ", totalRate=" + totalRate +
                 ", status='" + status + '\'' +
                 ", clinicUser=" + clinicUser +
                 ", freelancer=" + freelancer +
                 ", clinic=" + clinic +
+                ", similarity=" + similarity +
+                ", additionalFeeListString='" + additionalFeeListString + '\'' +
                 '}';
     }
 }

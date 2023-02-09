@@ -7,8 +7,10 @@ import android.app.PendingIntent;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.media.AudioAttributes;
 import android.media.RingtoneManager;
+import android.os.Build;
 import android.provider.Settings;
 import android.util.Log;
 import android.widget.Toast;
@@ -83,68 +85,56 @@ public class PushNotificationService extends FirebaseMessagingService {
 //     * B) User uninstalls/reinstalls the app
 //     * C) User clears app data
 //     */
-//    @Override
-//    public void onNewToken(@NonNull String token) {
-//
-//        Log.e("Refreshed token: " ,token);
-//        sendUpdateDeviceTokenToServer(token);
-//        super.onNewToken(token);
-//    }
+    @Override
+    public void onNewToken(@NonNull String s) {
+        super.onNewToken(s);
+    }
 
 
     private void createNotification(String activityToDirectTo,String title,String body,String jobid,String username){
-        final String CHANNEL_ID = "HEADS_UP_NOTIFICATION_ID";
+        final String CHANNEL_ID = "CHANNEL_NOTIFICATION_ID";
+        final String CHANNEL = "CHANNEL_NOTIFICATION";
 
         try {
 
-            int jobHashCode = jobid.hashCode();
-
+            int notificationId = jobid.hashCode();
 
             Class<?> cls = Class.forName(activityToDirectTo);
             Intent intent = new Intent(this, cls);
-            intent.putExtra("itemId", Integer.valueOf( jobid));
+            intent.putExtra("itemId", Integer.valueOf(jobid));
             intent.putExtra("notificationTargetUserName", username);
             intent.putExtra("fromNotification", true);
-            intent.putExtra("cancelNotificationOnSystemTray", jobHashCode);
-            //intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            intent.putExtra("cancelNotificationOnSystemTray", notificationId);
 
+            //set the FLAG_ONE_SHOT flag to ensure that the user is only redirected to the job details activity once.
+            PendingIntent pendingIntent = PendingIntent.getActivity(this, notificationId, intent,PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_ONE_SHOT);
 
-
-            PendingIntent pendingIntent =PendingIntent.getActivity(this, jobHashCode,intent,PendingIntent.FLAG_ONE_SHOT);
-
-            NotificationCompat.Action viewAction = new NotificationCompat.Action.Builder(R.drawable.ic_notifications_status_change,"VIEW",pendingIntent)
+            NotificationCompat.Action viewAction = new NotificationCompat.Action.Builder(R.drawable.ic_notifications_status_change, "VIEW", pendingIntent)
                     .build();
 
-
+            // Start a service to cancel notification
             Intent dismissIntent = new Intent(this, DismissNotificationService.class);
-            dismissIntent.putExtra("notification_id", jobHashCode);
-            PendingIntent dismissPendingIntent = PendingIntent.getService(this, jobHashCode, dismissIntent, PendingIntent.FLAG_CANCEL_CURRENT);
-            NotificationCompat.Action DismissAction = new NotificationCompat.Action.Builder(R.drawable.ic_dismiss_notification,"DISMISS",dismissPendingIntent)
+            dismissIntent.putExtra("notification_id", notificationId);
+            //FLAG_UPDATE_CURRENT flag to cancel the notification. This way, the user can either view the job details or dismiss the notification, but not both
+            PendingIntent dismissPendingIntent = PendingIntent.getService(this, notificationId, dismissIntent, PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
+            NotificationCompat.Action DismissAction = new NotificationCompat.Action.Builder(R.drawable.ic_dismiss_notification, "DISMISS", dismissPendingIntent)
                     .build();
 
-
-            NotificationChannel channel =
-                    new NotificationChannel(CHANNEL_ID, "Heads Up Notification", NotificationManager.IMPORTANCE_HIGH);
+            //Creating a notification channel for  version >= Android 8.1 (Oreo)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            NotificationChannel channel = new NotificationChannel(CHANNEL_ID, CHANNEL, NotificationManager.IMPORTANCE_HIGH);
             channel.enableVibration(true);
-            channel.setVibrationPattern(
-                    new long[]{100, 200, 300, 400, 500, 400, 300, 200, 400});
+            channel.setVibrationPattern(new long[]{100, 200, 300, 400, 500, 400, 300, 200, 400});
             channel.setSound(Settings.System.DEFAULT_NOTIFICATION_URI, new AudioAttributes.Builder().build());
-
+            channel.enableLights(true);
+            channel.setLightColor(Color.RED);
             getSystemService(NotificationManager.class).createNotificationChannel(channel);
+         }
 
             new Thread(() -> {
                 Bitmap largeIcon = BitmapFactory.decodeResource(getResources(), R.drawable.ic_notifications_status_change);
 
-//                Notification.Builder notification = new Notification
-//                        .Builder(this, CHANNEL_ID)
-//                        .setContentTitle(title)
-//                        .setContentText(body)
-//                        .setSmallIcon(R.drawable.ic_baseline_notifications)
-//                        .setLargeIcon(largeIcon)
-//                        .setColor(ContextCompat.getColor(this, R.color.light_grey))
-//                        .setAutoCancel(true)
-//                        .setContentIntent(pendingIntent);
-
+                //Creating the notification object
                 NotificationCompat.Builder notification = new NotificationCompat.Builder(this, CHANNEL_ID)
                         .setContentTitle(title)
                         .setContentText(body)
@@ -155,7 +145,7 @@ public class PushNotificationService extends FirebaseMessagingService {
                         .addAction(viewAction)
                         .addAction(DismissAction);
 
-                NotificationManagerCompat.from(this).notify(jobHashCode, notification.build());
+                NotificationManagerCompat.from(this).notify(notificationId, notification.build());
             }).start();
 
         } catch (ClassNotFoundException e) {

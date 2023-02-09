@@ -12,18 +12,18 @@
         android:layout_height="wrap_content"
         android:background="@color/app_main_blue">
 
-    <androidx.appcompat.widget.SearchView
-        android:id="@+id/searchView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="4dp"
-        android:layout_marginRight="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginBottom="8dp"
-        android:background="@drawable/search_view_bg"
-        app:queryBackground="@null"
-        app:iconifiedByDefault="false"
-        app:queryHint="Search" />
+        <androidx.appcompat.widget.SearchView
+            android:id="@+id/searchView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:layout_marginRight="8dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginBottom="8dp"
+            android:background="@drawable/search_view_bg"
+            app:queryBackground="@null"
+            app:iconifiedByDefault="false"
+            app:queryHint="Search" />
     </LinearLayout>
 
     <com.facebook.shimmer.ShimmerFrameLayout
