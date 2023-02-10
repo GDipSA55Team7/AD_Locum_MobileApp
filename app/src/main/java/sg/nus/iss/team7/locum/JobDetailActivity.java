@@ -1,5 +1,7 @@
 package sg.nus.iss.team7.locum;
 
+import static androidx.core.content.ContextCompat.getColorStateList;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
@@ -279,7 +281,10 @@ public class JobDetailActivity extends AppCompatActivity {
         } else if(jobPost.getStatus().equalsIgnoreCase("CANCELLED")){
             statusText.setText("CANCELLED");
             statusText.setBackgroundTintList(getColorStateList(R.color.darker_grey));
-        }  if (jobPost.getStatus().startsWith("COMPLETED")) {
+        } else if(jobPost.getStatus().equalsIgnoreCase("COMPLETED_PENDING_PAYMENT")){
+            statusText.setText("PAYMENT");
+            statusText.setBackgroundTintList(getColorStateList(R.color.status_red));
+        } else if (jobPost.getStatus().startsWith("COMPLETED")) {
             statusText.setText("COMPLETED");
             statusText.setBackgroundTintList(getColorStateList(R.color.darker_grey));
         }

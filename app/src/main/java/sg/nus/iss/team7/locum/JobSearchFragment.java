@@ -120,9 +120,7 @@ public class JobSearchFragment extends Fragment implements RecyclerViewInterface
                 }
             }
 
-            if (filteredList.isEmpty()) {
-                Toast.makeText(getContext(), "No results found", Toast.LENGTH_SHORT).show();
-            } else {
+            if (!filteredList.isEmpty()) {
                 adapter.setMyList(filteredList);
             }
         }

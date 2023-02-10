@@ -2,6 +2,7 @@ package sg.nus.iss.team7.locum;
 
 import static android.content.Context.MODE_PRIVATE;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.InsetDrawable;
@@ -40,6 +41,7 @@ import sg.nus.iss.team7.locum.APICommunication.ApiMethods;
 import sg.nus.iss.team7.locum.APICommunication.RetroFitClient;
 import sg.nus.iss.team7.locum.Adapter.HomeRecommendedAdapter;
 import sg.nus.iss.team7.locum.Adapter.JobSearchAdapter;
+import sg.nus.iss.team7.locum.Interface.RecyclerViewInterface;
 import sg.nus.iss.team7.locum.Model.JobPost;
 import sg.nus.iss.team7.locum.Utilities.JsonFieldParser;
 
@@ -55,6 +57,7 @@ public class HomeFragment extends Fragment {
     private TextView emptyView2;
     private RecyclerView recyclerView;
     private RecyclerView recyclerViewNext;
+    private RecyclerViewInterface recyclerViewInterface;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
