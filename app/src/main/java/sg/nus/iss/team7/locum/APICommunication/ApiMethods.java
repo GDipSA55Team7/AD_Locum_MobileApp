@@ -18,8 +18,11 @@ public interface ApiMethods {
     @POST("/api/freelancer/register")
     Call<FreeLancer> registerFreeLancer(@Body FreeLancer fl);
 
+//    @POST("/api/freelancer/login")
+//    Call<FreeLancer> loginFreeLancer(@Body FreeLancer fl);
     @POST("/api/freelancer/login")
-    Call<FreeLancer> loginFreeLancer(@Body FreeLancer fl);
+    Call<FreeLancer> loginFreeLancerAndUpdateToken(@Body FreeLancer fl);
+
 
 
     @POST("/api/freelancer/update")

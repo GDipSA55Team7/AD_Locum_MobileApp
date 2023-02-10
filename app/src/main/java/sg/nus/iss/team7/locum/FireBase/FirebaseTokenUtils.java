@@ -24,6 +24,46 @@ public class FirebaseTokenUtils {
     private static final String LogOut = "Logout Update ";
 
 
+//    public static String getDeviceToken(Context context) {
+//        final String[] deviceToken = {""};
+//        FirebaseApp.initializeApp(context);
+//        FirebaseMessaging.getInstance().getToken()
+//                .addOnCompleteListener(new OnCompleteListener<String>() {
+//                    @Override
+//                    public void onComplete(@NonNull Task<String> task) {
+//                        if (!task.isSuccessful()) {
+//                            Log.e("Fetching FCM registration token failed", String.valueOf(task.getException()));
+//                        }
+//                        // Get new FCM registration token
+//                        String token = task.getResult();
+//                      //  Log.e("UserName: " , loginUserName);
+//                        Log.e("FCM registration token: " , token);
+//                        deviceToken[0] = token;
+//                    }
+//                });
+//        return deviceToken[0];
+//    }
+
+    public static void getDeviceToken(Context context, OnTokenReceivedListener listener) {
+        FirebaseApp.initializeApp(context);
+        FirebaseMessaging.getInstance().getToken()
+                .addOnCompleteListener(new OnCompleteListener<String>() {
+                    @Override
+                    public void onComplete(@NonNull Task<String> task) {
+                        if (!task.isSuccessful()) {
+                            Log.e("Fetching FCM registration token failed", String.valueOf(task.getException()));
+                        }
+                        // Get new FCM registration token
+                        String token = task.getResult();
+                        Log.e("FCM registration token: " , token);
+                        listener.onTokenReceived(token);
+                    }
+                });
+    }
+    public interface OnTokenReceivedListener {
+        void onTokenReceived(String token);
+    }
+
     public static void sendTokenToServerOnLogin(String loginUserName, Context context) {
         FirebaseApp.initializeApp(context);
         FirebaseMessaging.getInstance().getToken()
@@ -42,6 +82,8 @@ public class FirebaseTokenUtils {
                     }
                 });
     }
+
+
 
     private static void sendDeviceTokenAPICall(String token,String loginUserName ) {
 

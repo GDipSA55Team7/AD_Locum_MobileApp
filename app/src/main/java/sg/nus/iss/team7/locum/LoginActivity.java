@@ -50,178 +50,237 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
+        Retrofit retrofit = RetroFitClient.getClient(RetroFitClient.BASE_URL);
+        ApiMethods api = retrofit.create(ApiMethods.class);
+
         //If Logged In, direct to MainActivity
         if(isLoggedIn()) {
             FreeLancer loggedInFL = SharedPrefUtility.readFromSharedPref(getApplicationContext());
-            FirebaseTokenUtils.sendTokenToServerOnLogin(loggedInFL.getUsername(),getApplicationContext());
-            launchMainActivity();
+          //  FirebaseTokenUtils.sendTokenToServerOnLogin(loggedInFL.getUsername(),getApplicationContext());
+
+            FirebaseTokenUtils.getDeviceToken(getApplicationContext(), new FirebaseTokenUtils.OnTokenReceivedListener() {
+                @Override
+                public void onTokenReceived(String token) {
+                    loggedInFL.setDeviceToken(token);
+
+                    Log.e("checkFL", loggedInFL.getDeviceToken());
+                    Call<FreeLancer> loginFLCall = api.loginFreeLancerAndUpdateToken(loggedInFL);
+//                        Call<FreeLancer> loginFLCall = api.loginFreeLancer(checkFLlogin);
+                    loginFLCall.enqueue(new Callback<FreeLancer>() {
+                        @Override
+                        public void onResponse(@NonNull Call<FreeLancer> call, @NonNull Response<FreeLancer> response) {
+                            if (response.isSuccessful() && response.code() == 200) {
+                                FreeLancer existingFL = response.body();
+                                if (existingFL != null && existingFL.getName() != null) {
+                                    Toast.makeText(getApplicationContext(), getResources().getString(R.string.LoginSuccess) + existingFL.getName(), Toast.LENGTH_SHORT).show();
+                                    Log.e("standard login", loggedInFL.getUsername() + " login successful , token registered : " +  token);
+
+                                    launchMainActivity();
+
+                                }
+                            } else {
+                                int statusCode = response.code();
+                                if (statusCode == 500) {
+                                    createDialogForLoginFailed(getResources().getString(R.string.InternalServerError));
+                                } else if (statusCode == 404) {
+                                    createDialogForLoginFailed(getResources().getString(R.string.NoSuchRegisteredUser));
+                                }
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(@NonNull Call<FreeLancer> call, @NonNull Throwable t) {
+                            if (t instanceof IOException) {
+                                createDialogForLoginFailed(getResources().getString(R.string.NetworkFailure));
+                            } else {
+                                createDialogForLoginFailed(getResources().getString(R.string.JSONParsingIssue));
+                            }
+                        }
+                    });
+                }
+            });
+
         }
         else{
             initElementsAndListeners();
             mLoginBtn.setOnClickListener(v -> {
-                String usernameInput = mUserName.getText().toString().trim();
-                String passwordInput = mPassword.getText().toString().trim();
+                        String usernameInput = mUserName.getText().toString().trim();
+                        String passwordInput = mPassword.getText().toString().trim();
 
-                //check if fields are empty
-                if (usernameInput.isEmpty()) {
-                    mUserName.setError(getResources().getString(R.string.UserName));
-                }
-                if (passwordInput.isEmpty()) {
-                    mPassword.setError(getResources().getString(R.string.Password));
-                }
-                if (usernameInput.isEmpty() || passwordInput.isEmpty()) {
-                    new AlertDialog.Builder(LoginActivity.this)
-                            .setIcon(R.drawable.ic_exit_application)
-                            .setTitle(getResources().getString(R.string.LoginFailed))
-                            .setMessage(getResources().getString(R.string.LoginFailedUserNameAndPasswordEmpty))
-                            .setCancelable(true)
-                            .setPositiveButton(getResources().getString(R.string.Ok), (dialog, id) -> dialog.dismiss())
-                            .show();
-                }
+                        //check if fields are empty
+                        if (usernameInput.isEmpty()) {
+                            mUserName.setError(getResources().getString(R.string.UserName));
+                        }
+                        if (passwordInput.isEmpty()) {
+                            mPassword.setError(getResources().getString(R.string.Password));
+                        }
+                        if (usernameInput.isEmpty() || passwordInput.isEmpty()) {
+                            new AlertDialog.Builder(LoginActivity.this)
+                                    .setIcon(R.drawable.ic_exit_application)
+                                    .setTitle(getResources().getString(R.string.LoginFailed))
+                                    .setMessage(getResources().getString(R.string.LoginFailedUserNameAndPasswordEmpty))
+                                    .setCancelable(true)
+                                    .setPositiveButton(getResources().getString(R.string.Ok), (dialog, id) -> dialog.dismiss())
+                                    .show();
+                        }
 
-                if (!usernameInput.isEmpty() && !passwordInput.isEmpty()) {
+                        if (!usernameInput.isEmpty() && !passwordInput.isEmpty()) {
 
-                    Retrofit retrofit = RetroFitClient.getClient(RetroFitClient.BASE_URL);
-                    ApiMethods api = retrofit.create(ApiMethods.class);
+//                            Retrofit retrofit = RetroFitClient.getClient(RetroFitClient.BASE_URL);
+//                            ApiMethods api = retrofit.create(ApiMethods.class);
 
-                    //coming from notifications, loginuser must match notification target user
-                    Intent intentNotificationUser = getIntent();
-                    if (intentNotificationUser.hasExtra("notificationTargetUserName")) {
-                        notificationTargetUserName = intentNotificationUser.getStringExtra("notificationTargetUserName");
-                        if (notificationTargetUserName != null && !notificationTargetUserName.equals("")) {
-                            // loginusername do not match notificationtargetusername
-                            if (!usernameInput.equals(notificationTargetUserName)) {
-                                createDialogForLoginFailed("Notification not meant the username you tried to login with");
+                            //Coming from notifications, loginuser must match notification target user
+                            Intent intentNotificationUser = getIntent();
+                            if (intentNotificationUser.hasExtra("notificationTargetUserName")) {
+                                notificationTargetUserName = intentNotificationUser.getStringExtra("notificationTargetUserName");
+                                if (notificationTargetUserName != null && !notificationTargetUserName.equals("")) {
+                                    // loginusername do not match notificationtargetusername
+                                    if (!usernameInput.equals(notificationTargetUserName)) {
+                                        createDialogForLoginFailed("Notification not meant the username you tried to login with");
+                                    }
+
+                                    //matches, proceed with login
+                                    else {
+                                        Log.e("Try to login From Notification", "loginusername matches notificationtarget, logging in as  " + notificationTargetUserName);
+                                        FreeLancer checkFLlogin = new FreeLancer();
+                                        checkFLlogin.setUsername(usernameInput);
+                                        checkFLlogin.setPassword(passwordInput);
+                                   //     String tokenToBeUpdatedToServer = FirebaseTokenUtils.getDeviceToken(getApplicationContext());
+                                   //     checkFLlogin.setDeviceToken(tokenToBeUpdatedToServer);
+
+                                        Call<FreeLancer> loginFLCall = api.loginFreeLancerAndUpdateToken(checkFLlogin);
+                                        // Call<FreeLancer> loginFLCall = api.loginFreeLancer(checkFLlogin);
+                                        loginFLCall.enqueue(new Callback<FreeLancer>() {
+                                            @Override
+                                            public void onResponse(@NonNull Call<FreeLancer> call, @NonNull Response<FreeLancer> response) {
+                                                if (response.isSuccessful() && response.code() == 200) {
+                                                    FreeLancer existingFL = response.body();
+                                                    if (existingFL != null && existingFL.getName() != null) {
+                                                        Log.e("Try to login From Notification", "login success ");
+                                                        Toast.makeText(getApplicationContext(), getResources().getString(R.string.LoginSuccess) + existingFL.getName(), Toast.LENGTH_SHORT).show();
+
+                                                        //if login is successful, store in shared Pref
+                                                        SharedPrefUtility.storeFLDetailsInSharedPref(getApplicationContext(), existingFL);
+
+                                                        //register device token with springboot server
+                                                        FirebaseTokenUtils.sendTokenToServerOnLogin(existingFL.getUsername(), getApplicationContext());
+
+                                                        Log.e("Try to login From Notification", "route from LoginActivity to JobDetailsActivity and pass jobId");
+                                                        //send jobid to jobDetailsActivity retrieve jobdetails
+                                                        Integer jobId = intentNotificationUser.getIntExtra("itemId", 0);
+                                                        Intent intent = new Intent(LoginActivity.this, JobDetailActivity.class);
+                                                        intent.putExtra("itemId", jobId);
+                                                        startActivity(intent);
+                                                    }
+                                                } else {
+                                                    int statusCode = response.code();
+                                                    if (statusCode == 500) {
+                                                        createDialogForLoginFailed(getResources().getString(R.string.InternalServerError));
+                                                    } else if (statusCode == 404) {
+                                                        createDialogForLoginFailed(getResources().getString(R.string.NoSuchRegisteredUser));
+                                                    }
+                                                }
+                                            }
+
+                                            @Override
+                                            public void onFailure(@NonNull Call<FreeLancer> call, @NonNull Throwable t) {
+                                                if (t instanceof IOException) {
+                                                    createDialogForLoginFailed(getResources().getString(R.string.NetworkFailure));
+                                                } else {
+                                                    createDialogForLoginFailed(getResources().getString(R.string.JSONParsingIssue));
+                                                }
+                                            }
+                                        });
+                                    }
+                                }
                             }
 
-                            //matches, proceed with login
-                            else {
-                                Log.e("Try to login From Notification", "loginusername matches notificationtarget, logging in as  " + notificationTargetUserName);
+                            //standard login (not from notification)
+                            else if (notificationTargetUserName.equals("")) {
+                                Log.e("standard login", "username : " + usernameInput);
                                 FreeLancer checkFLlogin = new FreeLancer();
                                 checkFLlogin.setUsername(usernameInput);
                                 checkFLlogin.setPassword(passwordInput);
 
-                                Call<FreeLancer> loginFLCall = api.loginFreeLancer(checkFLlogin);
-                                loginFLCall.enqueue(new Callback<FreeLancer>() {
+
+                                FirebaseTokenUtils.getDeviceToken(getApplicationContext(), new FirebaseTokenUtils.OnTokenReceivedListener() {
                                     @Override
-                                    public void onResponse(@NonNull Call<FreeLancer> call, @NonNull Response<FreeLancer> response) {
-                                        if (response.isSuccessful() && response.code() == 200) {
-                                            FreeLancer existingFL = response.body();
-                                            if (existingFL != null && existingFL.getName() != null) {
-                                                Log.e("Try to login From Notification", "login success ");
-                                                Toast.makeText(getApplicationContext(), getResources().getString(R.string.LoginSuccess) + existingFL.getName(), Toast.LENGTH_SHORT).show();
+                                    public void onTokenReceived(String token) {
+                                        checkFLlogin.setDeviceToken(token);
 
-                                                //if login is successful, store in shared Pref
-                                                SharedPrefUtility.storeFLDetailsInSharedPref(getApplicationContext(), existingFL);
+                                        Log.e("checkFL", checkFLlogin.getDeviceToken());
+                                        Call<FreeLancer> loginFLCall = api.loginFreeLancerAndUpdateToken(checkFLlogin);
+//                        Call<FreeLancer> loginFLCall = api.loginFreeLancer(checkFLlogin);
+                                        loginFLCall.enqueue(new Callback<FreeLancer>() {
+                                            @Override
+                                            public void onResponse(@NonNull Call<FreeLancer> call, @NonNull Response<FreeLancer> response) {
+                                                if (response.isSuccessful() && response.code() == 200) {
+                                                    FreeLancer existingFL = response.body();
+                                                    if (existingFL != null && existingFL.getName() != null) {
+                                                        Toast.makeText(getApplicationContext(), getResources().getString(R.string.LoginSuccess) + existingFL.getName(), Toast.LENGTH_SHORT).show();
+                                                        Log.e("standard login", usernameInput + "login successful , token registered : " +  token);
 
-                                                //register device token with springboot server
-                                                FirebaseTokenUtils.sendTokenToServerOnLogin(existingFL.getUsername(),getApplicationContext());
+                                                        //if login is successful, store in shared Pref
+                                                        SharedPrefUtility.storeFLDetailsInSharedPref(getApplicationContext(), existingFL);
 
-                                                Log.e("Try to login From Notification", "route from LoginActivity to JobDetailsActivity and pass jobId");
-                                                //send jobid to jobDetailsActivity retrieve jobdetails
-                                                Integer jobId = intentNotificationUser.getIntExtra("itemId", 0);
-                                                Intent intent = new Intent(LoginActivity.this, JobDetailActivity.class);
-                                                intent.putExtra("itemId", jobId);
-                                                startActivity(intent);
+                                                        //register device token with springboot server
+                                                        FirebaseTokenUtils.sendTokenToServerOnLogin(existingFL.getUsername(), getApplicationContext());
+
+                                                        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(getApplicationContext());
+
+                                                        //by default , Pixel 4 XL API 29 normal notification permissions are enabled
+                                                        if (notificationManager.areNotificationsEnabled()) {
+                                                            launchMainActivity();
+                                                        }
+                                                        //depends on phone S20 requires manual setting of permissions
+                                                        else {
+                                                            // Notifications are disabled, prompt the user to enable them
+                                                            AlertDialog.Builder builder = new AlertDialog.Builder(LoginActivity.this);
+                                                            builder.setMessage(
+                                                                            "The \"show notification\" is a normal permission so there is no need to request for permission at runtime, " +
+                                                                                    "Android will automatically request for runtime permission when creating notifications.However," +
+                                                                                    "for some reason, the first push notification will not be displayed when using Android's permission prompt." +
+                                                                                    "As such, User has to set \"show notification\" permission manually in app settings. "
+                                                                    )
+                                                                    .setCancelable(false)
+                                                                    .setPositiveButton("Go to Settings", new DialogInterface.OnClickListener() {
+                                                                        public void onClick(DialogInterface dialog, int id) {
+                                                                            Intent intent = new Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS);
+                                                                            intent.putExtra(Settings.EXTRA_APP_PACKAGE, getPackageName());
+                                                                            startActivity(intent);
+                                                                        }
+                                                                    });
+                                                            AlertDialog alert = builder.create();
+                                                            alert.show();
+                                                        }
+
+                                                        //go to mainactivity for standardlogin
+                                                        // launchMainActivity();
+                                                    }
+                                                } else {
+                                                    int statusCode = response.code();
+                                                    if (statusCode == 500) {
+                                                        createDialogForLoginFailed(getResources().getString(R.string.InternalServerError));
+                                                    } else if (statusCode == 404) {
+                                                        createDialogForLoginFailed(getResources().getString(R.string.NoSuchRegisteredUser));
+                                                    }
+                                                }
                                             }
-                                        }
-                                        else {
-                                            int statusCode = response.code();
-                                            if (statusCode == 500) {
-                                                createDialogForLoginFailed(getResources().getString(R.string.InternalServerError));
-                                            } else if (statusCode == 404) {
-                                                createDialogForLoginFailed(getResources().getString(R.string.NoSuchRegisteredUser));
+
+                                            @Override
+                                            public void onFailure(@NonNull Call<FreeLancer> call, @NonNull Throwable t) {
+                                                if (t instanceof IOException) {
+                                                    createDialogForLoginFailed(getResources().getString(R.string.NetworkFailure));
+                                                } else {
+                                                    createDialogForLoginFailed(getResources().getString(R.string.JSONParsingIssue));
+                                                }
                                             }
-                                        }
-                                    }
-                                    @Override
-                                    public void onFailure(@NonNull Call<FreeLancer> call, @NonNull Throwable t) {
-                                        if (t instanceof IOException) {
-                                            createDialogForLoginFailed(getResources().getString(R.string.NetworkFailure));
-                                        } else {
-                                            createDialogForLoginFailed(getResources().getString(R.string.JSONParsingIssue));
-                                        }
+                                        });
                                     }
                                 });
                             }
                         }
-                    }
-
-                    //standard login (not from notification)
-                    else if (notificationTargetUserName.equals("")) {
-                        Log.e("standard login", "username : " + notificationTargetUserName);
-                        FreeLancer checkFLlogin = new FreeLancer();
-                        checkFLlogin.setUsername(usernameInput);
-                        checkFLlogin.setPassword(passwordInput);
-
-                        Call<FreeLancer> loginFLCall = api.loginFreeLancer(checkFLlogin);
-                        loginFLCall.enqueue(new Callback<FreeLancer>() {
-                            @Override
-                            public void onResponse(@NonNull Call<FreeLancer> call, @NonNull Response<FreeLancer> response) {
-                                if (response.isSuccessful() && response.code() == 200) {
-                                    FreeLancer existingFL = response.body();
-                                    if (existingFL != null && existingFL.getName() != null) {
-                                        Toast.makeText(getApplicationContext(), getResources().getString(R.string.LoginSuccess) + existingFL.getName(), Toast.LENGTH_SHORT).show();
-
-                                        //if login is successful, store in shared Pref
-                                        SharedPrefUtility.storeFLDetailsInSharedPref(getApplicationContext(),existingFL);
-
-                                        //register device token with springboot server
-                                        FirebaseTokenUtils.sendTokenToServerOnLogin(existingFL.getUsername(),getApplicationContext());
-
-                                        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(getApplicationContext());
-
-                                        //by default , Pixel 4 XL API 29 normal notification permissions are enabled
-                                        if (notificationManager.areNotificationsEnabled()) {
-                                            launchMainActivity();
-                                        }
-                                        //depends on phone S20 requires manual setting of permissions
-                                        else {
-                                            // Notifications are disabled, prompt the user to enable them
-                                            AlertDialog.Builder builder = new AlertDialog.Builder(LoginActivity.this);
-                                            builder.setMessage(
-                                                                    "The \"show notification\" is a normal permission so there is no need to request for permission at runtime, " +
-                                                            "Android will automatically request for runtime permission when creating notifications.However," +
-                                                            "for some reason, the first push notification will not be displayed when using Android's permission prompt." +
-                                                                            "As such, User has to set \"show notification\" permission manually in app settings. "
-                                                            )
-                                                    .setCancelable(false)
-                                                    .setPositiveButton("Go to Settings", new DialogInterface.OnClickListener() {
-                                                        public void onClick(DialogInterface dialog, int id) {
-                                                            Intent intent = new Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS);
-                                                            intent.putExtra(Settings.EXTRA_APP_PACKAGE, getPackageName());
-                                                            startActivity(intent);
-                                                        }
-                                                    });
-                                            AlertDialog alert = builder.create();
-                                            alert.show();
-                                        }
-
-                                        //go to mainactivity for standardlogin
-                                       // launchMainActivity();
-                                    }
-                                }
-                                else {
-                                    int statusCode = response.code();
-                                    if (statusCode == 500) {
-                                        createDialogForLoginFailed(getResources().getString(R.string.InternalServerError));
-                                    } else if (statusCode == 404) {
-                                        createDialogForLoginFailed(getResources().getString(R.string.NoSuchRegisteredUser));
-                                    }
-                                }
-                            }
-                            @Override
-                            public void onFailure(@NonNull Call<FreeLancer> call, @NonNull Throwable t) {
-                                if (t instanceof IOException) {
-                                    createDialogForLoginFailed(getResources().getString(R.string.NetworkFailure));
-                                } else {
-                                    createDialogForLoginFailed(getResources().getString(R.string.JSONParsingIssue));
-                                }
-                            }
-                        });
-                    }
-                }
-            });
+                    });
             mRegisterBtn.setOnClickListener(v -> launchRegisterActivity());
         }
     }

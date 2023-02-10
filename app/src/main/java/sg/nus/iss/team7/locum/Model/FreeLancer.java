@@ -42,6 +42,10 @@ public class FreeLancer implements Parcelable{
     @Expose
     private String errorsFieldString;
 
+    @SerializedName("deviceToken")
+    @Expose
+    private String deviceToken;
+
     public FreeLancer() {
     }
 
@@ -109,6 +113,14 @@ public class FreeLancer implements Parcelable{
         this.medicalLicenseNo = medicalLicenseNo;
     }
 
+    public String getDeviceToken() {
+        return deviceToken;
+    }
+
+    public void setDeviceToken(String deviceToken) {
+        this.deviceToken = deviceToken;
+    }
+
     protected FreeLancer(Parcel in) {
         id = in.readString();
         username = in.readString();
@@ -118,6 +130,7 @@ public class FreeLancer implements Parcelable{
         contact = in.readString();
         medicalLicenseNo = in.readString();
         errorsFieldString = in.readString();
+      //  deviceToken = in .readString();
     }
 
     @Override
@@ -130,6 +143,7 @@ public class FreeLancer implements Parcelable{
         dest.writeString(contact);
         dest.writeString(medicalLicenseNo);
         dest.writeString(errorsFieldString);
+      //  dest.writeString(deviceToken);
     }
 
     @Override
