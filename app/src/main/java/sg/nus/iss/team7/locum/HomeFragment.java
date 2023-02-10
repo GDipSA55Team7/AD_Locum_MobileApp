@@ -2,19 +2,12 @@ package sg.nus.iss.team7.locum;
 
 import static android.content.Context.MODE_PRIVATE;
 
-import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.drawable.Drawable;
-import android.graphics.drawable.InsetDrawable;
 import android.os.Bundle;
 
-import androidx.appcompat.widget.SearchView;
-import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -24,12 +17,9 @@ import android.widget.Toast;
 
 import com.facebook.shimmer.ShimmerFrameLayout;
 
-import java.time.Instant;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.stream.Collectors;
 
@@ -40,35 +30,33 @@ import retrofit2.Retrofit;
 import sg.nus.iss.team7.locum.APICommunication.ApiMethods;
 import sg.nus.iss.team7.locum.APICommunication.RetroFitClient;
 import sg.nus.iss.team7.locum.Adapter.HomeRecommendedAdapter;
-import sg.nus.iss.team7.locum.Adapter.JobSearchAdapter;
 import sg.nus.iss.team7.locum.Interface.RecyclerViewInterface;
 import sg.nus.iss.team7.locum.Model.JobPost;
 import sg.nus.iss.team7.locum.Utilities.JsonFieldParser;
 
 public class HomeFragment extends Fragment {
 
-    private ArrayList<JobPost> responseList = new ArrayList<>();
-    private ArrayList<JobPost> responseList2 = new ArrayList<>();
-    private ShimmerFrameLayout shimmerFrameLayout;
-    private ShimmerFrameLayout shimmerFrameLayout2;
-    private HomeRecommendedAdapter adapter;
+    private ArrayList<JobPost> responseListRec = new ArrayList<>();
+    private ArrayList<JobPost> responseListNext = new ArrayList<>();
+    private ShimmerFrameLayout shimmerFrameLayoutRec;
+    private ShimmerFrameLayout shimmerFrameLayoutNext;
+    private HomeRecommendedAdapter recAdapter;
     private HomeRecommendedAdapter nextAdapter;
     private TextView emptyView;
-    private TextView emptyView2;
+    private TextView emptyViewNext;
     private RecyclerView recyclerView;
     private RecyclerView recyclerViewNext;
-    private RecyclerViewInterface recyclerViewInterface;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_home, container, false);
         emptyView = (TextView) view.findViewById(R.id.empty_view1);
-        emptyView2 = (TextView) view.findViewById(R.id.empty_view2);
+        emptyViewNext = (TextView) view.findViewById(R.id.empty_view2);
 
         // Recommended job recycler
         // Shimmer load effect
-        shimmerFrameLayout = view.findViewById(R.id.shimmer_view_container);
-        shimmerFrameLayout.startShimmer();
+        shimmerFrameLayoutRec = view.findViewById(R.id.shimmer_view_container);
+        shimmerFrameLayoutRec.startShimmer();
 
         // Set up recycler view
         recyclerView = view.findViewById(R.id.recRecyclerView);
@@ -76,14 +64,14 @@ public class HomeFragment extends Fragment {
         recyclerView.setLayoutManager(linearLayoutManager);
 
         // Load object from API to recycler view
-        adapter = new HomeRecommendedAdapter(recyclerView.getContext());
-        getRecommendedJobs(adapter);
-        recyclerView.setAdapter(adapter);
+        recAdapter = new HomeRecommendedAdapter(recyclerView.getContext());
+        getRecommendedJobs(recAdapter);
+        recyclerView.setAdapter(recAdapter);
 
         // Next job recycler
         // Shimmer load effect
-        shimmerFrameLayout2 = view.findViewById(R.id.shimmer_view_container2);
-        shimmerFrameLayout2.startShimmer();
+        shimmerFrameLayoutNext = view.findViewById(R.id.shimmer_view_container2);
+        shimmerFrameLayoutNext.startShimmer();
 
         // Set up recycler view
         recyclerViewNext = view.findViewById(R.id.nextRecyclerView);
@@ -115,20 +103,20 @@ public class HomeFragment extends Fragment {
             @Override
             public void onResponse(Call<ArrayList<JobPost>> call, Response<ArrayList<JobPost>> response) {
                 if (response.isSuccessful()) {
-                    responseList = response.body();
-                    if (responseList == null) {
-                        shimmerFrameLayout.stopShimmer();
-                        shimmerFrameLayout.setVisibility(View.GONE);
+                    responseListRec = response.body();
+                    if (responseListRec == null) {
+                        shimmerFrameLayoutRec.stopShimmer();
+                        shimmerFrameLayoutRec.setVisibility(View.GONE);
                         emptyView.setVisibility(View.VISIBLE);
                         recyclerView.setVisibility(View.GONE);
                     } else {
-                        responseList = responseList.stream()
+                        responseListRec = responseListRec.stream()
                                 .sorted(Comparator.comparingDouble(JobPost::getSimilarity).reversed())
                                 .limit(3)
                                 .collect(Collectors.toCollection(ArrayList::new));
-                        adapter.setMyList(responseList);
-                        shimmerFrameLayout.stopShimmer();
-                        shimmerFrameLayout.setVisibility(View.GONE);
+                        adapter.setMyList(responseListRec);
+                        shimmerFrameLayoutRec.stopShimmer();
+                        shimmerFrameLayoutRec.setVisibility(View.GONE);
                     }
                 }
             }
@@ -160,21 +148,21 @@ public class HomeFragment extends Fragment {
             @Override
             public void onResponse(Call<ArrayList<JobPost>> call, Response<ArrayList<JobPost>> response) {
                 if (response.isSuccessful()) {
-                    responseList2 = response.body();
-                    if (responseList2 == null) {
-                        shimmerFrameLayout2.stopShimmer();
-                        shimmerFrameLayout2.setVisibility(View.GONE);
-                        emptyView2.setVisibility(View.VISIBLE);
+                    responseListNext = response.body();
+                    if (responseListNext == null) {
+                        shimmerFrameLayoutNext.stopShimmer();
+                        shimmerFrameLayoutNext.setVisibility(View.GONE);
+                        emptyViewNext.setVisibility(View.VISIBLE);
                         recyclerViewNext.setVisibility(View.GONE);
                     } else {
-                        responseList2 = responseList2.stream()
+                        responseListNext = responseListNext.stream()
                                 .filter(jobPost -> LocalDateTime.parse(jobPost.getStartDateTime(), formatter).isAfter(LocalDateTime.now()))
                                 .sorted(Comparator.comparing(jobPost -> LocalDateTime.parse(jobPost.getStartDateTime(), formatter)))
                                 .limit(1)
                                 .collect(Collectors.toCollection(ArrayList::new));
-                        nextAdapter.setMyList(responseList2);
-                        shimmerFrameLayout2.stopShimmer();
-                        shimmerFrameLayout2.setVisibility(View.GONE);
+                        nextAdapter.setMyList(responseListNext);
+                        shimmerFrameLayoutNext.stopShimmer();
+                        shimmerFrameLayoutNext.setVisibility(View.GONE);
                     }
                 }
             }
@@ -185,5 +173,10 @@ public class HomeFragment extends Fragment {
                 Toast.makeText(getContext(),"error getting job list", Toast.LENGTH_SHORT);
             }
         });
+    }
+
+    public void onResume () {
+        super.onResume();
+        getRecommendedJobs(recAdapter);
     }
 }

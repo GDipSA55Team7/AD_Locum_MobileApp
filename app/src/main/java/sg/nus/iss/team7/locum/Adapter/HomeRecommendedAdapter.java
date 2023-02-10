@@ -65,6 +65,7 @@ public class HomeRecommendedAdapter extends RecyclerView.Adapter<HomeRecommended
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.home_item, parent, false);
 
         MyViewHolder viewHolder = new MyViewHolder(view);
+
         viewHolder.viewBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

@@ -21,7 +21,11 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.facebook.shimmer.ShimmerFrameLayout;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.stream.Collectors;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -115,7 +119,12 @@ public class AppliedJobChildFragment extends Fragment implements RecyclerViewInt
             public void onResponse(Call<ArrayList<JobPost>> call, Response<ArrayList<JobPost>> response) {
                 if (response.isSuccessful()) {
                     responseList = response.body();
-                    adapter.setMyList(responseList);
+                    if (responseList != null) {
+                        responseList = responseList.stream()
+                                .sorted(Comparator.comparing(o -> LocalDateTime.parse(o.getStartDateTime(), DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm"))))
+                                .collect(Collectors.toCollection(ArrayList::new));
+                        adapter.setMyList(responseList);
+                    }
                     shimmerFrameLayout.stopShimmer();
                     shimmerFrameLayout.setVisibility(View.GONE);
                     swipeContainer.setRefreshing(false);
