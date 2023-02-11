@@ -21,6 +21,8 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.facebook.shimmer.ShimmerFrameLayout;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.stream.Collectors;
@@ -123,7 +125,8 @@ public class JobMatchFragment extends Fragment implements RecyclerViewInterface{
                         recyclerView.setVisibility(View.GONE);
                     } else {
                         responseList = responseList.stream()
-                                .sorted(Comparator.comparingDouble(JobPost::getSimilarity).reversed())
+                                .sorted(Comparator.comparingDouble(JobPost::getSimilarity).reversed()
+                                .thenComparing(o -> LocalDateTime.parse(o.getStartDateTime(), DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm"))))
                                 .collect(Collectors.toCollection(ArrayList::new));
                         adapter.setMyList(responseList);
                         shimmerFrameLayout.stopShimmer();

@@ -12,8 +12,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.text.ParseException;
@@ -63,13 +65,23 @@ public class HomeRecommendedAdapter extends RecyclerView.Adapter<HomeRecommended
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.home_item, parent, false);
 
         MyViewHolder viewHolder = new MyViewHolder(view);
+
+        viewHolder.viewBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(context, JobDetailActivity.class);
+                int itemId = myList.get(viewHolder.getBindingAdapterPosition()).getId();
+                intent.putExtra("itemId", itemId);
+                context.startActivity(intent);
+            }
+        });
         return viewHolder;
     }
 
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
 
-        jobPost = myList.get(position);
+        jobPost = myList.get(holder.getLayoutPosition());
 
         String addressStr = jobPost.getClinic().getAddress() + ", " + jobPost.getClinic().getPostalCode();
         String hourRateStr = "$" + jobPost.getRatePerHour().toString() + "/HR";
@@ -93,17 +105,9 @@ public class HomeRecommendedAdapter extends RecyclerView.Adapter<HomeRecommended
             e.printStackTrace();
         }
         holder.hour_rate.setText(hourRateStr);
-        holder.clinic_name.setText(jobPost.getClinic().getName());
+//        holder.clinic_name.setText(jobPost.getClinic().getName());
+        holder.clinic_name.setText(jobPost.getTitle());
         holder.address.setText(addressStr);
-        holder.viewBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(context, JobDetailActivity.class);
-                int itemId = (int) jobPost.getId();
-                intent.putExtra("itemId", itemId);
-                context.startActivity(intent);
-            }
-        });
     }
 
     @Override

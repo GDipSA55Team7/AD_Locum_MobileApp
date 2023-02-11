@@ -142,7 +142,10 @@ public class JobSearchAdapter extends RecyclerView.Adapter<JobSearchAdapter.MyVi
         } else if(jobPost.getStatus().equalsIgnoreCase("CANCELLED")){
             holder.status.setText("CANCELLED");
             holder.status.setBackgroundTintList(getColorStateList(context, R.color.darker_grey));
-        }else if (jobPost.getStatus().startsWith("COMPLETED")) {
+        } else if(jobPost.getStatus().equalsIgnoreCase("COMPLETED_PENDING_PAYMENT")){
+            holder.status.setText("PAYMENT");
+            holder.status.setBackgroundTintList(getColorStateList(context, R.color.status_red));
+        } else if (jobPost.getStatus().startsWith("COMPLETED")) {
             holder.status.setText("COMPLETED");
             holder.status.setBackgroundTintList(getColorStateList(context, R.color.darker_grey));
         }

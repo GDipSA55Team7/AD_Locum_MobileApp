@@ -29,8 +29,12 @@ import android.widget.Toast;
 
 import com.facebook.shimmer.ShimmerFrameLayout;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -120,9 +124,7 @@ public class JobSearchFragment extends Fragment implements RecyclerViewInterface
                 }
             }
 
-            if (filteredList.isEmpty()) {
-                Toast.makeText(getContext(), "No results found", Toast.LENGTH_SHORT).show();
-            } else {
+            if (!filteredList.isEmpty()) {
                 adapter.setMyList(filteredList);
             }
         }
@@ -151,6 +153,11 @@ public class JobSearchFragment extends Fragment implements RecyclerViewInterface
             public void onResponse(Call<ArrayList<JobPost>> call, Response<ArrayList<JobPost>> response) {
                 if (response.isSuccessful()) {
                     responseList = response.body();
+                    if (responseList != null) {
+                        responseList = responseList.stream()
+                                .sorted(Comparator.comparing(o -> LocalDateTime.parse(o.getStartDateTime(), DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm"))))
+                                .collect(Collectors.toCollection(ArrayList::new));
+                    }
                     adapter.setMyList(responseList);
                     shimmerFrameLayout.stopShimmer();
                     shimmerFrameLayout.setVisibility(View.GONE);
