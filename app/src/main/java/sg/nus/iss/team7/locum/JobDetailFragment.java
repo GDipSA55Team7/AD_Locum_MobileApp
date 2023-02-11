@@ -190,16 +190,10 @@ public class JobDetailFragment extends Fragment {
                             fl.getContact(),
                             fl.getMedicalLicenseNo()
                     );
-
-
-                    Intent intent = new Intent(getActivity(),PaymentDetailsActivity.class);
-                    intent.putExtra("paymentDetails", paymentDTO);
-                    System.out.println("before send paymentDTO to paymentActivity"+ paymentDTO);
-                    startActivity(intent);
+                    launchPaymentDetailsActivity(paymentDTO);
                 }
             }
         });
-
         return view;
     }
 
@@ -262,5 +256,11 @@ public class JobDetailFragment extends Fragment {
                     }
                 });
         dlg.show();
+    }
+
+    private void launchPaymentDetailsActivity(PaymentDetailsDTO paymentDTO){
+        Intent intent = new Intent(getActivity(),PaymentDetailsActivity.class);
+        intent.putExtra("paymentDetails", paymentDTO);
+        startActivity(intent);
     }
 }

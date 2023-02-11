@@ -43,50 +43,6 @@ public class FirebaseTokenUtils {
         void onTokenReceived(String token);
     }
 
-//    public static void sendTokenToServerOnLogin(String loginUserName, Context context) {
-//        FirebaseApp.initializeApp(context);
-//        FirebaseMessaging.getInstance().getToken()
-//                .addOnCompleteListener(new OnCompleteListener<String>() {
-//                    @Override
-//                    public void onComplete(@NonNull Task<String> task) {
-//                        if (!task.isSuccessful()) {
-//                            Log.e("Fetching FCM registration token failed", String.valueOf(task.getException()));
-//                            return;
-//                        }
-//                        // Get new FCM registration token
-//                        String token = task.getResult();
-//                        Log.e("UserName: " , loginUserName);
-//                        Log.e("FCM registration token: " , token);
-//                        sendDeviceTokenAPICall(token,loginUserName);
-//                    }
-//                });
-//    }
-
-//    private static void sendDeviceTokenAPICall(String token,String loginUserName ) {
-//        Retrofit firebaseAPI = RetroFitClient.getClient(RetroFitClient.BASE_URL);
-//        ApiMethods api = firebaseAPI.create(ApiMethods.class);
-//
-//        Call<ResponseBody> updateTokenOnLogin = api.(token,loginUserName);
-//        updateTokenOnLogin.enqueue(new Callback<ResponseBody>() {
-//            @Override
-//            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-//                if (response.isSuccessful()) {
-//                    Log.e(LogIn, "Token sent to server successfully");
-//                }
-//                else {
-//                    int statusCode = response.code();
-//                    if (statusCode == 500) {
-//                        Log.e(LogIn,"Internal Server Error,failed to update token to server");
-//                    }
-//                }
-//            }
-//            @Override
-//            public void onFailure(Call<ResponseBody> call, Throwable t) {
-//                Log.e(LogIn, "Error sending token to server: " + t.getMessage());
-//            }
-//        });
-//    }
-
     public static void updateServerOnLogout(String logoutUserName) {
         Retrofit retrofit = RetroFitClient.getClient(RetroFitClient.BASE_URL);
         ApiMethods api = retrofit.create(ApiMethods.class);
