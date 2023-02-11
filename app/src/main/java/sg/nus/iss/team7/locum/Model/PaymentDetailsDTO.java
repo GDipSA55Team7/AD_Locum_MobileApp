@@ -39,7 +39,6 @@ public class PaymentDetailsDTO implements Parcelable {
         Log.d("PaymentDetailsDTO", "Writing jobPaymentRefNo " + this.jobPaymentRefNo);
 
 
-
         dest.writeString(this.clinicName);
         Log.d("PaymentDetailsDTO", "Writing clinicName: " + this.clinicName);
         dest.writeString(this.clinicAddress);

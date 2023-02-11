@@ -99,6 +99,7 @@ public class JobDetailActivity extends AppCompatActivity {
                 FreeLancer loggedInFl = SharedPrefUtility.readFromSharedPref(getApplicationContext());
                 Log.e("from notification", "already logged in as :" + loggedInFl.getUsername() + " so proceed to fetch jobdetails");
                 int itemId = intent.getIntExtra("itemId", 0);
+                Log.e("From Notification","should go to jobdetails straight since logged in");
                 getJobById(itemId);
 
                 // listener to update status in UI if job is applied
@@ -294,7 +295,9 @@ public class JobDetailActivity extends AppCompatActivity {
         Intent intent = new Intent(JobDetailActivity.this, LoginActivity.class);
         intent.putExtra("notificationTargetUserName", notficationForUsername);
         intent.putExtra("itemId", itemId);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
+        Log.e("from notification jobdetailsactivity tp loginactivity", "sending jobid : " +itemId + "for user : " + notficationForUsername);
         finish();
     }
 

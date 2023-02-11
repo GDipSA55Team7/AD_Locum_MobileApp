@@ -47,10 +47,10 @@ public interface ApiMethods {
     Call<ArrayList<JobPost>> getJobApplied(@Query("id") int userId);
 
 
-    @GET("/api/onloginupdatetoken?")
-    Call<ResponseBody> onLoginUpdateServerToken(@Query("token") String token,@Query("username") String username);
+//    @GET("/api/onloginupdatetoken?")
+//    Call<ResponseBody> onLoginUpdateServerToken(@Query("token") String token,@Query("username") String username);
 
-    @GET("/api/onlogout?")
+    @GET("api/freelancer/logout?")
     Call<ResponseBody> onLogoutUpdateServer(@Query("username") String username);
 
     @GET("/api/jobs/recommended?")

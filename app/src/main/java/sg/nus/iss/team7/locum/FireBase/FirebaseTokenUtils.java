@@ -23,27 +23,6 @@ public class FirebaseTokenUtils {
     private static final String LogIn = "Login Update Token";
     private static final String LogOut = "Logout Update ";
 
-
-//    public static String getDeviceToken(Context context) {
-//        final String[] deviceToken = {""};
-//        FirebaseApp.initializeApp(context);
-//        FirebaseMessaging.getInstance().getToken()
-//                .addOnCompleteListener(new OnCompleteListener<String>() {
-//                    @Override
-//                    public void onComplete(@NonNull Task<String> task) {
-//                        if (!task.isSuccessful()) {
-//                            Log.e("Fetching FCM registration token failed", String.valueOf(task.getException()));
-//                        }
-//                        // Get new FCM registration token
-//                        String token = task.getResult();
-//                      //  Log.e("UserName: " , loginUserName);
-//                        Log.e("FCM registration token: " , token);
-//                        deviceToken[0] = token;
-//                    }
-//                });
-//        return deviceToken[0];
-//    }
-
     public static void getDeviceToken(Context context, OnTokenReceivedListener listener) {
         FirebaseApp.initializeApp(context);
         FirebaseMessaging.getInstance().getToken()
@@ -64,55 +43,51 @@ public class FirebaseTokenUtils {
         void onTokenReceived(String token);
     }
 
-    public static void sendTokenToServerOnLogin(String loginUserName, Context context) {
-        FirebaseApp.initializeApp(context);
-        FirebaseMessaging.getInstance().getToken()
-                .addOnCompleteListener(new OnCompleteListener<String>() {
-                    @Override
-                    public void onComplete(@NonNull Task<String> task) {
-                        if (!task.isSuccessful()) {
-                            Log.e("Fetching FCM registration token failed", String.valueOf(task.getException()));
-                            return;
-                        }
-                        // Get new FCM registration token
-                        String token = task.getResult();
-                        Log.e("UserName: " , loginUserName);
-                        Log.e("FCM registration token: " , token);
-                        sendDeviceTokenAPICall(token,loginUserName);
-                    }
-                });
-    }
+//    public static void sendTokenToServerOnLogin(String loginUserName, Context context) {
+//        FirebaseApp.initializeApp(context);
+//        FirebaseMessaging.getInstance().getToken()
+//                .addOnCompleteListener(new OnCompleteListener<String>() {
+//                    @Override
+//                    public void onComplete(@NonNull Task<String> task) {
+//                        if (!task.isSuccessful()) {
+//                            Log.e("Fetching FCM registration token failed", String.valueOf(task.getException()));
+//                            return;
+//                        }
+//                        // Get new FCM registration token
+//                        String token = task.getResult();
+//                        Log.e("UserName: " , loginUserName);
+//                        Log.e("FCM registration token: " , token);
+//                        sendDeviceTokenAPICall(token,loginUserName);
+//                    }
+//                });
+//    }
 
-
-
-    private static void sendDeviceTokenAPICall(String token,String loginUserName ) {
-
-        Retrofit firebaseAPI = RetroFitClient.getClient(RetroFitClient.BASE_URL);
-        ApiMethods api = firebaseAPI.create(ApiMethods.class);
-
-        Call<ResponseBody> updateTokenOnLogin = api.onLoginUpdateServerToken(token,loginUserName);
-        updateTokenOnLogin.enqueue(new Callback<ResponseBody>() {
-            @Override
-            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                if (response.isSuccessful()) {
-                    Log.e(LogIn, "Token sent to server successfully");
-                }
-                else {
-                    int statusCode = response.code();
-                    if (statusCode == 500) {
-                        Log.e(LogIn,"Internal Server Error,failed to update token to server");
-                    }
-                }
-            }
-            @Override
-            public void onFailure(Call<ResponseBody> call, Throwable t) {
-                Log.e(LogIn, "Error sending token to server: " + t.getMessage());
-            }
-        });
-    }
+//    private static void sendDeviceTokenAPICall(String token,String loginUserName ) {
+//        Retrofit firebaseAPI = RetroFitClient.getClient(RetroFitClient.BASE_URL);
+//        ApiMethods api = firebaseAPI.create(ApiMethods.class);
+//
+//        Call<ResponseBody> updateTokenOnLogin = api.(token,loginUserName);
+//        updateTokenOnLogin.enqueue(new Callback<ResponseBody>() {
+//            @Override
+//            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+//                if (response.isSuccessful()) {
+//                    Log.e(LogIn, "Token sent to server successfully");
+//                }
+//                else {
+//                    int statusCode = response.code();
+//                    if (statusCode == 500) {
+//                        Log.e(LogIn,"Internal Server Error,failed to update token to server");
+//                    }
+//                }
+//            }
+//            @Override
+//            public void onFailure(Call<ResponseBody> call, Throwable t) {
+//                Log.e(LogIn, "Error sending token to server: " + t.getMessage());
+//            }
+//        });
+//    }
 
     public static void updateServerOnLogout(String logoutUserName) {
-
         Retrofit retrofit = RetroFitClient.getClient(RetroFitClient.BASE_URL);
         ApiMethods api = retrofit.create(ApiMethods.class);
 
@@ -121,7 +96,7 @@ public class FirebaseTokenUtils {
             @Override
             public void onResponse(@NonNull Call<ResponseBody> call, @NonNull Response<ResponseBody> response) {
                 if(response.isSuccessful() && response.code() == 200){
-                    Log.e(LogOut,"Server is updated : " + logoutUserName);
+                    Log.e(LogOut, logoutUserName + "has logged out successfully");
                 }
                 else {
                     int statusCode = response.code();
