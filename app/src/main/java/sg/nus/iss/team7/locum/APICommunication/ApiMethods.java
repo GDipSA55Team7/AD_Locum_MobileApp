@@ -21,7 +21,6 @@ public interface ApiMethods {
     @POST("/api/freelancer/login")
     Call<FreeLancer> loginFreeLancer(@Body FreeLancer fl);
 
-
     @POST("/api/freelancer/update")
     Call<FreeLancer> updateFreeLancer(@Body FreeLancer fl);
 
@@ -43,7 +42,6 @@ public interface ApiMethods {
     @GET("/api/jobs/applied?")
     Call<ArrayList<JobPost>> getJobApplied(@Query("id") int userId);
 
-
     @GET("/api/onloginupdatetoken?")
     Call<ResponseBody> onLoginUpdateServerToken(@Query("token") String token,@Query("username") String username);
 
@@ -53,4 +51,6 @@ public interface ApiMethods {
     @GET("/api/jobs/recommended?")
     Call<ArrayList<JobPost>> getJobRecommended(@Query("id") int userId);
 
+    @GET("/api/jobs/job/user?")
+    Call<ArrayList<JobPost>> getJobsByUserId(@Query("id") int userId);
 }
