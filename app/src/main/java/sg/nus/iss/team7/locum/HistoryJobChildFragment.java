@@ -118,7 +118,13 @@ public class HistoryJobChildFragment extends Fragment implements RecyclerViewInt
                     responseList = response.body();
                     if (responseList != null) {
                         responseList = responseList.stream()
-                                .sorted(Comparator.comparing(o -> LocalDateTime.parse(((JobPost) o).getStartDateTime(), DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm"))).reversed())
+                                .sorted(Comparator.comparing((JobPost o) -> {
+                                    if (o.getStatus().equalsIgnoreCase("COMPLETED_PENDING_PAYMENT")) {
+                                        return 1;
+                                    } else {
+                                        return 0;
+                                    }
+                                }).thenComparing(o -> LocalDateTime.parse(((JobPost) o).getStartDateTime(), DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm"))).reversed())
                                 .collect(Collectors.toCollection(ArrayList::new));
                     }
                     adapter.setMyList(responseList);

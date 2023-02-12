@@ -45,7 +45,6 @@ public class HomeFragment extends Fragment {
     private RecyclerView recyclerView, recyclerViewNext;
     private Retrofit retrofit = RetroFitClient.getClient(RetroFitClient.BASE_URL);
     private ApiMethods api = retrofit.create(ApiMethods.class);
-    private Map<String, Long> statusCounts;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -186,10 +185,10 @@ public class HomeFragment extends Fragment {
                 if (response.isSuccessful()) {
                     responseListOverview = response.body();
                     if (responseListOverview == null) {
-                        scheduledCount.setText("0");
-                        confirmationCount.setText("0");
-                        completedCount.setText("0");
-                        paymentCount.setText("0");
+                        scheduledCount.setText("-");
+                        confirmationCount.setText("-");
+                        completedCount.setText("-");
+                        paymentCount.setText("-");
                     } else {
                         Map<String, Long> statusCounts = responseListOverview.stream()
                                 .collect(Collectors.groupingBy(JobPost::getStatus, Collectors.counting()));
