@@ -2,6 +2,7 @@ package sg.nus.iss.team7.locum.APICommunication;
 
 
 import java.util.ArrayList;
+import java.util.List;
 
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -11,6 +12,7 @@ import retrofit2.http.POST;
 import retrofit2.http.Query;
 import sg.nus.iss.team7.locum.Model.FreeLancer;
 import sg.nus.iss.team7.locum.Model.JobPost;
+import sg.nus.iss.team7.locum.Model.Notification;
 
 public interface ApiMethods {
 
@@ -50,4 +52,13 @@ public interface ApiMethods {
 
     @GET("/api/jobs/job/user?")
     Call<ArrayList<JobPost>> getJobsByUserId(@Query("id") int userId);
+
+    @GET("/api/notifications/check?")
+    Call<Boolean> getNotificationStatus(@Query("userId") int userId);
+
+    @GET("/api/notifications/get?")
+    Call<ArrayList<Notification>> getNotifications(@Query("userId") int userId);
+
+    @POST("/api/notifications/setread?")
+    Call<ArrayList<Notification>> setAsRead(@Query("notificationId") int notificationId);
 }

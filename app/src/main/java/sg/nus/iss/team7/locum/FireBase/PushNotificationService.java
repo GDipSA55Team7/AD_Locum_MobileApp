@@ -56,16 +56,6 @@ public class PushNotificationService extends FirebaseMessagingService {
             String username = data.get("username");
             String redirectToTargetActivity = data.get("click_action");
 
-//            // Store notification data in shared preferences
-//            SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences("notification_data", Context.MODE_PRIVATE);
-//            SharedPreferences.Editor editor = sharedPreferences.edit();
-//            editor.putString("title", title);
-//            editor.putString("body", body);
-//            editor.putString("jobid", jobid);
-//            editor.putString("username", username);
-//            editor.putString("click_action", redirectToTargetActivity);
-//            editor.apply();
-
             Log.e("Data Message Received -Message data payload: " , String.valueOf(remoteMessage.getData()));
             createNotification(redirectToTargetActivity,title,body,jobid,username);
         }

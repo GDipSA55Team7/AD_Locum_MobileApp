@@ -44,7 +44,7 @@ public class JobDetailActivity extends AppCompatActivity {
     private TextView clinicNameText;
     private TextView addressText;
     private TextView statusText;
-
+    private Intent entryIntent;
     private ImageView addressImg;
 
     private ImageView phoneImg;
@@ -63,29 +63,29 @@ public class JobDetailActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_job_detail);
 
-        Intent intent = getIntent();
+        entryIntent = getIntent();
 
         //If came from notifications,check login status
-        if (intent.hasExtra("fromNotification")) {
+        if (entryIntent.hasExtra("fromNotification")) {
             //cancel notification on systemtray
-            NotificationManagerCompat.from(this).cancel(intent.getIntExtra("cancelNotificationOnSystemTray",-1));
+            NotificationManagerCompat.from(this).cancel(entryIntent.getIntExtra("cancelNotificationOnSystemTray",-1));
 
-            Log.e("from notification", "for username : " + intent.getStringExtra("notificationTargetUserName"));
+            Log.e("from notification", "for username : " + entryIntent.getStringExtra("notificationTargetUserName"));
 
             // If not Logged In, redirectToLoginActivity
             if (!isLoggedIn()) {
                 Log.e("from notification", "not logged, route from jobDetailsActivity to loginActivity");
                 Log.e("from notification", "embed notificationTargetUser and  itemId/jobId, route from jobDetailsActivity to loginActivity");
                 // loginUserName must match notificationTargetUserName for login
-                String notficationForUsername = intent.getStringExtra("notificationTargetUserName");
-                int itemId = intent.getIntExtra("itemId", 0);
+                String notficationForUsername = entryIntent.getStringExtra("notificationTargetUserName");
+                int itemId = entryIntent.getIntExtra("itemId", 0);
                 launchLoginActivity(notficationForUsername, Integer.valueOf(itemId));
             }
             //If came from notification and already logged in,proceed to get job
             else {
                 FreeLancer loggedInFl = SharedPrefUtility.readFromSharedPref(getApplicationContext());
                 Log.e("from notification", "already logged in as :" + loggedInFl.getUsername() + " so proceed to fetch jobdetails");
-                int itemId = intent.getIntExtra("itemId", 0);
+                int itemId = entryIntent.getIntExtra("itemId", 0);
                 Log.e("From Notification","should go to jobdetails straight since logged in");
                 getJobById(itemId);
 
@@ -98,7 +98,7 @@ public class JobDetailActivity extends AppCompatActivity {
         }
         //not from notification,proceed to fetch jobdetails
         else {
-            int itemId = intent.getIntExtra("itemId", 0);
+            int itemId = entryIntent.getIntExtra("itemId", 0);
             getJobById(itemId);
 
             // listener to update status in UI if job is applied
@@ -291,4 +291,5 @@ public class JobDetailActivity extends AppCompatActivity {
         Log.e("from notification jobdetailsactivity tp loginactivity", "sending jobid : " +itemId + ", for user : " + notficationForUsername);
         finish();
     }
+
 }
