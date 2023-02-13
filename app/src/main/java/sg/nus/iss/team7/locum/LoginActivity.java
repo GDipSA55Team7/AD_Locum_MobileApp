@@ -215,12 +215,20 @@ public class LoginActivity extends AppCompatActivity {
 
     @Override
     protected void onPause() {
+        dismissDialog();
         super.onPause();
+    }
+    @Override
+    protected void onDestroy() {
+        dismissDialog();
+        super.onDestroy();
+    }
+
+    private void dismissDialog() {
         if (dialog != null && dialog.isShowing()) {
             dialog.dismiss();
         }
     }
-
     @Override
     protected void onResume() {
         if(isLoggedIn()){

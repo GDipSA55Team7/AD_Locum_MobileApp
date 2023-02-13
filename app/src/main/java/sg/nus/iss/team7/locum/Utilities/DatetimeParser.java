@@ -2,6 +2,8 @@ package sg.nus.iss.team7.locum.Utilities;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 
 import java.text.ParseException;
@@ -31,6 +33,11 @@ public class DatetimeParser {
 
         Date date = inputFormat.parse(datetimeStr);
         return dayFormat.format(date);
+    }
+
+    public static LocalDateTime parseLocalDateTime(String datetimeStr) {
+        DateTimeFormatter inputFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm");
+        return LocalDateTime.parse(datetimeStr, inputFormat);
     }
 
     public static String getHoursBetween(String datetime1, String datetime2) throws ParseException {
