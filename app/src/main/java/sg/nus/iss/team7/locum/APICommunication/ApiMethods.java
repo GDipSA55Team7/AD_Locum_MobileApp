@@ -48,4 +48,6 @@ public interface ApiMethods {
     @GET("/api/jobs/recommended?")
     Call<ArrayList<JobPost>> getJobRecommended(@Query("id") int userId);
 
+    @GET("/api/jobs/job/user?")
+    Call<ArrayList<JobPost>> getJobsByUserId(@Query("id") int userId);
 }

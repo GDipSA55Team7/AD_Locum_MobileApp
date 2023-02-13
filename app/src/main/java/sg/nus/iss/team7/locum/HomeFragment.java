@@ -5,6 +5,7 @@ import static android.content.Context.MODE_PRIVATE;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -21,6 +22,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import retrofit2.Call;
@@ -36,22 +38,23 @@ import sg.nus.iss.team7.locum.Utilities.JsonFieldParser;
 
 public class HomeFragment extends Fragment {
 
-    private ArrayList<JobPost> responseListRec = new ArrayList<>();
-    private ArrayList<JobPost> responseListNext = new ArrayList<>();
-    private ShimmerFrameLayout shimmerFrameLayoutRec;
-    private ShimmerFrameLayout shimmerFrameLayoutNext;
-    private HomeRecommendedAdapter recAdapter;
-    private HomeRecommendedAdapter nextAdapter;
-    private TextView emptyView;
-    private TextView emptyViewNext;
-    private RecyclerView recyclerView;
-    private RecyclerView recyclerViewNext;
+    private ArrayList<JobPost> responseListRec, responseListNext, responseListOverview = new ArrayList<>();
+    private ShimmerFrameLayout shimmerFrameLayoutRec, shimmerFrameLayoutNext;
+    private HomeRecommendedAdapter recAdapter, nextAdapter;
+    private TextView emptyView, emptyViewNext, scheduledCount, confirmationCount, completedCount, paymentCount;
+    private RecyclerView recyclerView, recyclerViewNext;
+    private Retrofit retrofit = RetroFitClient.getClient(RetroFitClient.BASE_URL);
+    private ApiMethods api = retrofit.create(ApiMethods.class);
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_home, container, false);
         emptyView = (TextView) view.findViewById(R.id.empty_view1);
         emptyViewNext = (TextView) view.findViewById(R.id.empty_view2);
+        scheduledCount = (TextView) view.findViewById(R.id.scheduled);
+        confirmationCount = (TextView) view.findViewById(R.id.pendingConfirmation);
+        completedCount = (TextView) view.findViewById(R.id.completed);
+        paymentCount = (TextView) view.findViewById(R.id.pendingPayment);
 
         // Recommended job recycler
         // Shimmer load effect
@@ -83,19 +86,16 @@ public class HomeFragment extends Fragment {
         getNextJob(nextAdapter);
         recyclerViewNext.setAdapter(nextAdapter);
 
+        // Set overview counts
+        getOverview();
+
         return view;
     }
 
     public void getRecommendedJobs(HomeRecommendedAdapter adapter) {
 
         // API call
-        Retrofit retrofit = RetroFitClient.getClient(RetroFitClient.BASE_URL);
-        ApiMethods api = retrofit.create(ApiMethods.class);
-
-        SharedPreferences sharedPref = getActivity().getSharedPreferences("FL_Shared_Pref", MODE_PRIVATE);
-        String userDetails = sharedPref.getString("FL_Details", "no value");
-
-        String id = JsonFieldParser.getField(userDetails, "id");
+        String id = getUserIdString();
 
         Call<ArrayList<JobPost>> call = api.getJobRecommended(Integer.parseInt(id));
 
@@ -132,13 +132,7 @@ public class HomeFragment extends Fragment {
     public void getNextJob(HomeRecommendedAdapter adapter) {
 
         // API call
-        Retrofit retrofit = RetroFitClient.getClient(RetroFitClient.BASE_URL);
-        ApiMethods api = retrofit.create(ApiMethods.class);
-
-        SharedPreferences sharedPref = getActivity().getSharedPreferences("FL_Shared_Pref", MODE_PRIVATE);
-        String userDetails = sharedPref.getString("FL_Details", "no value");
-
-        String id = JsonFieldParser.getField(userDetails, "id");
+        String id = getUserIdString();
 
         Call<ArrayList<JobPost>> call = api.getJobConfirmed(Integer.parseInt(id));
 
@@ -160,6 +154,9 @@ public class HomeFragment extends Fragment {
                                 .sorted(Comparator.comparing(jobPost -> LocalDateTime.parse(jobPost.getStartDateTime(), formatter)))
                                 .limit(1)
                                 .collect(Collectors.toCollection(ArrayList::new));
+                        if (responseListNext.isEmpty()) { //if there is response but the date is not after current date
+                            emptyViewNext.setVisibility(View.VISIBLE);
+                        }
                         nextAdapter.setMyList(responseListNext);
                         shimmerFrameLayoutNext.stopShimmer();
                         shimmerFrameLayoutNext.setVisibility(View.GONE);
@@ -175,8 +172,54 @@ public class HomeFragment extends Fragment {
         });
     }
 
+    public void getOverview() {
+
+        // API call
+        String id = getUserIdString();
+
+        Call<ArrayList<JobPost>> call = api.getJobsByUserId(Integer.parseInt(id));
+
+        call.enqueue(new Callback<ArrayList<JobPost>>() {
+            @Override
+            public void onResponse(Call<ArrayList<JobPost>> call, Response<ArrayList<JobPost>> response) {
+                if (response.isSuccessful()) {
+                    responseListOverview = response.body();
+                    if (responseListOverview == null) {
+                        scheduledCount.setText("-");
+                        confirmationCount.setText("-");
+                        completedCount.setText("-");
+                        paymentCount.setText("-");
+                    } else {
+                        Map<String, Long> statusCounts = responseListOverview.stream()
+                                .collect(Collectors.groupingBy(JobPost::getStatus, Collectors.counting()));
+                        scheduledCount.setText(statusCounts.getOrDefault("ACCEPTED", 0L).toString());
+                        confirmationCount.setText(statusCounts.getOrDefault("PENDING_CONFIRMATION_BY_CLINIC", 0L).toString());
+                        completedCount.setText(statusCounts.getOrDefault("COMPLETED_PAYMENT_PROCESSED", 0L).toString());
+                        paymentCount.setText(statusCounts.getOrDefault("COMPLETED_PENDING_PAYMENT", 0L).toString());
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ArrayList<JobPost>> call, Throwable t) {
+                t.printStackTrace();
+                Toast.makeText(getContext(),"error getting job count", Toast.LENGTH_SHORT);
+            }
+        });
+    }
+
+    @Nullable
+    private String getUserIdString() {
+        SharedPreferences sharedPref = getActivity().getSharedPreferences("FL_Shared_Pref", MODE_PRIVATE);
+        String userDetails = sharedPref.getString("FL_Details", "no value");
+
+        String id = JsonFieldParser.getField(userDetails, "id");
+        return id;
+    }
+
     public void onResume () {
         super.onResume();
         getRecommendedJobs(recAdapter);
+        getNextJob(nextAdapter);
     }
 }
