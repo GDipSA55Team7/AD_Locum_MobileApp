@@ -120,19 +120,12 @@ public class JobDetailFragment extends Fragment {
         } else if (jobPost.getStatus().equalsIgnoreCase("CANCELLED")) {
             button.setVisibility(GONE);
         }
-        //else if ((jobPost.getStatus().startsWith("COMPLETED")) || jobPost.getStatus().equalsIgnoreCase("CANCELLED")) {
-            //button.setVisibility(GONE);
-        //}
         else if (jobPost.getStatus().startsWith("COMPLETED") || jobPost.getStatus().equalsIgnoreCase("Processed_Payment") ) {
 
             button.setText("PAYMENT DETAILS");
 
             //If pending payment
             if(jobPost.getStatus().contains("PENDING_PAYMENT")){
-                //Hide payment Success animation
-//                LottieAnimationView paymentSuccessAnimation = (LottieAnimationView) view.findViewById(R.id.paymentSuccessAnimation);
-//                paymentSuccessAnimation.setVisibility(GONE);
-
                 //Show payment pending animation
                 LottieAnimationView paymentProcessingAnimation = (LottieAnimationView) view.findViewById(R.id.paymentProcessingAnimation);
                 paymentProcessingAnimation.setVisibility(View.VISIBLE);
@@ -147,10 +140,6 @@ public class JobDetailFragment extends Fragment {
             }
             //if payment success
             else{
-                //Hide payment processing animation
-//                LottieAnimationView paymentProcessingAnimation = (LottieAnimationView) view.findViewById(R.id.paymentProcessingAnimation);
-//                paymentProcessingAnimation.setVisibility(GONE);
-
                 //Show payment success animation
                 LottieAnimationView paymentSuccessAnimation = (LottieAnimationView) view.findViewById(R.id.paymentSuccessAnimation);
                 paymentSuccessAnimation.setVisibility(View.VISIBLE);
@@ -180,6 +169,7 @@ public class JobDetailFragment extends Fragment {
                     String json = sharedPreferences.getString(getResources().getString(R.string.Freelancer_Details), "");
                     FreeLancer fl = gson.fromJson(json, FreeLancer.class);
 
+
                     PaymentDetailsDTO paymentDTO = new PaymentDetailsDTO(
                             jobPost.getId(),
                             jobPost.getRatePerHour(),
@@ -200,16 +190,10 @@ public class JobDetailFragment extends Fragment {
                             fl.getContact(),
                             fl.getMedicalLicenseNo()
                     );
-
-
-                    Intent intent = new Intent(getActivity(),PaymentDetailsActivity.class);
-                    intent.putExtra("paymentDetails", paymentDTO);
-                    System.out.println("before send paymentDTO to paymentActivity"+ paymentDTO);
-                    startActivity(intent);
+                    launchPaymentDetailsActivity(paymentDTO);
                 }
             }
         });
-
         return view;
     }
 
@@ -272,5 +256,11 @@ public class JobDetailFragment extends Fragment {
                     }
                 });
         dlg.show();
+    }
+
+    private void launchPaymentDetailsActivity(PaymentDetailsDTO paymentDTO){
+        Intent intent = new Intent(getActivity(),PaymentDetailsActivity.class);
+        intent.putExtra("paymentDetails", paymentDTO);
+        startActivity(intent);
     }
 }

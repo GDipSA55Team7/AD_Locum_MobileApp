@@ -83,7 +83,9 @@ public class SettingsListAdapter extends ArrayAdapter<String> {
     }
     private void returnToLoginActivity(){
         Intent intent = new Intent(getContext(), LoginActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         context.startActivity(intent);
+        ((Activity) context).finish();
     }
     private FreeLancer readFromSharedPref(){
         Gson gson = new Gson();

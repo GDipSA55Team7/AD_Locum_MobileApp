@@ -181,37 +181,40 @@ public class PaymentDetailsActivity extends AppCompatActivity {
     private void createPDFDoc(Document document, PaymentDetailsDTO paymentDTO) throws ParseException {
 
         Double ratePerHr;
-        String totalTo2DP,ratePerHrTo2DP,subTotalTo2DP,paymentDate,paymentRefNo;
+        String totalTo2DP,ratePerHrTo2DP,subTotalTo2DP;
+        String paymentDate ="N.A.",paymentRefNo = "N.A.";
 
+        //jobDuration
         String jobDurationString = DatetimeParser.getHoursBetween(paymentDTO.getJobStartDateTime(),paymentDTO.getJobEndDateTime());
         String removedExtraTxt = jobDurationString.substring(0,jobDurationString.indexOf(" "));
-        //Log.e("removedHr",removedHrs );
         Double jobDurationRoundedToHalfHr =Math.round(Double.valueOf(removedExtraTxt) * 2) / 2.0;
-        //Log.e("jobDurationinHrs", String.valueOf(jobDurationRoundedToHalfHr));
 
-        //rate
+        //Rate
         ratePerHr = paymentDTO.getJobRatePerHr();
         ratePerHrTo2DP = String.format("%.2f", ratePerHr);
 
         PdfPTable irdTable = new PdfPTable(2);
         irdTable.addCell(getIRDCell("Invoice No"));
         irdTable.addCell(getIRDCell("Invoice Date"));
-        if(paymentDTO.getJobPaymentDate() == null){
-            paymentDate = "N.A.";
-        }
-        else{
+        Log.e("paymentDate",paymentDTO.getJobPaymentDate() );
+        Log.e("paymentRefNo",paymentDTO.getJobPaymentRefNo() );
+
+        if(!paymentDTO.getJobPaymentDate().equalsIgnoreCase("") &&
+            !paymentDTO.getJobPaymentDate().equalsIgnoreCase("null")
+        ){
             paymentDate = paymentDTO.getJobPaymentDate();
         }
-        if(paymentDTO.getJobPaymentRefNo() == null){
-            paymentRefNo  = "N.A.";
-        }
-        else{
+
+        Log.e("paymentDate", "paymentDate is: " + paymentDate);
+        if(!paymentDTO.getJobPaymentRefNo().equalsIgnoreCase("") ||
+            !paymentDTO.getJobPaymentDate().equalsIgnoreCase("null")
+        ){
             paymentRefNo  = paymentDTO.getJobPaymentRefNo();
         }
 
-        //hardcode need to fix
-        irdTable.addCell(getIRDCell(paymentRefNo)); // pass invoice number
-        irdTable.addCell(getIRDCell(paymentDate)); // pass invoice date
+        // Invoice number and date
+        irdTable.addCell(getIRDCell(paymentRefNo));
+        irdTable.addCell(getIRDCell(paymentDate));
 
         PdfPTable irhTable = new PdfPTable(3);
         irhTable.setWidthPercentage(100);
@@ -307,15 +310,11 @@ public class PaymentDetailsActivity extends AppCompatActivity {
         int idx = 2;
         long count = 0;
         String additionalFeeStr = paymentDTO.getJobAdditionalFees();
-      //  Log.e("additionalFee",additionalFeeStr);
         //if length >1 ,at least 1 additional fee
         if(additionalFeeStr.length() > 1) {
-//            Log.e(">= 1 additional fees",">= 1 additional fees");
             count = additionalFeeStr.chars().filter(c -> c == ';').count();
-//            Log.e("Count",String.valueOf(count));
             //at least 2 additional fees
             if (count == 1) {
-//                Log.e(">= 2 additional fees",">= 2 additional fees");
                 String[] allAdditionalFees = paymentDTO.getJobAdditionalFees().split(";");
                 for (int i = 0; i <= count; i++) {
                     String[] eachAdditionalFee = allAdditionalFees[i].split(",");
@@ -323,8 +322,6 @@ public class PaymentDetailsActivity extends AppCompatActivity {
                     System.out.println(additionalFee);
                     String description = eachAdditionalFee[1];
                     System.out.println(description);
-//                    Log.e("additionalFee",additionalFee);
-//                    Log.e("description",description);
 
                     billTable.addCell(getBillRowCell(String.valueOf(idx)));
                     billTable.addCell(getBillRowCell("Additional"));
@@ -371,8 +368,8 @@ public class PaymentDetailsActivity extends AppCompatActivity {
         validity.setWidthPercentage(100);
         validity.addCell(getValidityCell(" "));
         validity.addCell(getValidityCell("Extra comments"));
-        validity.addCell(getValidityCell(" * Dummy line \n   (Dummy)"));
-        validity.addCell(getValidityCell(" * Dummy"));
+      //  validity.addCell(getValidityCell(" * Dummy line \n   (Dummy)"));
+       // validity.addCell(getValidityCell(" * Dummy"));
         PdfPCell summaryL = new PdfPCell(validity);
         summaryL.setColspan(3);
         summaryL.setPadding(1.0f);
@@ -382,10 +379,6 @@ public class PaymentDetailsActivity extends AppCompatActivity {
         accounts.setWidthPercentage(100);
         accounts.addCell(getAccountsCell("Subtotal(SGD)"));
         accounts.addCell(getAccountsCellR(subTotalTo2DP));
-//            accounts.addCell(getAccountsCell("Discount (10%)"));
-//            accounts.addCell(getAccountsCellR("1262.00"));
-//        accounts.addCell(getAccountsCell("Tax(2.5%)"));
-//        accounts.addCell(getAccountsCellR("315.55"));
         accounts.addCell(getAccountsCell("Total(SGD)"));
         accounts.addCell(getAccountsCellR(totalTo2DP));
         PdfPCell summaryR = new PdfPCell(accounts);
@@ -415,11 +408,7 @@ public class PaymentDetailsActivity extends AppCompatActivity {
         } catch (DocumentException e) {
             e.printStackTrace();
         }
-
-        //document.add(validity);
-        // document.add(accounts);
         document.close();
-
     }
 
     private PdfPCell getValidityCell(String text) {
