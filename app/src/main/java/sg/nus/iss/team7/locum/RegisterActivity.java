@@ -50,82 +50,80 @@ public class RegisterActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
 
-        initListeners();
+        initListenersAndFieldValidationListener();
+
         mRegister = findViewById(R.id.register);
         mReset = findViewById(R.id.reset);
 
         mRegister.setOnClickListener(v -> {
             if(allFieldsValid()){
-                FirebaseTokenUtils.getDeviceToken(getApplicationContext(), new FirebaseTokenUtils.OnTokenReceivedListener() {
-                    @Override
-                    public void onTokenReceived(String token) {
+                //listener for receiving token
+                FirebaseTokenUtils.getDeviceToken(getApplicationContext(), token -> {
+                    //onTokenReceived(String token), set token on freelancer object to be send in API call
+                    setFreeLancerDetails(token);
+                    Log.e("Sending DeviceToken", fl.getDeviceToken());
 
-                        setFreeLancerDetails(token);
-                        Log.e("DeviceToken", fl.getDeviceToken());
-
-                        Retrofit retrofit = RetroFitClient.getClient(RetroFitClient.BASE_URL);
-                        ApiMethods api = retrofit.create(ApiMethods.class);
-                        Call<FreeLancer> loginFLCall = api.registerFreeLancer(fl);
-                        loginFLCall.enqueue(new Callback<FreeLancer>() {
-                            @Override
-                            public void onResponse(@NonNull Call<FreeLancer> call, @NonNull Response<FreeLancer> response) {
-                                if (response.isSuccessful() && response.code() == 201) {
-                                    FreeLancer returnedFL = response.body();
-                                    if (returnedFL != null && returnedFL.getName() != null) {
-                                        Toast.makeText(getApplicationContext(), getResources().getString(R.string.RegisterSuccess) + returnedFL.getName(),Toast.LENGTH_SHORT).show();
-                                        //if register is successful, store in shared Pref
-                                        SharedPrefUtility.storeFLDetailsInSharedPref(getApplicationContext(),returnedFL);
-
-                                       // FirebaseTokenUtils.sendTokenToServerOnLogin(returnedFL.getUsername(),getApplicationContext());
-
-                                        //redirect
-                                        launchMainActivity();
-                                    }
+                    //Register API Call
+                    Retrofit retrofit = RetroFitClient.getClient(RetroFitClient.BASE_URL);
+                    ApiMethods api = retrofit.create(ApiMethods.class);
+                    Call<FreeLancer> loginFLCall = api.registerFreeLancer(fl);
+                    loginFLCall.enqueue(new Callback<FreeLancer>() {
+                        @Override
+                        public void onResponse(@NonNull Call<FreeLancer> call, @NonNull Response<FreeLancer> response) {
+                            if (response.isSuccessful() && response.code() == 201) {
+                                FreeLancer returnedFL = response.body();
+                                if (returnedFL != null && returnedFL.getName() != null) {
+                                    Toast.makeText(getApplicationContext(), getResources().getString(R.string.RegisterSuccess) + returnedFL.getName(),Toast.LENGTH_SHORT).show();
+                                    //Store freeLancer Details into shared Pref
+                                    SharedPrefUtility.storeFLDetailsInSharedPref(getApplicationContext(),returnedFL);
+                                    launchMainActivity();
                                 }
-                                else {
-                                    int statusCode = response.code();
-                                    if (statusCode == 500) {
-                                        createDialogForRegisterFailed(getResources().getString(R.string.InternalServerError));
+                            }
+                            //Register API Call failed
+                            else {
+                                int statusCode = response.code();
+                                if (statusCode == 500) {
+                                    createDialogForRegisterFailed(getResources().getString(R.string.InternalServerError));
+                                }
+                                //Server-side Validation Error - non-unique Fields(username,Email,medicalLicenseNo)
+                                else if  ( statusCode == 406) {
+                                    FreeLancer invalidFL = null;
+                                    if (response.errorBody() != null) {
+                                        //converting a JSON response string from an API to FreeLancer class object using GSON
+                                        invalidFL = new Gson().fromJson( response.errorBody().charStream(), FreeLancer.class);
                                     }
-                                    //Server-side Validation Error - non-unique Fields(username,Email,medicalLicenseNo)
-                                    else if  ( statusCode == 406) {
-                                        FreeLancer invalidFL = null;
-                                        if (response.errorBody() != null) {
-                                            invalidFL = new Gson().fromJson( response.errorBody().charStream(), FreeLancer.class);
-                                        }
-
-                                        if(invalidFL != null){
-                                            String errString =  invalidFL.getErrorsFieldString();
-                                            String displayErrorTxt = "These fields have already been taken/registered :";
-                                            if(!errString.isEmpty()){
-                                                if(errString.contains("Username")){
-                                                    displayErrorTxt += " UserName,";
-                                                }
-                                                if(errString.contains("Email")){
-                                                    displayErrorTxt += " Email,";
-                                                }
-                                                if(errString.contains("Medical")){
-                                                    displayErrorTxt += " MedicalLicenseNumber,";
-                                                }
-                                                displayErrorTxt = displayErrorTxt.substring(0, displayErrorTxt.length() - 1);
-                                                createDialogForRegisterFailed(displayErrorTxt);
+                                    //display fields that have failed validation
+                                    if(invalidFL != null){
+                                        String errString =  invalidFL.getErrorsFieldString();
+                                        String displayErrorTxt = "These fields have already been taken/registered :";
+                                        if(!errString.isEmpty()){
+                                            if(errString.contains("Username")){
+                                                displayErrorTxt += " UserName,";
                                             }
+                                            if(errString.contains("Email")){
+                                                displayErrorTxt += " Email,";
+                                            }
+                                            if(errString.contains("Medical")){
+                                                displayErrorTxt += " MedicalLicenseNumber,";
+                                            }
+                                            displayErrorTxt = displayErrorTxt.substring(0, displayErrorTxt.length() - 1);
+                                            createDialogForRegisterFailed(displayErrorTxt);
                                         }
                                     }
                                 }
                             }
+                        }
 
-                            @Override
-                            public void onFailure(@NonNull Call<FreeLancer> call, @NonNull Throwable t) {
-                                if (t instanceof IOException) {
-                                    createDialogForRegisterFailed(getResources().getString(R.string.NetworkFailure));
-                                }
-                                else {
-                                    createDialogForRegisterFailed(getResources().getString(R.string.JSONParsingIssue));
-                                }
+                        @Override
+                        public void onFailure(@NonNull Call<FreeLancer> call, @NonNull Throwable t) {
+                            if (t instanceof IOException) {
+                                createDialogForRegisterFailed(getResources().getString(R.string.NetworkFailure));
                             }
-                        });
-                    }
+                            else {
+                                createDialogForRegisterFailed(getResources().getString(R.string.JSONParsingIssue));
+                            }
+                        }
+                    });
                 });
             }
             else{
@@ -139,7 +137,7 @@ public class RegisterActivity extends AppCompatActivity {
         });
     }
 
-    private void initListeners(){
+    private void initListenersAndFieldValidationListener(){
 
         mName = findViewById(R.id.name);
         mName.setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);

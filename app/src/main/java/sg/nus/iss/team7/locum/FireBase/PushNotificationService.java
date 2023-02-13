@@ -32,10 +32,10 @@ public class PushNotificationService extends FirebaseMessagingService {
     final String CHANNEL_ID = "CHANNEL_NOTIFICATION_ID";
     final String CHANNEL = "CHANNEL_NOTIFICATION";
 
-
     @Override
     public void onCreate() {
         super.onCreate();
+        //Channel is created once
         createNotificationChannel();
     }
 
@@ -53,8 +53,10 @@ public class PushNotificationService extends FirebaseMessagingService {
             String jobid = data.get("jobid");
             String username = data.get("username");
             String redirectToTargetActivity = data.get("click_action");
-            Log.e("Data Message Received -Message data payload: " , String.valueOf(remoteMessage.getData()));
-            createNotification(redirectToTargetActivity,title,body,jobid,username);
+            Log.e("Data Message Received : " , String.valueOf(remoteMessage.getData()));
+            if (jobid != null) {
+                createNotification(redirectToTargetActivity,title,body,jobid,username);
+            }
         }
         super.onMessageReceived(remoteMessage);
     }
@@ -73,8 +75,12 @@ public class PushNotificationService extends FirebaseMessagingService {
     private void createNotification(String activityToDirectTo,String title,String body,String jobid,String username){
 
         try {
+            //generating a unique identifier for the notification
             int notificationId = jobid.hashCode();
 
+            //Set up 2 actions("VIEW" and "DISMISS") for notification
+
+            //pendingIntent to direct to targetActivity onClicking "VIEW"
             Class<?> cls = Class.forName(activityToDirectTo);
             Intent intent = new Intent(this, cls);
             intent.putExtra("itemId", Integer.valueOf(jobid));
@@ -88,7 +94,7 @@ public class PushNotificationService extends FirebaseMessagingService {
                     .Builder(R.drawable.ic_notifications_status_change, "VIEW", pendingIntent)
                     .build();
 
-            // Start a service to cancel notification
+            //pendingIntent to start a service to cancel notification onClicking "DISMISS"
             Intent dismissIntent = new Intent(this, DismissNotificationService.class);
             dismissIntent.putExtra("notification_id", notificationId);
             //FLAG_UPDATE_CURRENT flag to cancel the notification. This way, the user can either view the job details or dismiss the notification, but not both
@@ -96,18 +102,8 @@ public class PushNotificationService extends FirebaseMessagingService {
             NotificationCompat.Action DismissAction = new NotificationCompat.Action
                     .Builder(R.drawable.ic_dismiss_notification, "DISMISS", dismissPendingIntent)
                     .build();
-
-//            //Creating a notification channel for  version >= Android 8.1 (Oreo)
-//            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-//                NotificationChannel channel = new NotificationChannel(CHANNEL_ID, CHANNEL, NotificationManager.IMPORTANCE_HIGH);
-//                channel.enableVibration(true);
-//                channel.setVibrationPattern(new long[]{100, 200, 300, 400, 500, 400, 300, 200, 400});
-//                channel.setSound(Settings.System.DEFAULT_NOTIFICATION_URI, new AudioAttributes.Builder().build());
-//                channel.enableLights(true);
-//                channel.setLightColor(Color.RED);
-//                getSystemService(NotificationManager.class).createNotificationChannel(channel);
-//            }
-
+            //start background thread to not hog main UI thread as
+            // decodingResource to bitmap is an expensive operation that can take some time to complete
             new Thread(() -> {
                 Bitmap largeIcon = BitmapFactory.decodeResource(getResources(), R.drawable.ic_notifications_status_change);
 

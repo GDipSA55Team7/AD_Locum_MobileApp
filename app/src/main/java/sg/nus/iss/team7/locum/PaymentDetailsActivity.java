@@ -97,7 +97,6 @@ public class PaymentDetailsActivity extends AppCompatActivity {
         downloadButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                System.out.println("inside onclick");
                 requestPermission();
             }
         });

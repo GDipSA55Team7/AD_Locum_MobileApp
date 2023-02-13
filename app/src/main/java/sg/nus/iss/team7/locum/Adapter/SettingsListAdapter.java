@@ -48,32 +48,24 @@ public class SettingsListAdapter extends ArrayAdapter<String> {
         String logOutString = context.getResources().getString(R.string.LogOut);
         View linkView = rowView.findViewById(R.id.rowSetting);
         if (SettingsText[position].equals(editProfileString)) {
-            linkView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Intent intent = new Intent(context, EditProfileActivity.class);
-                    context.startActivity(intent);
-                }
+            linkView.setOnClickListener(v -> {
+                Intent intent = new Intent(context, EditProfileActivity.class);
+                context.startActivity(intent);
             });
         } else if (SettingsText[position].equals(logOutString)) {
-            linkView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    new AlertDialog.Builder(context)
-                            .setIcon(R.drawable.ic_exit_application)
-                            .setTitle(context.getResources().getString(R.string.LogOut))
-                            .setMessage(context.getResources().getString(R.string.LogOutPrompt))
-                            .setCancelable(false)
-                            .setPositiveButton(context.getResources().getString(R.string.Yes), (dialog, id) -> {
-                                FreeLancer loggedOutUser = readFromSharedPref();
-                                clearSharedPref();
-                                FirebaseTokenUtils.updateServerOnLogout(loggedOutUser.getUsername());
-                                returnToLoginActivity();
-                            })
-                            .setNegativeButton(context.getResources().getString(R.string.No), null)
-                            .show();
-                }
-            });
+            linkView.setOnClickListener(v -> new AlertDialog.Builder(context)
+                    .setIcon(R.drawable.ic_exit_application)
+                    .setTitle(context.getResources().getString(R.string.LogOut))
+                    .setMessage(context.getResources().getString(R.string.LogOutPrompt))
+                    .setCancelable(false)
+                    .setPositiveButton(context.getResources().getString(R.string.Yes), (dialog, id) -> {
+                        FreeLancer loggedOutUser = readFromSharedPref();
+                        clearSharedPref();
+                        FirebaseTokenUtils.updateServerOnLogout(getContext(),loggedOutUser.getUsername());
+                        returnToLoginActivity();
+                    })
+                    .setNegativeButton(context.getResources().getString(R.string.No), null)
+                    .show());
         }
         return rowView;
     }
@@ -91,7 +83,6 @@ public class SettingsListAdapter extends ArrayAdapter<String> {
         Gson gson = new Gson();
         SharedPreferences sharedPreferences = getContext().getSharedPreferences(getContext().getResources().getString(R.string.Freelancer_Shared_Pref), MODE_PRIVATE);
         String json = sharedPreferences.getString(getContext().getResources().getString(R.string.Freelancer_Details), "");
-        FreeLancer fl = gson.fromJson(json, FreeLancer.class);
-        return fl;
+        return gson.fromJson(json, FreeLancer.class);
     }
 }

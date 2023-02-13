@@ -11,12 +11,16 @@ public class RetroFitClient {
     public static final String BASE_URL = "http://192.168.1.6:8080";
     private static Retrofit retrofit = null;
 
+    //synchronized keyword ensures that the retrofit object is only created once
     public static synchronized Retrofit getClient(String url) {
         if (retrofit == null) {
+
+            //log the network requests and responses
             HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
             interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
             OkHttpClient client = new OkHttpClient.Builder().addInterceptor(interceptor).build();
 
+            //GsonConverterFactory to parse the data received from the API into a Java object.
             retrofit = new Retrofit.Builder()
                     .baseUrl(url)
                     .addConverterFactory(GsonConverterFactory.create())

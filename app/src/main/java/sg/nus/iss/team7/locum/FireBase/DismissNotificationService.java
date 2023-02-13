@@ -4,7 +4,6 @@ import android.app.NotificationManager;
 import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
-import android.util.Log;
 
 
 public class DismissNotificationService extends Service {
@@ -14,11 +13,10 @@ public class DismissNotificationService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
 
         int notificationId = intent.getIntExtra("notification_id", -1);
-        Log.e("DismissNotificationService started","notification id : " + notificationId);
         NotificationManager notificationManager = (NotificationManager) getSystemService(getApplicationContext().NOTIFICATION_SERVICE);
         notificationManager.cancel(notificationId);
         stopSelf();
-        return START_NOT_STICKY;
+        return START_STICKY;
     }
     @Override
     public IBinder onBind(Intent intent) {
