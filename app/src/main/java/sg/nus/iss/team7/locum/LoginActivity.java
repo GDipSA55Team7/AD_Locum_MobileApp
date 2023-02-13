@@ -124,91 +124,6 @@ public class LoginActivity extends AppCompatActivity {
                             checkFLlogin.setUsername(usernameInput);
                             checkFLlogin.setPassword(passwordInput);
 
-//                            if (getIntent().getBooleanExtra("fromNotification",false) == true) {
-//                                notificationTargetUserName = intentNotificationUser.getStringExtra("notificationTargetUserName");
-//                                if (notificationTargetUserName != null && !notificationTargetUserName.equals("")) {
-//                                    // loginusername do not match notificationtargetusername
-//                                    if (!usernameInput.equals(notificationTargetUserName)) {
-//                                        createDialogForLoginFailed("Notification not meant the username you tried to login with");
-//                                    }
-//
-//                                   // matches, proceed with login
-//                                    else {
-//                                        Log.e("Try to login From Notification", "loginusername matches notificationtarget, logging in as  " + notificationTargetUserName);
-//                                        FirebaseTokenUtils.getDeviceToken(getApplicationContext(), new FirebaseTokenUtils.OnTokenReceivedListener() {
-//                                            @Override
-//                                            public void onTokenReceived(String token) {
-//                                                checkFLlogin.setDeviceToken(token);
-//                                                Retrofit retrofit = RetroFitClient.getClient(RetroFitClient.BASE_URL);
-//                                                ApiMethods api = retrofit.create(ApiMethods.class);
-//                                                Log.e("checkFL", checkFLlogin.getDeviceToken());
-//                                                Call<FreeLancer> loginFLCall = api.loginFreeLancerAndUpdateToken(checkFLlogin);
-//                                                loginFLCall.enqueue(new Callback<FreeLancer>() {
-//                                                    @Override
-//                                                    public void onResponse(@NonNull Call<FreeLancer> call, @NonNull Response<FreeLancer> response) {
-//                                                        if (response.isSuccessful() && response.code() == 200) {
-//                                                            FreeLancer existingFL = response.body();
-//                                                            if (existingFL != null && existingFL.getName() != null) {
-//                                                                Toast.makeText(getApplicationContext(), getResources().getString(R.string.LoginSuccess) + existingFL.getName(), Toast.LENGTH_SHORT).show();
-//                                                                Log.e("login from notification", usernameInput + "login successful , token registered : " +  token);
-//
-//                                                                //if login is successful, store in shared Pref
-//                                                                SharedPrefUtility.storeFLDetailsInSharedPref(getApplicationContext(), existingFL);
-//
-//                                                                NotificationManagerCompat notificationManager = NotificationManagerCompat.from(getApplicationContext());
-//
-//                                                                // Pixel 4 XL API 29- By Default, normal "show notification" permissions are enabled
-//                                                                if (notificationManager.areNotificationsEnabled()) {
-//                                                                    launchJobDetailsActivity(intentNotificationUser.getIntExtra("itemId",-1));
-//                                                                }
-//                                                                //Depends on phone, S20 "show Notifications" permissions are disabled
-//                                                                // redirect the user to app settings to enable permissions
-//                                                                else {
-//                                                                    AlertDialog.Builder builder = new AlertDialog.Builder(LoginActivity.this);
-//                                                                    builder.setMessage(
-//                                                                                    "The \"show notification\" is a normal permission so there is no need to request for permission at runtime, " +
-//                                                                                            "Android will automatically request for runtime permission when creating notifications.However," +
-//                                                                                            "for some reason, the first push notification will not be displayed when using Android's permission prompt." +
-//                                                                                            "As such, User has to set \"show notification\" permission manually in app settings. "
-//                                                                            )
-//                                                                            .setCancelable(false)
-//                                                                            .setPositiveButton("Go to Settings", new DialogInterface.OnClickListener() {
-//                                                                                public void onClick(DialogInterface dialog, int id) {
-//                                                                                    Intent intent = new Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS);
-//                                                                                    intent.putExtra(Settings.EXTRA_APP_PACKAGE, getPackageName());
-//                                                                                    startActivity(intent);
-//                                                                                }
-//                                                                            });
-//                                                                    AlertDialog alert = builder.create();
-//                                                                    alert.show();
-//                                                                }
-//
-//                                                            }
-//                                                        } else {
-//                                                            int statusCode = response.code();
-//                                                            if (statusCode == 500) {
-//                                                                createDialogForLoginFailed(getResources().getString(R.string.InternalServerError));
-//                                                            } else if (statusCode == 404) {
-//                                                                createDialogForLoginFailed(getResources().getString(R.string.NoSuchRegisteredUser));
-//                                                            }
-//                                                        }
-//                                                    }
-//
-//                                                    @Override
-//                                                    public void onFailure(@NonNull Call<FreeLancer> call, @NonNull Throwable t) {
-//                                                        if (t instanceof IOException) {
-//                                                            createDialogForLoginFailed(getResources().getString(R.string.NetworkFailure));
-//                                                        } else {
-//                                                            createDialogForLoginFailed(getResources().getString(R.string.JSONParsingIssue));
-//                                                        }
-//                                                    }
-//                                                });
-//                                            }
-//                                        });
-//
-//                                    }
-//                                }
-//                            }
 
                             //standard login (not from notification)
                                 Log.e("standard login", "username : " + usernameInput);
@@ -300,12 +215,20 @@ public class LoginActivity extends AppCompatActivity {
 
     @Override
     protected void onPause() {
+        dismissDialog();
         super.onPause();
+    }
+    @Override
+    protected void onDestroy() {
+        dismissDialog();
+        super.onDestroy();
+    }
+
+    private void dismissDialog() {
         if (dialog != null && dialog.isShowing()) {
             dialog.dismiss();
         }
     }
-
     @Override
     protected void onResume() {
         if(isLoggedIn()){
@@ -408,11 +331,12 @@ public class LoginActivity extends AppCompatActivity {
                 .show();
     }
 
+    //intent from jobDetailsActivity(By Notification)
     @Override
     protected void onNewIntent(Intent intentFromNotification) {
         super.onNewIntent(intentFromNotification);
         setIntent(intentFromNotification);
-        //intent from jobDetailsActivity(By Notification)
+
         mLoginBtn.setOnClickListener(v -> {
 
         String usernameInput = mUserName.getText().toString().trim();
