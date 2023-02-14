@@ -5,13 +5,11 @@
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_gravity">center</item>
-        <item name="android:layout_marginStart">32dp</item>
-        <item name="android:layout_marginEnd">32dp</item>
         <item name="android:textColor">@color/black</item>
         <item name="android:textColorHint">@color/black</item>
         <item name="android:padding">15dp</item>
-        <item name="android:ems">15</item>
-        <item name="android:background">@drawable/shimmer_rounded_corners</item>
+        <item name="android:ems">17</item>
+        <item name="android:background">@drawable/rounded_input</item>
     </style>
 
     <style name="RegisterFieldStyle">
@@ -24,8 +22,8 @@
         <item name="android:textColor">@color/black</item>
         <item name="android:textColorHint">@color/black</item>
         <item name="android:padding">10dp</item>
-        <item name="android:ems">15</item>
-        <item name="android:background">@drawable/shimmer_rounded_corners</item>
+        <item name="android:ems">17</item>
+        <item name="android:background">@drawable/rounded_input</item>
     </style>
 
 

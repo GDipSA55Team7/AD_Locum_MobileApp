@@ -3,9 +3,13 @@ package sg.nus.iss.team7.locum;
 
 import android.app.Activity;
 
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.InsetDrawable;
 import android.os.Bundle;
 
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.DividerItemDecoration;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -29,6 +33,7 @@ public class SettingsFragment extends Fragment {
         String[] values = {"Edit Profile", "Log Out"};
         Integer[] images = {R.drawable.ic_editprofile_settings, R.drawable.ic_logout_settings};
         SettingsListAdapter adapter = new SettingsListAdapter((Activity) getContext(), values, images);
+
         list.setAdapter(adapter);
 
         return view;

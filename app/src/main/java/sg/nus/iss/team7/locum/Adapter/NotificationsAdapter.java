@@ -81,6 +81,7 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
                         Intent intent = new Intent(context, JobDetailActivity.class);
                         int itemId = notification.getJobId().intValue();
                         intent.putExtra("itemId", itemId);
+                        dismissNotifications(viewHolder);
                         context.startActivity(intent);
                         return false;
                     }
