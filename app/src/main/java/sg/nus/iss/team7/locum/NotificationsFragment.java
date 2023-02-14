@@ -85,7 +85,7 @@ public class NotificationsFragment extends Fragment {
             public void onResponse(Call<ArrayList<Notification>> call, Response<ArrayList<Notification>> response) {
                 if (response.isSuccessful()) {
                     responseList = response.body();
-                    if (responseList == null) {
+                    if (responseList.isEmpty()) {
                         emptyView.setVisibility(View.VISIBLE);
                     } else {
                         adapter.setMyList(responseList);
