@@ -134,9 +134,6 @@ public class JobDetailFragment extends Fragment {
 
             //If pending payment
             if(jobPost.getStatus().contains("PENDING_PAYMENT")){
-                //Show payment pending animation
-                LottieAnimationView paymentProcessingAnimation = (LottieAnimationView) view.findViewById(R.id.paymentProcessingAnimation);
-                paymentProcessingAnimation.setVisibility(View.VISIBLE);
 
                 //update text
                 TextView textView = (TextView) view.findViewById(R.id.paymentStatus);
@@ -148,9 +145,6 @@ public class JobDetailFragment extends Fragment {
             }
             //if payment success
             else{
-                //Show payment success animation
-                LottieAnimationView paymentSuccessAnimation = (LottieAnimationView) view.findViewById(R.id.paymentSuccessAnimation);
-                paymentSuccessAnimation.setVisibility(View.VISIBLE);
 
                 //update text
                 TextView paymentStatus = (TextView) view.findViewById(R.id.paymentStatus);
@@ -254,7 +248,6 @@ public class JobDetailFragment extends Fragment {
             public void onResponse(Call<JobPost> call, Response<JobPost> response) {
                 if (response.isSuccessful()) {
                     if (status.equalsIgnoreCase("apply")) {
-                        //todo check if any job application on same timing
                         jobPost.setStatus("PENDING_CONFIRMATION_BY_CLINIC");
                         button.setEnabled(false);
                     } else if (status.equalsIgnoreCase("cancel")) {
