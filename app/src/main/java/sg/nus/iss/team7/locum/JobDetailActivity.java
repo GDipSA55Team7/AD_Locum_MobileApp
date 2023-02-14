@@ -257,22 +257,22 @@ public class JobDetailActivity extends AppCompatActivity {
     private void setStatusBar() {
         if(jobPost.getStatus().equalsIgnoreCase("PENDING_CONFIRMATION_BY_CLINIC")) {
             statusText.setText("APPLIED");
-            statusText.setBackgroundTintList(getColorStateList(R.color.status_mid));
+            statusText.setBackgroundTintList(getColorStateList(R.color.pendingStatus));
         } else if (jobPost.getStatus().equalsIgnoreCase("OPEN")) {
             statusText.setText("OPEN");
-            statusText.setBackgroundTintList(getColorStateList(R.color.status_green));
+            statusText.setBackgroundTintList(getColorStateList(R.color.lightBlue));
         } else if(jobPost.getStatus().equalsIgnoreCase("ACCEPTED")){
             statusText.setText("ACCEPTED");
-            statusText.setBackgroundTintList(getColorStateList(R.color.darker_grey));
+            statusText.setBackgroundTintList(getColorStateList(R.color.accpeted));
         } else if(jobPost.getStatus().equalsIgnoreCase("CANCELLED")){
             statusText.setText("CANCELLED");
             statusText.setBackgroundTintList(getColorStateList(R.color.darker_grey));
         } else if(jobPost.getStatus().equalsIgnoreCase("COMPLETED_PENDING_PAYMENT")){
             statusText.setText("PAYMENT");
-            statusText.setBackgroundTintList(getColorStateList(R.color.status_red));
+            statusText.setBackgroundTintList(getColorStateList(R.color.pendingPayment));
         } else if (jobPost.getStatus().startsWith("COMPLETED")) {
             statusText.setText("COMPLETED");
-            statusText.setBackgroundTintList(getColorStateList(R.color.darker_grey));
+            statusText.setBackgroundTintList(getColorStateList(R.color.black));
         }
     }
 

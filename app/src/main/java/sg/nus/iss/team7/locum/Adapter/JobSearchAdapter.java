@@ -132,22 +132,22 @@ public class JobSearchAdapter extends RecyclerView.Adapter<JobSearchAdapter.MyVi
 
         if(jobPost.getStatus().equalsIgnoreCase("PENDING_CONFIRMATION_BY_CLINIC")) {
             holder.status.setText("APPLIED");
-            holder.status.setBackgroundTintList(getColorStateList(context,R.color.status_mid));
+            holder.status.setBackgroundTintList(getColorStateList(context,R.color.pendingStatus));
         } else if (jobPost.getStatus().equalsIgnoreCase("OPEN")) {
             holder.status.setText("OPEN");
-            holder.status.setBackgroundTintList(getColorStateList(context, R.color.status_green));
+            holder.status.setBackgroundTintList(getColorStateList(context, R.color.lightBlue));
         } else if(jobPost.getStatus().equalsIgnoreCase("ACCEPTED")){
             holder.status.setText("ACCEPTED");
-            holder.status.setBackgroundTintList(getColorStateList(context, R.color.darker_grey));
+            holder.status.setBackgroundTintList(getColorStateList(context, R.color.accpeted));
         } else if(jobPost.getStatus().equalsIgnoreCase("CANCELLED")){
             holder.status.setText("CANCELLED");
             holder.status.setBackgroundTintList(getColorStateList(context, R.color.darker_grey));
         } else if(jobPost.getStatus().equalsIgnoreCase("COMPLETED_PENDING_PAYMENT")){
             holder.status.setText("PAYMENT");
-            holder.status.setBackgroundTintList(getColorStateList(context, R.color.status_red));
+            holder.status.setBackgroundTintList(getColorStateList(context, R.color.pendingPayment));
         } else if (jobPost.getStatus().startsWith("COMPLETED")) {
             holder.status.setText("COMPLETED");
-            holder.status.setBackgroundTintList(getColorStateList(context, R.color.darker_grey));
+            holder.status.setBackgroundTintList(getColorStateList(context, R.color.black));
         }
     }
 }

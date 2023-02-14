@@ -143,6 +143,7 @@
             android:layout_weight="1">
 
             <LinearLayout
+                android:id="@+id/confirmedJobs"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_margin="5dp"
@@ -173,6 +174,7 @@
             </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/pendingConfirmationJobs"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_margin="5dp"
@@ -209,6 +211,7 @@
             android:layout_weight="1">
 
             <LinearLayout
+                android:id="@+id/completedJob"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_margin="5dp"
@@ -238,6 +241,7 @@
             </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/pendingPaymentJobs"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_margin="5dp"
