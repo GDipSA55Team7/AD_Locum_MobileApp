@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.core.content.ContextCompat;
@@ -46,12 +47,16 @@ public class ConfirmedJobChildFragment extends Fragment implements RecyclerViewI
     private ShimmerFrameLayout shimmerFrameLayout;
     private SwipeRefreshLayout swipeContainer;
     private RecyclerView recyclerView;
+    private TextView emptyView;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.child_fragment_confirmed, container, false);
+
+        // Empty view if list is empty
+        emptyView = view.findViewById(R.id.empty_confirmed);
 
         // Shimmer load effect
         shimmerFrameLayout = view.findViewById(R.id.shimmer_view_container);
@@ -125,6 +130,14 @@ public class ConfirmedJobChildFragment extends Fragment implements RecyclerViewI
                     shimmerFrameLayout.stopShimmer();
                     shimmerFrameLayout.setVisibility(View.GONE);
                     swipeContainer.setRefreshing(false);
+
+                    if (responseList == null || responseList.isEmpty()) {
+                        emptyView.setVisibility(View.VISIBLE);
+                        recyclerView.setVisibility(View.GONE);
+                    } else {
+                        emptyView.setVisibility(View.GONE);
+                        recyclerView.setVisibility(View.VISIBLE);
+                    }
                 }
             }
 

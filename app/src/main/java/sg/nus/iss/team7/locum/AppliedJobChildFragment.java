@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.core.content.ContextCompat;
@@ -45,6 +46,7 @@ public class AppliedJobChildFragment extends Fragment implements RecyclerViewInt
     private ArrayList<JobPost> responseList = new ArrayList<JobPost>();
     private ShimmerFrameLayout shimmerFrameLayout;
     private SwipeRefreshLayout swipeContainer;
+    private TextView emptyView;
 
 
     @Override
@@ -52,6 +54,9 @@ public class AppliedJobChildFragment extends Fragment implements RecyclerViewInt
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.child_fragment_applied, container, false);
+
+        // Empty view if list is empty
+        emptyView = view.findViewById(R.id.empty_applied);
 
         // Shimmer load effect
         shimmerFrameLayout = view.findViewById(R.id.shimmer_view_container);
@@ -76,6 +81,7 @@ public class AppliedJobChildFragment extends Fragment implements RecyclerViewInt
         // Load object from API to recycler view
         adapter = new JobSearchAdapter(recyclerView.getContext(), this);
         getJobs(adapter);
+
         recyclerView.setAdapter(adapter);
 
         // Set listener for swipe up to reload
@@ -123,11 +129,19 @@ public class AppliedJobChildFragment extends Fragment implements RecyclerViewInt
                         responseList = responseList.stream()
                                 .sorted(Comparator.comparing(o -> LocalDateTime.parse(o.getStartDateTime(), DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm"))))
                                 .collect(Collectors.toCollection(ArrayList::new));
-                        adapter.setMyList(responseList);
                     }
+                    adapter.setMyList(responseList);
                     shimmerFrameLayout.stopShimmer();
                     shimmerFrameLayout.setVisibility(View.GONE);
                     swipeContainer.setRefreshing(false);
+
+                    if (responseList == null || responseList.isEmpty()) {
+                        emptyView.setVisibility(View.VISIBLE);
+                        recyclerView.setVisibility(View.GONE);
+                    } else {
+                        emptyView.setVisibility(View.GONE);
+                        recyclerView.setVisibility(View.VISIBLE);
+                    }
                 }
             }
 

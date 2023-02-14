@@ -25,6 +25,7 @@ import android.transition.TransitionInflater;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.facebook.shimmer.ShimmerFrameLayout;
@@ -55,10 +56,14 @@ public class JobSearchFragment extends Fragment implements RecyclerViewInterface
     private JobSearchAdapter adapter;
     private SearchView searchView;
     private RecyclerView recyclerView;
+    private TextView emptyView;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.activity_job_search, container, false);
+
+        // Empty view if list is empty
+        emptyView = view.findViewById(R.id.empty_search);
 
         // Set up search bar
         searchView = view.findViewById(R.id.searchView);
@@ -162,6 +167,14 @@ public class JobSearchFragment extends Fragment implements RecyclerViewInterface
                     shimmerFrameLayout.stopShimmer();
                     shimmerFrameLayout.setVisibility(View.GONE);
                     swipeContainer.setRefreshing(false);
+
+                    if (responseList == null || responseList.isEmpty()) {
+                        emptyView.setVisibility(View.VISIBLE);
+                        recyclerView.setVisibility(View.GONE);
+                    } else {
+                        emptyView.setVisibility(View.GONE);
+                        recyclerView.setVisibility(View.VISIBLE);
+                    }
                 }
             }
 

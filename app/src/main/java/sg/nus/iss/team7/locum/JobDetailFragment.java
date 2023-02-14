@@ -297,8 +297,8 @@ public class JobDetailFragment extends Fragment {
     }
     public void dialogForJobOverlapByDateAndTime(){
 
-        String alertMsg="Comfirm Want to Apply?";
-        String alertTitle="Job Date and Time Overlaps with Existing Jobs";
+        String alertMsg="Confirm application";
+        String alertTitle="This job's date and time overlaps with one or more of your existing jobs. \n Please confirm your application.";
 
         AlertDialog.Builder dlg = new AlertDialog.Builder(getContext())
                 .setTitle(alertTitle)
