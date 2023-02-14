@@ -21,4 +21,8 @@
     <color name="selected">#2B91EB</color>
     <color name="unselected">#D5DBD6</color>
     <color name="shimmerBG">#dddddd</color>
+    <color name="lightBlue">#3c8dbc</color>
+    <color name="pendingStatus">#ffc107</color>
+    <color name="accpeted">#28a745</color>
+    <color name="pendingPayment">#dc3545</color>
 </resources>

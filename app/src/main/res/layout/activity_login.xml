@@ -9,22 +9,20 @@
 
     <ImageView
         android:id="@+id/splashImg"
-        android:layout_width="150dp"
-        android:layout_height="150dp"
+        android:layout_width="239dp"
+        android:layout_height="100dp"
         android:layout_gravity="center"
+        android:layout_marginTop="100dp"
         android:gravity="center"
-        android:layout_marginTop="50dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:background="@drawable/login_img"
         android:src="@drawable/login_img"
-        />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
 
     <EditText
         android:id="@+id/username"
-        android:layout_marginTop="50dp"
+        android:layout_marginTop="20dp"
         android:drawableLeft="@drawable/ic_baseline_person_24"
         android:drawablePadding="10dp"
         android:hint="Enter Your Username"

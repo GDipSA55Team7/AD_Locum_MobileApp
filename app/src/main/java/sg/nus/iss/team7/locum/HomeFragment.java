@@ -2,6 +2,7 @@ package sg.nus.iss.team7.locum;
 
 import static android.content.Context.MODE_PRIVATE;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 
@@ -13,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -42,6 +44,8 @@ public class HomeFragment extends Fragment {
     private ShimmerFrameLayout shimmerFrameLayoutRec, shimmerFrameLayoutNext;
     private HomeRecommendedAdapter recAdapter, nextAdapter;
     private TextView emptyView, emptyViewNext, scheduledCount, confirmationCount, completedCount, paymentCount;
+
+    private View confirmedJobs, pendingConfirmationJobs, pendingPaymentJobs, completedJobs;
     private RecyclerView recyclerView, recyclerViewNext;
     private Retrofit retrofit = RetroFitClient.getClient(RetroFitClient.BASE_URL);
     private ApiMethods api = retrofit.create(ApiMethods.class);
@@ -55,6 +59,10 @@ public class HomeFragment extends Fragment {
         confirmationCount = (TextView) view.findViewById(R.id.pendingConfirmation);
         completedCount = (TextView) view.findViewById(R.id.completed);
         paymentCount = (TextView) view.findViewById(R.id.pendingPayment);
+        confirmedJobs = (View) view.findViewById(R.id.confirmedJobs);
+        pendingConfirmationJobs = (View) view.findViewById(R.id.pendingConfirmationJobs);
+        completedJobs = (View) view.findViewById(R.id.completedJob);
+        pendingPaymentJobs = (View) view.findViewById(R.id.pendingPaymentJobs);
 
         // Recommended job recycler
         // Shimmer load effect
@@ -88,6 +96,42 @@ public class HomeFragment extends Fragment {
 
         // Set overview counts
         getOverview();
+
+        confirmedJobs.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getActivity().getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.container,new ConfirmedJobChildFragment(), null)
+                        .addToBackStack(null).commit();
+            }
+        });
+
+        pendingConfirmationJobs.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getActivity().getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.container,new AppliedJobChildFragment(), null)
+                        .addToBackStack(null).commit();
+            }
+        });
+
+        completedJobs.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getActivity().getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.container,new HistoryJobChildFragment(), null)
+                        .addToBackStack(null).commit();
+            }
+        });
+
+        pendingPaymentJobs.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getActivity().getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.container,new HistoryJobChildFragment(), null)
+                        .addToBackStack(null).commit();
+            }
+        });
 
         return view;
     }
