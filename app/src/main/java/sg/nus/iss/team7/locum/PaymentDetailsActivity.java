@@ -220,7 +220,7 @@ public class PaymentDetailsActivity extends AppCompatActivity {
 
         irhTable.addCell(getIRHCell("", PdfPCell.ALIGN_RIGHT));
         irhTable.addCell(getIRHCell("", PdfPCell.ALIGN_RIGHT));
-        irhTable.addCell(getIRHCell("Job Invoice", PdfPCell.ALIGN_RIGHT));
+        irhTable.addCell(getIRHCell("Payment Slip", PdfPCell.ALIGN_RIGHT));
         irhTable.addCell(getIRHCell("", PdfPCell.ALIGN_RIGHT));
         irhTable.addCell(getIRHCell("", PdfPCell.ALIGN_RIGHT));
         PdfPCell invoiceTable = new PdfPCell(irdTable);
