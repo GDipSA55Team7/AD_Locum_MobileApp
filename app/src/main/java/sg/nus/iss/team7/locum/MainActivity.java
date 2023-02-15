@@ -119,9 +119,9 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<Boolean> call, Response<Boolean> response) {
                 if (response.isSuccessful()) {
-                    Boolean hasUnread = response.body();
-                    if (hasUnread != null) {
-                        if (hasUnread) {
+                    Boolean allRead = response.body();
+                    if (allRead != null) {
+                        if (!allRead) {
                             notificationIndicator.setVisibility(View.VISIBLE);
                         }
                     }
