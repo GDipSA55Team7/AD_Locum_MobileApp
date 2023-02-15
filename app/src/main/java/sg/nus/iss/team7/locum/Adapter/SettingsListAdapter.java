@@ -75,7 +75,7 @@ public class SettingsListAdapter extends ArrayAdapter<String> {
     }
     private void returnToLoginActivity(){
         Intent intent = new Intent(getContext(), LoginActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         context.startActivity(intent);
         ((Activity) context).finish();
     }
