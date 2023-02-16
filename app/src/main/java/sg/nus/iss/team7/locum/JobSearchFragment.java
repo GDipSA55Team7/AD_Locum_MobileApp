@@ -51,7 +51,7 @@ public class JobSearchFragment extends Fragment implements RecyclerViewInterface
         View view = inflater.inflate(R.layout.activity_job_search, container, false);
 
         // Empty view if list is empty
-//        emptyView = view.findViewById(R.id.empty_search);
+        emptyView = view.findViewById(R.id.empty_search);
 
         // Set up search bar
         searchView = view.findViewById(R.id.searchView);
@@ -101,7 +101,7 @@ public class JobSearchFragment extends Fragment implements RecyclerViewInterface
     }
 
     private void filterList(String text) {
-        if (text.length() >= 3 || text.isEmpty()) {
+        if (text.length() >= 2 || text.isEmpty()) {
             ArrayList<JobPost> filteredList = new ArrayList<>();
             for (JobPost jobPost : responseList) {
                 if (!filteredList.contains(jobPost)) {
@@ -154,13 +154,13 @@ public class JobSearchFragment extends Fragment implements RecyclerViewInterface
                     shimmerFrameLayout.setVisibility(View.GONE);
                     swipeContainer.setRefreshing(false);
 
-//                    if (responseList == null || responseList.isEmpty()) {
-//                        emptyView.setVisibility(View.VISIBLE);
-//                        recyclerView.setVisibility(View.GONE);
-//                    } else {
-//                        emptyView.setVisibility(View.GONE);
-//                        recyclerView.setVisibility(View.VISIBLE);
-//                    }
+                    if (responseList == null || responseList.isEmpty()) {
+                        emptyView.setVisibility(View.VISIBLE);
+                        recyclerView.setVisibility(View.GONE);
+                    } else {
+                        emptyView.setVisibility(View.GONE);
+                        recyclerView.setVisibility(View.VISIBLE);
+                    }
                 }
             }
 
