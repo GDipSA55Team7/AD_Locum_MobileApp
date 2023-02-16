@@ -4,9 +4,7 @@ package sg.nus.iss.team7.locum.FireBase;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -20,12 +18,10 @@ import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 import androidx.core.content.ContextCompat;
 
-
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
 import java.util.Map;
-
 
 import sg.nus.iss.team7.locum.R;
 
@@ -41,9 +37,6 @@ public class PushNotificationService extends FirebaseMessagingService {
         createNotificationChannel();
     }
 
-    // Data messages are handled here in onMessageReceived whether the app is in the foreground or background.
-    //Notification messages are only received here in onMessageReceived when the app is in the foreground.
-    // When the app is in the background an automatically generated notification is displayed.
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
 
@@ -56,24 +49,18 @@ public class PushNotificationService extends FirebaseMessagingService {
             String username = data.get("username");
             String redirectToTargetActivity = data.get("click_action");
 
-            Log.e("Data Message Received -Message data payload: " , String.valueOf(remoteMessage.getData()));
-            createNotification(redirectToTargetActivity,title,body,jobid,username);
+            Log.e("Data Message Received -Message data payload: ", String.valueOf(remoteMessage.getData()));
+            createNotification(redirectToTargetActivity, title, body, jobid, username);
         }
         super.onMessageReceived(remoteMessage);
     }
 
-//     * There are two scenarios when onNewToken is called:
-//     * 1) When a new token is generated on initial app startup
-//     * 2) Whenever an existing token is changed
-//     * Under #2, there are two scenarios when the existing token is changed:
-//     * A) App is restored to a new device
-//     * B) User uninstalls/reinstalls the app
     @Override
     public void onNewToken(@NonNull String s) {
         super.onNewToken(s);
     }
 
-    private void createNotification(String activityToDirectTo,String title,String body,String jobid,String username){
+    private void createNotification(String activityToDirectTo, String title, String body, String jobid, String username) {
 
         try {
             int notificationId = jobid.hashCode();
@@ -86,7 +73,7 @@ public class PushNotificationService extends FirebaseMessagingService {
             intent.putExtra("cancelNotificationOnSystemTray", notificationId);
 
             //set the FLAG_ONE_SHOT flag to ensure that the user is only redirected to the job details activity once.
-            PendingIntent pendingIntent = PendingIntent.getActivity(this, notificationId, intent,PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_ONE_SHOT);
+            PendingIntent pendingIntent = PendingIntent.getActivity(this, notificationId, intent, PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_ONE_SHOT);
             NotificationCompat.Action viewAction = new NotificationCompat.Action
                     .Builder(R.drawable.ic_notifications_status_change, "VIEW", pendingIntent)
                     .build();
@@ -94,22 +81,11 @@ public class PushNotificationService extends FirebaseMessagingService {
             // Start a service to cancel notification
             Intent dismissIntent = new Intent(this, DismissNotificationService.class);
             dismissIntent.putExtra("notification_id", notificationId);
-            //FLAG_UPDATE_CURRENT flag to cancel the notification. This way, the user can either view the job details or dismiss the notification, but not both
+            // FLAG_UPDATE_CURRENT flag to cancel the notification. This way, the user can either view the job details or dismiss the notification, but not both
             PendingIntent dismissPendingIntent = PendingIntent.getService(this, notificationId, dismissIntent, PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
             NotificationCompat.Action DismissAction = new NotificationCompat.Action
                     .Builder(R.drawable.ic_dismiss_notification, "DISMISS", dismissPendingIntent)
                     .build();
-
-//            //Creating a notification channel for  version >= Android 8.1 (Oreo)
-//            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-//                NotificationChannel channel = new NotificationChannel(CHANNEL_ID, CHANNEL, NotificationManager.IMPORTANCE_HIGH);
-//                channel.enableVibration(true);
-//                channel.setVibrationPattern(new long[]{100, 200, 300, 400, 500, 400, 300, 200, 400});
-//                channel.setSound(Settings.System.DEFAULT_NOTIFICATION_URI, new AudioAttributes.Builder().build());
-//                channel.enableLights(true);
-//                channel.setLightColor(Color.RED);
-//                getSystemService(NotificationManager.class).createNotificationChannel(channel);
-//            }
 
             new Thread(() -> {
                 Bitmap largeIcon = BitmapFactory.decodeResource(getResources(), R.drawable.ic_notifications_status_change);
@@ -129,14 +105,14 @@ public class PushNotificationService extends FirebaseMessagingService {
             }).start();
 
         } catch (ClassNotFoundException e) {
-            Log.e("createNotification","error with either converting string to class or with notification creation");
+            Log.e("createNotification", "error with either converting string to class or with notification creation");
             e.printStackTrace();
         }
     }
 
-    private void createNotificationChannel(){
+    private void createNotificationChannel() {
 
-        //Creating a notification channel for  version >= Android 8.1 (Oreo)
+        // Creating a notification channel for  version >= Android 8.1 (Oreo)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationChannel channel = new NotificationChannel(CHANNEL_ID, CHANNEL, NotificationManager.IMPORTANCE_HIGH);
             channel.enableVibration(true);

@@ -5,63 +5,25 @@ import android.os.Parcelable;
 import android.util.Log;
 
 public class PaymentDetailsDTO implements Parcelable {
+    public static final Parcelable.Creator<PaymentDetailsDTO> CREATOR = new Parcelable.Creator<PaymentDetailsDTO>() {
+        @Override
+        public PaymentDetailsDTO createFromParcel(Parcel source) {
+            return new PaymentDetailsDTO(source);
+        }
+
+        @Override
+        public PaymentDetailsDTO[] newArray(int size) {
+            return new PaymentDetailsDTO[size];
+        }
+    };
     private Integer jobId;
-    private Double jobRatePerHr,jobTotalRate;
-    private String jobDescription,jobStartDateTime,jobEndDateTime,jobAdditionalFees,jobPaymentDate,jobPaymentRefNo;
-    private String clinicName,clinicAddress,clinicPostalCode,clinicContact,clinicHciCode;
-    private String flName,flEmail,flContact,flMedicalLicenseNo;
-
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        Log.d("PaymentDetailsDTO", "Writing to parcel");
-        dest.writeValue(this.jobId);
-        Log.d("PaymentDetailsDTO", "Writing jobId: " + this.jobId);
-        dest.writeValue(this.jobRatePerHr);
-        Log.d("PaymentDetailsDTO", "Writing jobRatePerHr: " + this.jobRatePerHr);
-        dest.writeValue(this.jobTotalRate);
-        Log.d("PaymentDetailsDTO", "Writing jobTotalRate: " + this.jobTotalRate);
-        dest.writeString(this.jobAdditionalFees);
-        Log.d("PaymentDetailsDTO", "Writing jobAdditionalFees: " + this.jobAdditionalFees);
-        dest.writeString(this.jobDescription);
-        Log.d("PaymentDetailsDTO", "Writing jobDescription: " + this.jobDescription);
-        dest.writeString(this.jobStartDateTime);
-        Log.d("PaymentDetailsDTO", "Writing jobStartDateTime: " + this.jobStartDateTime);
-        dest.writeString(this.jobEndDateTime);
-        Log.d("PaymentDetailsDTO", "Writing jobEndDateTime: " + this.jobEndDateTime);
-        dest.writeString(this.jobPaymentDate);
-        Log.d("PaymentDetailsDTO", "Writing jobPaymentDate: " + this.jobPaymentDate);
-        dest.writeString(this.jobPaymentRefNo);
-        Log.d("PaymentDetailsDTO", "Writing jobPaymentRefNo " + this.jobPaymentRefNo);
-
-
-        dest.writeString(this.clinicName);
-        Log.d("PaymentDetailsDTO", "Writing clinicName: " + this.clinicName);
-        dest.writeString(this.clinicAddress);
-        Log.d("PaymentDetailsDTO", "Writing clinicAddress: " + this.clinicAddress);
-        dest.writeString(this.clinicPostalCode);
-        Log.d("PaymentDetailsDTO", "Writing clinicPostalCode: " + this.clinicPostalCode);
-        dest.writeString(this.clinicContact);
-        Log.d("PaymentDetailsDTO", "Writing clinicContact: " + this.clinicContact);
-        dest.writeString(this.clinicHciCode);
-        Log.d("PaymentDetailsDTO", "Writing clinicHciCode: " + this.clinicHciCode);
-        dest.writeString(this.flName);
-
-        Log.d("PaymentDetailsDTO", "Writing flName: " + this.flName);
-        dest.writeString(this.flEmail);
-        Log.d("PaymentDetailsDTO", "Writing flEmail: " + this.flEmail);
-        dest.writeString(this.flContact);
-        Log.d("PaymentDetailsDTO", "Writing flContact: " + this.flContact);
-        dest.writeString(this.flMedicalLicenseNo);
-        Log.d("PaymentDetailsDTO", "Writing flMedicalLicenseNo: " + this.flMedicalLicenseNo);
-    }
+    private Double jobRatePerHr, jobTotalRate;
+    private String jobDescription, jobStartDateTime, jobEndDateTime, jobAdditionalFees, jobPaymentDate, jobPaymentRefNo;
+    private String clinicName, clinicAddress, clinicPostalCode, clinicContact, clinicHciCode;
+    private String flName, flEmail, flContact, flMedicalLicenseNo;
 
     public PaymentDetailsDTO(Integer jobId, Double jobRatePerHr, Double jobTotalRate, String jobAdditionalFees, String jobDescription,
-                             String jobStartDateTime, String jobEndDateTime,String jobPaymentDate,String jobPaymentRefNo,
+                             String jobStartDateTime, String jobEndDateTime, String jobPaymentDate, String jobPaymentRefNo,
                              String clinicName, String clinicAddress, String clinicPostalCode, String clinicContact, String clinicHciCode,
                              String flName, String flEmail, String flContact, String flMedicalLicenseNo) {
         this.jobId = jobId;
@@ -130,18 +92,55 @@ public class PaymentDetailsDTO implements Parcelable {
 
 
     }
-    public static final Parcelable.Creator<PaymentDetailsDTO> CREATOR = new Parcelable.Creator<PaymentDetailsDTO>() {
-        @Override
-        public PaymentDetailsDTO createFromParcel(Parcel source) {
-            return new PaymentDetailsDTO(source);
-        }
 
-        @Override
-        public PaymentDetailsDTO[] newArray(int size) {
-            return new PaymentDetailsDTO[size];
-        }
-    };
+    @Override
+    public int describeContents() {
+        return 0;
+    }
 
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        Log.d("PaymentDetailsDTO", "Writing to parcel");
+        dest.writeValue(this.jobId);
+        Log.d("PaymentDetailsDTO", "Writing jobId: " + this.jobId);
+        dest.writeValue(this.jobRatePerHr);
+        Log.d("PaymentDetailsDTO", "Writing jobRatePerHr: " + this.jobRatePerHr);
+        dest.writeValue(this.jobTotalRate);
+        Log.d("PaymentDetailsDTO", "Writing jobTotalRate: " + this.jobTotalRate);
+        dest.writeString(this.jobAdditionalFees);
+        Log.d("PaymentDetailsDTO", "Writing jobAdditionalFees: " + this.jobAdditionalFees);
+        dest.writeString(this.jobDescription);
+        Log.d("PaymentDetailsDTO", "Writing jobDescription: " + this.jobDescription);
+        dest.writeString(this.jobStartDateTime);
+        Log.d("PaymentDetailsDTO", "Writing jobStartDateTime: " + this.jobStartDateTime);
+        dest.writeString(this.jobEndDateTime);
+        Log.d("PaymentDetailsDTO", "Writing jobEndDateTime: " + this.jobEndDateTime);
+        dest.writeString(this.jobPaymentDate);
+        Log.d("PaymentDetailsDTO", "Writing jobPaymentDate: " + this.jobPaymentDate);
+        dest.writeString(this.jobPaymentRefNo);
+        Log.d("PaymentDetailsDTO", "Writing jobPaymentRefNo " + this.jobPaymentRefNo);
+
+
+        dest.writeString(this.clinicName);
+        Log.d("PaymentDetailsDTO", "Writing clinicName: " + this.clinicName);
+        dest.writeString(this.clinicAddress);
+        Log.d("PaymentDetailsDTO", "Writing clinicAddress: " + this.clinicAddress);
+        dest.writeString(this.clinicPostalCode);
+        Log.d("PaymentDetailsDTO", "Writing clinicPostalCode: " + this.clinicPostalCode);
+        dest.writeString(this.clinicContact);
+        Log.d("PaymentDetailsDTO", "Writing clinicContact: " + this.clinicContact);
+        dest.writeString(this.clinicHciCode);
+        Log.d("PaymentDetailsDTO", "Writing clinicHciCode: " + this.clinicHciCode);
+        dest.writeString(this.flName);
+
+        Log.d("PaymentDetailsDTO", "Writing flName: " + this.flName);
+        dest.writeString(this.flEmail);
+        Log.d("PaymentDetailsDTO", "Writing flEmail: " + this.flEmail);
+        dest.writeString(this.flContact);
+        Log.d("PaymentDetailsDTO", "Writing flContact: " + this.flContact);
+        dest.writeString(this.flMedicalLicenseNo);
+        Log.d("PaymentDetailsDTO", "Writing flMedicalLicenseNo: " + this.flMedicalLicenseNo);
+    }
 
     public Integer getJobId() {
         return jobId;

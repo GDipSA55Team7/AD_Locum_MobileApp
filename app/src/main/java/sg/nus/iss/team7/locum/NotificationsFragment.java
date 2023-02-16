@@ -6,18 +6,17 @@ import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.InsetDrawable;
 import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -28,7 +27,6 @@ import retrofit2.Retrofit;
 import sg.nus.iss.team7.locum.APICommunication.ApiMethods;
 import sg.nus.iss.team7.locum.APICommunication.RetroFitClient;
 import sg.nus.iss.team7.locum.Adapter.NotificationsAdapter;
-import sg.nus.iss.team7.locum.Adapter.RecommenderFragmentAdapter;
 import sg.nus.iss.team7.locum.Model.Notification;
 import sg.nus.iss.team7.locum.Utilities.JsonFieldParser;
 
@@ -85,11 +83,13 @@ public class NotificationsFragment extends Fragment {
             public void onResponse(Call<ArrayList<Notification>> call, Response<ArrayList<Notification>> response) {
                 if (response.isSuccessful()) {
                     responseList = response.body();
-                    if (responseList.isEmpty()) {
+                    if (responseList == null) {
                         emptyView.setVisibility(View.VISIBLE);
                     } else {
                         adapter.setMyList(responseList);
                     }
+                } else if (response.code() == 500) {
+                    emptyView.setVisibility(View.VISIBLE);
                 }
             }
 
@@ -97,7 +97,7 @@ public class NotificationsFragment extends Fragment {
             public void onFailure(Call<ArrayList<Notification>> call, Throwable t) {
                 t.printStackTrace();
                 emptyView.setVisibility(View.VISIBLE);
-                Toast.makeText(getContext(),"error getting job list", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), "error getting notification list", Toast.LENGTH_SHORT).show();
             }
         });
     }

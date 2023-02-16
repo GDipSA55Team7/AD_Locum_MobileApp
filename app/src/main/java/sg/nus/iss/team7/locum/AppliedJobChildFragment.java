@@ -39,7 +39,7 @@ import sg.nus.iss.team7.locum.Interface.RecyclerViewInterface;
 import sg.nus.iss.team7.locum.Model.JobPost;
 import sg.nus.iss.team7.locum.Utilities.JsonFieldParser;
 
-public class AppliedJobChildFragment extends Fragment implements RecyclerViewInterface{
+public class AppliedJobChildFragment extends Fragment implements RecyclerViewInterface {
 
     private RecyclerView recyclerView;
     private JobSearchAdapter adapter;
@@ -149,12 +149,12 @@ public class AppliedJobChildFragment extends Fragment implements RecyclerViewInt
             @Override
             public void onFailure(Call<ArrayList<JobPost>> call, Throwable t) {
                 t.printStackTrace();
-                Toast.makeText(getContext(),"error getting job list", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), "error getting job list", Toast.LENGTH_SHORT).show();
             }
         });
     }
 
-    public void onResume () {
+    public void onResume() {
         super.onResume();
         getJobs(adapter);
     }

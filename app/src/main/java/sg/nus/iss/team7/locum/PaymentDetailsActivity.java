@@ -1,25 +1,22 @@
 package sg.nus.iss.team7.locum;
 
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.annotation.NonNull;
-import androidx.activity.result.ActivityResultCallback;
-import androidx.activity.result.contract.ActivityResultContracts;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.lifecycle.DefaultLifecycleObserver;
-import androidx.lifecycle.Lifecycle;
-import androidx.lifecycle.LifecycleOwner;
-
 import android.content.Intent;
-
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
-
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.DefaultLifecycleObserver;
+import androidx.lifecycle.Lifecycle;
+import androidx.lifecycle.LifecycleOwner;
 
 import com.github.barteksc.pdfviewer.PDFView;
 import com.itextpdf.text.BaseColor;
@@ -40,19 +37,18 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.text.ParseException;
 
-
 import sg.nus.iss.team7.locum.Model.PaymentDetailsDTO;
 import sg.nus.iss.team7.locum.Utilities.DatetimeParser;
 
 public class PaymentDetailsActivity extends AppCompatActivity {
 
     private static final int PERMISSION_REQUEST_CODE = 2;
-    public PaymentDetailsDTO paymentDetailsDTO;
-    Document document = null;
-    public ByteArrayOutputStream outputStream;
     private final ActivityResultContracts.CreateDocument createDocumentContract =
-            new ActivityResultContracts.CreateDocument( "application/pdf");
-    ActivityResultLauncher activityResultLauncher;
+            new ActivityResultContracts.CreateDocument("application/pdf");
+    private PaymentDetailsDTO paymentDetailsDTO;
+    private ByteArrayOutputStream outputStream;
+    private Document document = null;
+    private ActivityResultLauncher activityResultLauncher;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,13 +64,12 @@ public class PaymentDetailsActivity extends AppCompatActivity {
             public void onActivityResult(Uri uri) {
                 //Uri is the location of saved PDF
                 if (uri != null) {
-                   try {
-                       savePdfToUri(uri);
-                       Toast.makeText(PaymentDetailsActivity.this, "PDF saved successfully!", Toast.LENGTH_SHORT).show();
-                   }
-                   catch(Exception e){
-                       e.printStackTrace();
-                   }
+                    try {
+                        savePdfToUri(uri);
+                        Toast.makeText(PaymentDetailsActivity.this, "PDF saved successfully!", Toast.LENGTH_SHORT).show();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
                 }
             }
         });
@@ -131,7 +126,7 @@ public class PaymentDetailsActivity extends AppCompatActivity {
         intent.addCategory(Intent.CATEGORY_OPENABLE);
         intent.setType("application/pdf");
         intent.putExtra(Intent.EXTRA_TITLE, "mydoc.pdf");//suggets filename
-        activityResultLauncher.launch(paymentDetailsDTO.getFlName()+"_jobId_"+ paymentDetailsDTO.getJobId());
+        activityResultLauncher.launch(paymentDetailsDTO.getFlName() + "_jobId_" + paymentDetailsDTO.getJobId());
         System.out.println("after startActivity");
     }
 
@@ -150,7 +145,7 @@ public class PaymentDetailsActivity extends AppCompatActivity {
 
     private ByteArrayOutputStream generateTempPDF(PaymentDetailsDTO paymentDTO) {
         try {
-            if(document == null) {
+            if (document == null) {
                 outputStream = new ByteArrayOutputStream();
                 document = new Document();
                 PdfWriter.getInstance(document, outputStream);
@@ -180,13 +175,13 @@ public class PaymentDetailsActivity extends AppCompatActivity {
     private void createPDFDoc(Document document, PaymentDetailsDTO paymentDTO) throws ParseException {
 
         Double ratePerHr;
-        String totalTo2DP,ratePerHrTo2DP,subTotalTo2DP;
-        String paymentDate ="N.A.",paymentRefNo = "N.A.";
+        String totalTo2DP, ratePerHrTo2DP, subTotalTo2DP;
+        String paymentDate = "N.A.", paymentRefNo = "N.A.";
 
         //jobDuration
-        String jobDurationString = DatetimeParser.getHoursBetween(paymentDTO.getJobStartDateTime(),paymentDTO.getJobEndDateTime());
-        String removedExtraTxt = jobDurationString.substring(0,jobDurationString.indexOf(" "));
-        Double jobDurationRoundedToHalfHr =Math.round(Double.valueOf(removedExtraTxt) * 2) / 2.0;
+        String jobDurationString = DatetimeParser.getHoursBetween(paymentDTO.getJobStartDateTime(), paymentDTO.getJobEndDateTime());
+        String removedExtraTxt = jobDurationString.substring(0, jobDurationString.indexOf(" "));
+        Double jobDurationRoundedToHalfHr = Math.round(Double.valueOf(removedExtraTxt) * 2) / 2.0;
 
         //Rate
         ratePerHr = paymentDTO.getJobRatePerHr();
@@ -195,20 +190,20 @@ public class PaymentDetailsActivity extends AppCompatActivity {
         PdfPTable irdTable = new PdfPTable(2);
         irdTable.addCell(getIRDCell("Invoice No"));
         irdTable.addCell(getIRDCell("Invoice Date"));
-        Log.e("paymentDate",paymentDTO.getJobPaymentDate() );
-        Log.e("paymentRefNo",paymentDTO.getJobPaymentRefNo() );
+        Log.e("paymentDate", paymentDTO.getJobPaymentDate());
+        Log.e("paymentRefNo", paymentDTO.getJobPaymentRefNo());
 
-        if(!paymentDTO.getJobPaymentDate().equalsIgnoreCase("") &&
-            !paymentDTO.getJobPaymentDate().equalsIgnoreCase("null")
-        ){
+        if (!paymentDTO.getJobPaymentDate().equalsIgnoreCase("") &&
+                !paymentDTO.getJobPaymentDate().equalsIgnoreCase("null")
+        ) {
             paymentDate = paymentDTO.getJobPaymentDate();
         }
 
         Log.e("paymentDate", "paymentDate is: " + paymentDate);
-        if(!paymentDTO.getJobPaymentRefNo().equalsIgnoreCase("") ||
-            !paymentDTO.getJobPaymentDate().equalsIgnoreCase("null")
-        ){
-            paymentRefNo  = paymentDTO.getJobPaymentRefNo();
+        if (!paymentDTO.getJobPaymentRefNo().equalsIgnoreCase("") ||
+                !paymentDTO.getJobPaymentDate().equalsIgnoreCase("null")
+        ) {
+            paymentRefNo = paymentDTO.getJobPaymentRefNo();
         }
 
         // Invoice number and date
@@ -283,14 +278,14 @@ public class PaymentDetailsActivity extends AppCompatActivity {
         String endDate = EDT[0];
         String endTime = EDT[1];
 
-        String invoiceDesc ="Job Description : "  + paymentDTO.getJobDescription() + "\n\n"
+        String invoiceDesc = "Job Description : " + paymentDTO.getJobDescription() + "\n\n"
                 + "Start Date : " + startDate + "\n\n"
                 + "Start Time : " + startTime + "\n\n"
                 + "End Date : " + endDate + "\n\n"
                 + "End Time : " + endTime + "\n\n";
-        Log.e("desc",paymentDTO.getJobDescription());
-        Log.e("start",paymentDTO.getJobStartDateTime());
-        Log.e("end",paymentDTO.getJobEndDateTime());
+        Log.e("desc", paymentDTO.getJobDescription());
+        Log.e("start", paymentDTO.getJobStartDateTime());
+        Log.e("end", paymentDTO.getJobEndDateTime());
 
         //total rate
         Double subTotal = jobDurationRoundedToHalfHr * ratePerHr;
@@ -310,7 +305,7 @@ public class PaymentDetailsActivity extends AppCompatActivity {
         long count = 0;
         String additionalFeeStr = paymentDTO.getJobAdditionalFees();
         //if length >1 ,at least 1 additional fee
-        if(additionalFeeStr.length() > 1) {
+        if (additionalFeeStr.length() > 1) {
             count = additionalFeeStr.chars().filter(c -> c == ';').count();
             //at least 2 additional fees
             if (count == 1) {
@@ -335,8 +330,8 @@ public class PaymentDetailsActivity extends AppCompatActivity {
                 }
             }
             //1 additional fee
-            else{
-                Log.e("1 additional fees","1 additional fees");
+            else {
+                Log.e("1 additional fees", "1 additional fees");
                 String[] eachAdditionalFee = additionalFeeStr.split(",");
                 String additionalFee = eachAdditionalFee[0];
                 String description = eachAdditionalFee[1];
@@ -367,8 +362,8 @@ public class PaymentDetailsActivity extends AppCompatActivity {
         validity.setWidthPercentage(100);
         validity.addCell(getValidityCell(" "));
         validity.addCell(getValidityCell("Extra comments"));
-      //  validity.addCell(getValidityCell(" * Dummy line \n   (Dummy)"));
-       // validity.addCell(getValidityCell(" * Dummy"));
+        //  validity.addCell(getValidityCell(" * Dummy line \n   (Dummy)"));
+        // validity.addCell(getValidityCell(" * Dummy"));
         PdfPCell summaryL = new PdfPCell(validity);
         summaryL.setColspan(3);
         summaryL.setPadding(1.0f);

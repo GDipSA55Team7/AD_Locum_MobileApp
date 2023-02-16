@@ -22,15 +22,12 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.airbnb.lottie.LottieAnimationView;
 import com.google.gson.Gson;
 
 import java.text.ParseException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -48,17 +45,11 @@ import sg.nus.iss.team7.locum.ViewModel.ItemViewModel;
 public class JobDetailFragment extends Fragment {
 
     ItemViewModel viewModel;
-    JobPost jobPost;
-    TextView addInfo;
-    TextView title;
-    TextView startTime;
-    TextView endTime;
-    TextView totalTime;
-    TextView ratePerHour;
-    TextView totalRate;
-    Button button;
-    private Retrofit retrofit = RetroFitClient.getClient(RetroFitClient.BASE_URL);
-    private ApiMethods api = retrofit.create(ApiMethods.class);
+    private JobPost jobPost;
+    private TextView addInfo, title, startTime, endTime, totalTime, ratePerHour, totalRate;
+    private Button button;
+    private final Retrofit retrofit = RetroFitClient.getClient(RetroFitClient.BASE_URL);
+    private final ApiMethods api = retrofit.create(ApiMethods.class);
 
     public static JobDetailFragment newInstance(JobPost jobPost) {
         JobDetailFragment fragment = new JobDetailFragment();
@@ -77,6 +68,7 @@ public class JobDetailFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_job_detail, container, false);
+
         // Inflate the layout for this fragment
         jobPost = (JobPost) getArguments().getParcelable("jobPost");
 
@@ -127,13 +119,12 @@ public class JobDetailFragment extends Fragment {
             button.setText("CANCEL");
         } else if (jobPost.getStatus().equalsIgnoreCase("CANCELLED")) {
             button.setVisibility(GONE);
-        }
-        else if (jobPost.getStatus().startsWith("COMPLETED") || jobPost.getStatus().equalsIgnoreCase("Processed_Payment") ) {
+        } else if (jobPost.getStatus().startsWith("COMPLETED") || jobPost.getStatus().equalsIgnoreCase("Processed_Payment")) {
 
             button.setText("PAYMENT DETAILS");
 
             //If pending payment
-            if(jobPost.getStatus().contains("PENDING_PAYMENT")){
+            if (jobPost.getStatus().contains("PENDING_PAYMENT")) {
 
                 //update text
                 TextView textView = (TextView) view.findViewById(R.id.paymentStatus);
@@ -144,7 +135,7 @@ public class JobDetailFragment extends Fragment {
                 paymentStatusTxt.setVisibility(View.VISIBLE);
             }
             //if payment success
-            else{
+            else {
 
                 //update text
                 TextView paymentStatus = (TextView) view.findViewById(R.id.paymentStatus);
@@ -170,14 +161,13 @@ public class JobDetailFragment extends Fragment {
                         @Override
                         public void onResponse(Call<ArrayList<JobPost>> call, Response<ArrayList<JobPost>> response) {
                             if (response.isSuccessful()) {
-                               List<JobPost> jobPostListByUser = response.body();
+                                List<JobPost> jobPostListByUser = response.body();
                                 if (jobPostListByUser == null) {
                                     setJobStatus("apply");
                                 } else {
-                                    if(jobOverlapsWithExistingJobsByDayAndTime(jobPost,jobPostListByUser)){
+                                    if (jobOverlapsWithExistingJobsByDayAndTime(jobPost, jobPostListByUser)) {
                                         dialogForJobOverlapByDateAndTime();
-                                    }
-                                    else{
+                                    } else {
                                         setJobStatus("apply");
                                     }
                                 }
@@ -187,14 +177,13 @@ public class JobDetailFragment extends Fragment {
                         @Override
                         public void onFailure(Call<ArrayList<JobPost>> call, Throwable t) {
                             t.printStackTrace();
-                            Toast.makeText(getContext(),"error getting job count", Toast.LENGTH_SHORT);
+                            Toast.makeText(getContext(), "error getting job count", Toast.LENGTH_SHORT).show();
                         }
                     });
 
-                } else if (jobPost.getStatus().equalsIgnoreCase("PENDING_CONFIRMATION_BY_CLINIC") || jobPost.getStatus().equalsIgnoreCase("ACCEPTED")){
+                } else if (jobPost.getStatus().equalsIgnoreCase("PENDING_CONFIRMATION_BY_CLINIC") || jobPost.getStatus().equalsIgnoreCase("ACCEPTED")) {
                     showCancelDialogue();
-                }
-                else if ((jobPost.getStatus().startsWith("COMPLETED"))) {
+                } else if ((jobPost.getStatus().startsWith("COMPLETED"))) {
 
                     Gson gson = new Gson();
                     SharedPreferences sharedPreferences = getActivity().getSharedPreferences(getResources().getString(R.string.Freelancer_Shared_Pref), MODE_PRIVATE);
@@ -267,13 +256,13 @@ public class JobDetailFragment extends Fragment {
     }
 
     public void showCancelDialogue() {
-        String alertMsg=getString(R.string.cancelMsg);
-        String alertTitle=getString(R.string.cancelAlertTitle);
+        String alertMsg = getString(R.string.cancelMsg);
+        String alertTitle = getString(R.string.cancelAlertTitle);
 
         AlertDialog.Builder dlg = new AlertDialog.Builder(getContext())
                 .setTitle(alertTitle)
                 .setMessage(alertMsg)
-                .setPositiveButton(R.string.yes,new DialogInterface.OnClickListener() {
+                .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         Toast.makeText(getContext(), "Application was successfully cancelled", Toast.LENGTH_SHORT).show();
@@ -290,20 +279,21 @@ public class JobDetailFragment extends Fragment {
     }
 
 
-    private void launchPaymentDetailsActivity(PaymentDetailsDTO paymentDTO){
-        Intent intent = new Intent(getActivity(),PaymentDetailsActivity.class);
+    private void launchPaymentDetailsActivity(PaymentDetailsDTO paymentDTO) {
+        Intent intent = new Intent(getActivity(), PaymentDetailsActivity.class);
         intent.putExtra("paymentDetails", paymentDTO);
         startActivity(intent);
     }
-    public void dialogForJobOverlapByDateAndTime(){
 
-        String alertMsg="Confirm application";
-        String alertTitle="This job's date and time overlaps with one or more of your existing jobs. \n Please confirm your application.";
+    public void dialogForJobOverlapByDateAndTime() {
+
+        String alertMsg = "Confirm application";
+        String alertTitle = "This job's date and time overlaps with one or more of your existing jobs. \n Please confirm your application.";
 
         AlertDialog.Builder dlg = new AlertDialog.Builder(getContext())
                 .setTitle(alertTitle)
                 .setMessage(alertMsg)
-                .setPositiveButton(R.string.yes,new DialogInterface.OnClickListener() {
+                .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         setJobStatus("apply");
@@ -323,13 +313,13 @@ public class JobDetailFragment extends Fragment {
         return id;
     }
 
-    public Boolean jobOverlapsWithExistingJobsByDayAndTime(JobPost jobPost,List<JobPost> existingJobsListForUser) {
+    public Boolean jobOverlapsWithExistingJobsByDayAndTime(JobPost jobPost, List<JobPost> existingJobsListForUser) {
         Boolean overlaps = false;
-        LocalDateTime jobPostStart =  DatetimeParser.parseLocalDateTime(jobPost.getStartDateTime());
+        LocalDateTime jobPostStart = DatetimeParser.parseLocalDateTime(jobPost.getStartDateTime());
         LocalDateTime jobPostEnd = DatetimeParser.parseLocalDateTime(jobPost.getEndDateTime());
-        for (JobPost existingJob : existingJobsListForUser ) {
-            LocalDateTime existingJobStart =  DatetimeParser.parseLocalDateTime(existingJob.getStartDateTime());
-            LocalDateTime existingJobEnd =  DatetimeParser.parseLocalDateTime(existingJob.getEndDateTime());
+        for (JobPost existingJob : existingJobsListForUser) {
+            LocalDateTime existingJobStart = DatetimeParser.parseLocalDateTime(existingJob.getStartDateTime());
+            LocalDateTime existingJobEnd = DatetimeParser.parseLocalDateTime(existingJob.getEndDateTime());
             if (!(jobPostEnd.isBefore(existingJobStart) || jobPostStart.isAfter(existingJobEnd))) {
                 overlaps = true;
                 break;

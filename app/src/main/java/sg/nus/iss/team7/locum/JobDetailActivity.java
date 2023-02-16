@@ -1,15 +1,5 @@
 package sg.nus.iss.team7.locum;
 
-import static androidx.core.content.ContextCompat.getColorStateList;
-
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-import androidx.core.app.NotificationManagerCompat;
-import androidx.core.content.ContextCompat;
-import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProvider;
-
 import android.Manifest;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -21,6 +11,14 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.app.NotificationManagerCompat;
+import androidx.core.content.ContextCompat;
+import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 
 import java.text.ParseException;
 
@@ -38,6 +36,9 @@ import sg.nus.iss.team7.locum.ViewModel.ItemViewModel;
 
 public class JobDetailActivity extends AppCompatActivity {
 
+    private static final String FINE_LOCATION = android.Manifest.permission.ACCESS_FINE_LOCATION;
+    private static final String COARSE_LOCATION = android.Manifest.permission.ACCESS_COARSE_LOCATION;
+    private static final int LOCATION_PERMISSION_REQUEST_CODE = 1234;
     private JobPost jobPost;
     private ItemViewModel viewModel;
     private TextView dateText;
@@ -46,18 +47,11 @@ public class JobDetailActivity extends AppCompatActivity {
     private TextView statusText;
     private Intent entryIntent;
     private ImageView addressImg;
-
     private ImageView phoneImg;
-
     private ImageView emailImg;
-
     private String addressStr;
-
-    private static final String FINE_LOCATION = android.Manifest.permission.ACCESS_FINE_LOCATION;
-    private static final String COARSE_LOCATION = android.Manifest.permission.ACCESS_COARSE_LOCATION;
-    private static final int LOCATION_PERMISSION_REQUEST_CODE = 1234;
-
     private Boolean mLocationPermissionGranted = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -68,7 +62,7 @@ public class JobDetailActivity extends AppCompatActivity {
         //If came from notifications,check login status
         if (entryIntent.hasExtra("fromNotification")) {
             //cancel notification on systemtray
-            NotificationManagerCompat.from(this).cancel(entryIntent.getIntExtra("cancelNotificationOnSystemTray",-1));
+            NotificationManagerCompat.from(this).cancel(entryIntent.getIntExtra("cancelNotificationOnSystemTray", -1));
 
             Log.e("from notification", "for username : " + entryIntent.getStringExtra("notificationTargetUserName"));
 
@@ -86,7 +80,7 @@ public class JobDetailActivity extends AppCompatActivity {
                 FreeLancer loggedInFl = SharedPrefUtility.readFromSharedPref(getApplicationContext());
                 Log.e("from notification", "already logged in as :" + loggedInFl.getUsername() + " so proceed to fetch jobdetails");
                 int itemId = entryIntent.getIntExtra("itemId", 0);
-                Log.e("From Notification","should go to jobdetails straight since logged in");
+                Log.e("From Notification", "should go to jobdetails straight since logged in");
                 getJobById(itemId);
 
                 // listener to update status in UI if job is applied
@@ -185,25 +179,24 @@ public class JobDetailActivity extends AppCompatActivity {
             @Override
             public void onFailure(Call<JobPost> call, Throwable t) {
                 t.printStackTrace();
-                Toast.makeText(getApplicationContext(),"error getting job", Toast.LENGTH_SHORT);
+                Toast.makeText(getApplicationContext(), "error getting job", Toast.LENGTH_SHORT);
             }
         });
     }
 
-    public void callPhone(String phoneNo){
+    public void callPhone(String phoneNo) {
 
-        Uri uri = Uri.parse("tel:"+phoneNo);
+        Uri uri = Uri.parse("tel:" + phoneNo);
         Intent intent = new Intent(Intent.ACTION_DIAL, uri);
-        if (intent.resolveActivity(getPackageManager()) != null)
-        {
+        if (intent.resolveActivity(getPackageManager()) != null) {
             startActivity(intent);
         }
 
     }
 
-    public void sendEmail(String emailAddress){
+    public void sendEmail(String emailAddress) {
 
-        Uri uri = Uri.parse("mailto:"+ emailAddress);
+        Uri uri = Uri.parse("mailto:" + emailAddress);
         Intent intent = new Intent(Intent.ACTION_SENDTO, uri);
         intent.putExtra(Intent.EXTRA_SUBJECT, getString(R.string.email_subject));
         if (intent.resolveActivity(getPackageManager()) != null) {
@@ -211,19 +204,18 @@ public class JobDetailActivity extends AppCompatActivity {
         }
     }
 
-    private void getLocationPermission(){
+    private void getLocationPermission() {
         String[] permissions = {android.Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION};
 
-        if(ContextCompat.checkSelfPermission(this.getApplicationContext(),FINE_LOCATION) ==
-                PackageManager.PERMISSION_GRANTED){
-            if(ContextCompat.checkSelfPermission(this.getApplicationContext(),COARSE_LOCATION) ==
-                    PackageManager.PERMISSION_GRANTED){
+        if (ContextCompat.checkSelfPermission(this.getApplicationContext(), FINE_LOCATION) ==
+                PackageManager.PERMISSION_GRANTED) {
+            if (ContextCompat.checkSelfPermission(this.getApplicationContext(), COARSE_LOCATION) ==
+                    PackageManager.PERMISSION_GRANTED) {
                 mLocationPermissionGranted = true;
                 initMap();
             }
-        }
-        else {
-            ActivityCompat.requestPermissions(this,permissions,LOCATION_PERMISSION_REQUEST_CODE);
+        } else {
+            ActivityCompat.requestPermissions(this, permissions, LOCATION_PERMISSION_REQUEST_CODE);
         }
     }
 
@@ -249,25 +241,25 @@ public class JobDetailActivity extends AppCompatActivity {
         }
     }
 
-    public void initMap(){
-        Fragment mapsFragment = new MapsFragment(mLocationPermissionGranted,addressStr,jobPost);
-        getSupportFragmentManager().beginTransaction().replace(R.id.container,mapsFragment).commit();
+    public void initMap() {
+        Fragment mapsFragment = new MapsFragment(mLocationPermissionGranted, addressStr, jobPost);
+        getSupportFragmentManager().beginTransaction().replace(R.id.container, mapsFragment).commit();
     }
 
     private void setStatusBar() {
-        if(jobPost.getStatus().equalsIgnoreCase("PENDING_CONFIRMATION_BY_CLINIC")) {
+        if (jobPost.getStatus().equalsIgnoreCase("PENDING_CONFIRMATION_BY_CLINIC")) {
             statusText.setText("APPLIED");
             statusText.setBackgroundTintList(getColorStateList(R.color.pendingStatus));
         } else if (jobPost.getStatus().equalsIgnoreCase("OPEN")) {
             statusText.setText("OPEN");
             statusText.setBackgroundTintList(getColorStateList(R.color.lightBlue));
-        } else if(jobPost.getStatus().equalsIgnoreCase("ACCEPTED")){
+        } else if (jobPost.getStatus().equalsIgnoreCase("ACCEPTED")) {
             statusText.setText("ACCEPTED");
             statusText.setBackgroundTintList(getColorStateList(R.color.accpeted));
-        } else if(jobPost.getStatus().equalsIgnoreCase("CANCELLED")){
+        } else if (jobPost.getStatus().equalsIgnoreCase("CANCELLED")) {
             statusText.setText("CANCELLED");
             statusText.setBackgroundTintList(getColorStateList(R.color.darker_grey));
-        } else if(jobPost.getStatus().equalsIgnoreCase("COMPLETED_PENDING_PAYMENT")){
+        } else if (jobPost.getStatus().equalsIgnoreCase("COMPLETED_PENDING_PAYMENT")) {
             statusText.setText("PAYMENT");
             statusText.setBackgroundTintList(getColorStateList(R.color.pendingPayment));
         } else if (jobPost.getStatus().startsWith("COMPLETED")) {
@@ -288,7 +280,7 @@ public class JobDetailActivity extends AppCompatActivity {
         intent.putExtra("fromNotification", true);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
-        Log.e("from notification jobdetailsactivity tp loginactivity", "sending jobid : " +itemId + ", for user : " + notficationForUsername);
+        Log.e("from notification jobdetailsactivity tp loginactivity", "sending jobid : " + itemId + ", for user : " + notficationForUsername);
         finish();
     }
 

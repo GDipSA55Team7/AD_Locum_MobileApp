@@ -6,7 +6,6 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 
-
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.messaging.FirebaseMessaging;
 
@@ -33,22 +32,17 @@ public class FirebaseTokenUtils {
                 .addOnCompleteListener(task -> {
                     //task unsuccessful, device token retrieval failed
                     if (!task.isSuccessful()) {
-                        Log.e(LogIn , String.valueOf(task.getException()));
+                        Log.e(LogIn, String.valueOf(task.getException()));
                     }
                     //task successful, device token token retrieval success
                     String token = task.getResult();
-                    Log.e(LogIn , "FCM registration token: " + token);
+                    Log.e(LogIn, "FCM registration token: " + token);
                     //Async interface method to pass received token to caller
                     listener.onTokenReceived(token);
                 });
     }
 
-    public interface OnTokenReceivedListener {
-        void onTokenReceived(String token);
-    }
-
-
-    public static void updateServerOnLogout(Context context,String logoutUserName) {
+    public static void updateServerOnLogout(Context context, String logoutUserName) {
 
         Retrofit retrofit = RetroFitClient.getClient(RetroFitClient.BASE_URL);
         ApiMethods api = retrofit.create(ApiMethods.class);
@@ -57,32 +51,36 @@ public class FirebaseTokenUtils {
         logoutFLCall.enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(@NonNull Call<ResponseBody> call, @NonNull Response<ResponseBody> response) {
-                if(response.isSuccessful() && response.code() == 200){
+                if (response.isSuccessful() && response.code() == 200) {
                     Log.e(LogOut, logoutUserName + "has logged out successfully");
-                }
-                else {
+                } else {
                     int statusCode = response.code();
                     if (statusCode == 500) {
-                        Log.e(LogOut,"Internal Server Error,failed to logout username :" + logoutUserName);
+                        Log.e(LogOut, "Internal Server Error,failed to logout username :" + logoutUserName);
                         FirebaseTokenUtils firebaseTokenUtils = new FirebaseTokenUtils();
-                        firebaseTokenUtils.createDialogForLoginFailed( context,"Internal Server Error,failed to logout");
+                        firebaseTokenUtils.createDialogForLoginFailed(context, "Internal Server Error,failed to logout");
                     }
                 }
             }
+
             @Override
             public void onFailure(@NonNull Call<ResponseBody> call, @NonNull Throwable t) {
-                Log.e(LogOut ,t.getMessage());
+                Log.e(LogOut, t.getMessage());
             }
         });
     }
 
-    protected void createDialogForLoginFailed(Context context,String msg){
+    protected void createDialogForLoginFailed(Context context, String msg) {
         dialog = new AlertDialog.Builder(context)
                 .setIcon(R.drawable.ic_exit_application)
                 .setTitle(context.getResources().getString(R.string.LogOutFailed))
-                .setMessage(msg )
+                .setMessage(msg)
                 .setCancelable(true)
-                .setPositiveButton( context.getResources().getString(R.string.Ok), (dialog, id) -> dialog.dismiss())
+                .setPositiveButton(context.getResources().getString(R.string.Ok), (dialog, id) -> dialog.dismiss())
                 .show();
+    }
+
+    public interface OnTokenReceivedListener {
+        void onTokenReceived(String token);
     }
 }

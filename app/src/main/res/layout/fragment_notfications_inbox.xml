@@ -8,16 +8,15 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/NotificationRecyclerView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" >
-    </androidx.recyclerview.widget.RecyclerView>
+        android:layout_height="match_parent"></androidx.recyclerview.widget.RecyclerView>
 
     <TextView
         android:id="@+id/NotificationsEmpty"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="No notifications"
         android:gravity="center"
-        android:visibility="gone"/>
+        android:text="No notifications"
+        android:visibility="gone" />
 
 
 </FrameLayout>

@@ -39,9 +39,9 @@ import sg.nus.iss.team7.locum.Utilities.SharedPrefUtility;
 
 public class EditProfileActivity extends AppCompatActivity {
 
-    EditText mName,mEmail,mPassword,mContactNumber,mMedicalLicenseNumber;
-    Button mSubmitBtn,mResetBtn;
-    Map<String,Boolean> mapFieldToValidStatus = new HashMap<>();
+    private EditText mName, mEmail, mPassword, mContactNumber, mMedicalLicenseNumber;
+    private Button mSubmitBtn, mResetBtn;
+    private Map<String, Boolean> mapFieldToValidStatus = new HashMap<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,8 +52,7 @@ public class EditProfileActivity extends AppCompatActivity {
 
         //update fields with existing profile data
         FreeLancer fl = SharedPrefUtility.readFromSharedPref(getApplicationContext());
-        //FreeLancer fl = readFromSharedPref();
-        if(fl != null){
+        if (fl != null) {
             displayExistingFreeLancerDetails(fl);
         }
 
@@ -61,11 +60,11 @@ public class EditProfileActivity extends AppCompatActivity {
         mResetBtn = findViewById(R.id.reset);
 
         mSubmitBtn.setOnClickListener(v -> {
-            if(!allFieldsValid()){
+            if (!allFieldsValid()) {
                 createDialogForValidationFailed(getResources().getString(R.string.AllFieldsAreValid));
             }
             //proceed to update if fields are valid
-            else{
+            else {
 
                 Retrofit retrofit = RetroFitClient.getClient(RetroFitClient.BASE_URL);
                 ApiMethods api = retrofit.create(ApiMethods.class);
@@ -90,41 +89,38 @@ public class EditProfileActivity extends AppCompatActivity {
                 updateFLCall.enqueue(new Callback<FreeLancer>() {
                     @Override
                     public void onResponse(@NonNull Call<FreeLancer> call, @NonNull Response<FreeLancer> response) {
-                        if(response.isSuccessful()){
-                            if(response.code() == 200){
-                                Toast.makeText(getApplicationContext(),"Update Success ",Toast.LENGTH_SHORT).show();
+                        if (response.isSuccessful()) {
+                            if (response.code() == 200) {
+                                Toast.makeText(getApplicationContext(), "Update Success ", Toast.LENGTH_SHORT).show();
 
                                 //if register is successful, store in shared Pref
-                                SharedPrefUtility.storeFLDetailsInSharedPref(getApplicationContext(),fl);
-                                //storeFLDetailsInSharedPref(fl);
+                                SharedPrefUtility.storeFLDetailsInSharedPref(getApplicationContext(), fl);
 
                                 //redirect
                                 Intent intent = new Intent(EditProfileActivity.this, MainActivity.class);
                                 startActivity(intent);
                                 finish();
                             }
-                        }
-                        else {
+                        } else {
                             int statusCode = response.code();
                             if (statusCode == 500) {
                                 createDialogForEditFailed(getResources().getString(R.string.InternalServerError));
-                            }
-                            else if  ( statusCode == 406) {
+                            } else if (statusCode == 406) {
                                 FreeLancer invalidFL = null;
                                 if (response.errorBody() != null) {
-                                    invalidFL = new Gson().fromJson( response.errorBody().charStream(), FreeLancer.class);
+                                    invalidFL = new Gson().fromJson(response.errorBody().charStream(), FreeLancer.class);
                                 }
 
-                                if(invalidFL != null){
-                                    String errString =  invalidFL.getErrorsFieldString();
+                                if (invalidFL != null) {
+                                    String errString = invalidFL.getErrorsFieldString();
 
                                     String displayErrorTxt = "These fields have already been taken/registered :";
-                                    if(!errString.isEmpty()){
-                                        if(errString.contains("Email")){
+                                    if (!errString.isEmpty()) {
+                                        if (errString.contains("Email")) {
                                             displayErrorTxt += " Email,";
                                         }
 
-                                        if(errString.contains("Medical")){
+                                        if (errString.contains("Medical")) {
                                             displayErrorTxt += " MedicalLicenseNumber,";
                                         }
                                         displayErrorTxt = displayErrorTxt.substring(0, displayErrorTxt.length() - 1);
@@ -134,12 +130,12 @@ public class EditProfileActivity extends AppCompatActivity {
                             }
                         }
                     }
+
                     @Override
                     public void onFailure(@NonNull Call<FreeLancer> call, @NonNull Throwable t) {
                         if (t instanceof IOException) {
                             createDialogForEditFailed(getResources().getString(R.string.NetworkFailure));
-                        }
-                        else {
+                        } else {
                             createDialogForEditFailed(getResources().getString(R.string.JSONParsingIssue));
                         }
                     }
@@ -147,12 +143,12 @@ public class EditProfileActivity extends AppCompatActivity {
             }
         });
         mResetBtn.setOnClickListener(v -> {
-            LinearLayout linearLayout =  findViewById(R.id.linearlayoutEditProfileActivity);
+            LinearLayout linearLayout = findViewById(R.id.linearlayoutEditProfileActivity);
             clearAllFields(linearLayout);
         });
     }
 
-    private void initListeners(){
+    private void initListeners() {
 
         mName = findViewById(R.id.name);
         mName.setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
@@ -169,16 +165,16 @@ public class EditProfileActivity extends AppCompatActivity {
         mMedicalLicenseNumber = findViewById(R.id.medicalLicenseNumber);
         mMedicalLicenseNumber.setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
 
-        listenerForLengthValidation(mName,getResources().getString(R.string.Name),1,10);
-        listenerForLengthValidation(mPassword,getResources().getString(R.string.Password),5,15);
+        listenerForLengthValidation(mName, getResources().getString(R.string.Name), 1, 10);
+        listenerForLengthValidation(mPassword, getResources().getString(R.string.Password), 5, 15);
 
         String validEmailRegex = getResources().getString(R.string.ValidEmailRegex);
         String validMedicalLicenseNumberRegex = getResources().getString(R.string.ValidMedicalLicenseNumberRegex);
         String validContactNumberRegex = getResources().getString(R.string.ValidContactNumberRegex);
 
-        listenerForRegexValidation(mEmail,getResources().getString(R.string.Email),validEmailRegex);
-        listenerForRegexValidation(mMedicalLicenseNumber,getResources().getString(R.string.MedicalLicenseNumber),validMedicalLicenseNumberRegex);
-        listenerForRegexValidation(mContactNumber,getResources().getString(R.string.ContactNumber),validContactNumberRegex);
+        listenerForRegexValidation(mEmail, getResources().getString(R.string.Email), validEmailRegex);
+        listenerForRegexValidation(mMedicalLicenseNumber, getResources().getString(R.string.MedicalLicenseNumber), validMedicalLicenseNumberRegex);
+        listenerForRegexValidation(mContactNumber, getResources().getString(R.string.ContactNumber), validContactNumberRegex);
 
     }
 
@@ -187,20 +183,20 @@ public class EditProfileActivity extends AppCompatActivity {
     public boolean dispatchTouchEvent(MotionEvent event) {
         if (event.getAction() == MotionEvent.ACTION_DOWN) {
             View v = getCurrentFocus();
-            if ( v instanceof EditText) {
+            if (v instanceof EditText) {
                 Rect outRect = new Rect();
                 v.getGlobalVisibleRect(outRect);
-                if (!outRect.contains((int)event.getRawX(), (int)event.getRawY())) {
+                if (!outRect.contains((int) event.getRawX(), (int) event.getRawY())) {
                     v.clearFocus();
                     InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                     imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
                 }
             }
         }
-        return super.dispatchTouchEvent( event );
+        return super.dispatchTouchEvent(event);
     }
 
-    private FreeLancer readFromSharedPref(){
+    private FreeLancer readFromSharedPref() {
         Gson gson = new Gson();
         SharedPreferences sharedPreferences = getSharedPreferences(getResources().getString(R.string.Freelancer_Shared_Pref), MODE_PRIVATE);
         String json = sharedPreferences.getString(getResources().getString(R.string.Freelancer_Details), "");
@@ -209,7 +205,7 @@ public class EditProfileActivity extends AppCompatActivity {
     }
 
 
-    private void listenerForLengthValidation(final EditText editTxt,final String fieldName,final int minChar,final int maxChar){
+    private void listenerForLengthValidation(final EditText editTxt, final String fieldName, final int minChar, final int maxChar) {
         editTxt.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -226,26 +222,27 @@ public class EditProfileActivity extends AppCompatActivity {
             }
         });
     }
-    private boolean validateLength(EditText editTxt, String fieldName, int minChar, int maxChar){
+
+    private boolean validateLength(EditText editTxt, String fieldName, int minChar, int maxChar) {
 
         boolean fieldIsValid = true;
         String checkFieldStr = editTxt.getText().toString().trim();
 
-        if(checkFieldStr.isEmpty()){
-            editTxt.setError(fieldName +getResources().getString(R.string.MustNotBeEmpty));
-            if(fieldIsValid){
+        if (checkFieldStr.isEmpty()) {
+            editTxt.setError(fieldName + getResources().getString(R.string.MustNotBeEmpty));
+            if (fieldIsValid) {
                 fieldIsValid = false;
             }
-        }
-        else if (checkFieldStr.length() < minChar || checkFieldStr.length() > maxChar){
-            editTxt.setError(fieldName + " must be between " +minChar + " and " + maxChar + " characters");
-            if(fieldIsValid){
+        } else if (checkFieldStr.length() < minChar || checkFieldStr.length() > maxChar) {
+            editTxt.setError(fieldName + " must be between " + minChar + " and " + maxChar + " characters");
+            if (fieldIsValid) {
                 fieldIsValid = false;
             }
         }
         return fieldIsValid;
     }
-    private void listenerForRegexValidation(final EditText editTxt,final String fieldName,final String validPattern){
+
+    private void listenerForRegexValidation(final EditText editTxt, final String fieldName, final String validPattern) {
         editTxt.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -253,8 +250,8 @@ public class EditProfileActivity extends AppCompatActivity {
 
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                Boolean fieldIsValid = validateWithRegex(editTxt,fieldName,validPattern);
-                mapFieldToValidStatus.put(fieldName,fieldIsValid);
+                Boolean fieldIsValid = validateWithRegex(editTxt, fieldName, validPattern);
+                mapFieldToValidStatus.put(fieldName, fieldIsValid);
             }
 
             @Override
@@ -262,22 +259,22 @@ public class EditProfileActivity extends AppCompatActivity {
             }
         });
     }
-    private boolean validateWithRegex(EditText editTxt,final String fieldName, final String validRegexPattern) {
+
+    private boolean validateWithRegex(EditText editTxt, final String fieldName, final String validRegexPattern) {
 
         String fieldInput = editTxt.getText().toString().trim();
 
-        if (fieldInput.isEmpty()){
-            editTxt.setError( fieldName + getResources().getString(R.string.MustNotBeEmpty));
+        if (fieldInput.isEmpty()) {
+            editTxt.setError(fieldName + getResources().getString(R.string.MustNotBeEmpty));
             return false;
-        }
-        else if(!fieldInput.matches(validRegexPattern)){
+        } else if (!fieldInput.matches(validRegexPattern)) {
 
-            switch(fieldName){
+            switch (fieldName) {
                 case "Email":
                     editTxt.setError("Must be valid " + getResources().getString(R.string.Email) + getResources().getString(R.string.EmailValidation));
                     break;
                 case "ContactNumber":
-                    editTxt.setError( getResources().getString(R.string.ContactNumber)  + getResources().getString(R.string.ContactNumberValidation));
+                    editTxt.setError(getResources().getString(R.string.ContactNumber) + getResources().getString(R.string.ContactNumberValidation));
                     break;
                 case "MedicalLicenseNumber":
                     editTxt.setError("Must be valid " + getResources().getString(R.string.MedicalLicenseNumber) + getResources().getString(R.string.MedicalLicenseNumberValidation));
@@ -290,13 +287,13 @@ public class EditProfileActivity extends AppCompatActivity {
         return true;
     }
 
-    private boolean allFieldsValid(){
+    private boolean allFieldsValid() {
         boolean isValid = true;
         //contains false
-        if(mapFieldToValidStatus.values().isEmpty()){
+        if (mapFieldToValidStatus.values().isEmpty()) {
             isValid = false;
         }
-        for (Boolean b : mapFieldToValidStatus.values()){
+        for (Boolean b : mapFieldToValidStatus.values()) {
             if (b == Boolean.FALSE) {
                 isValid = false;
                 break;
@@ -304,18 +301,19 @@ public class EditProfileActivity extends AppCompatActivity {
         }
         return isValid;
     }
+
     private void clearAllFields(ViewGroup group) {
         for (int i = 0, count = group.getChildCount(); i < count; ++i) {
             View view = group.getChildAt(i);
             if (view instanceof EditText) {
-                ((EditText)view).setText("");
+                ((EditText) view).setText("");
             }
-            if(view instanceof ViewGroup && (((ViewGroup)view).getChildCount() > 0))
-                clearAllFields((ViewGroup)view);
+            if (view instanceof ViewGroup && (((ViewGroup) view).getChildCount() > 0))
+                clearAllFields((ViewGroup) view);
         }
     }
 
-    private void createDialogForValidationFailed(String msg){
+    private void createDialogForValidationFailed(String msg) {
         new AlertDialog.Builder(EditProfileActivity.this)
                 .setIcon(R.drawable.ic_exit_application)
                 .setTitle(getResources().getString(R.string.SubmitFailed))
@@ -325,14 +323,14 @@ public class EditProfileActivity extends AppCompatActivity {
                 .show();
     }
 
-    private void storeFLDetailsInSharedPref(FreeLancer freeLancer){
+    private void storeFLDetailsInSharedPref(FreeLancer freeLancer) {
         Gson gson = new Gson();
         String json = gson.toJson(freeLancer);
         SharedPreferences sharedPreferences = getSharedPreferences(getResources().getString(R.string.Freelancer_Shared_Pref), MODE_PRIVATE);
         sharedPreferences.edit().putString(getResources().getString(R.string.Freelancer_Details), json).apply();
     }
 
-    private void createDialogForEditFailed(String msg){
+    private void createDialogForEditFailed(String msg) {
         new AlertDialog.Builder(EditProfileActivity.this)
                 .setIcon(R.drawable.ic_exit_application)
                 .setTitle(getResources().getString(R.string.SubmitChangesFailed))
@@ -342,20 +340,20 @@ public class EditProfileActivity extends AppCompatActivity {
                 .show();
     }
 
-    private void displayExistingFreeLancerDetails(FreeLancer fl){
-        if(fl.getName() != null){
+    private void displayExistingFreeLancerDetails(FreeLancer fl) {
+        if (fl.getName() != null) {
             mName.setText(fl.getName());
         }
-        if(fl.getEmail() != null) {
+        if (fl.getEmail() != null) {
             mEmail.setText(fl.getEmail());
         }
-        if(fl.getPassword() != null) {
+        if (fl.getPassword() != null) {
             mPassword.setText(fl.getPassword());
         }
-        if(fl.getContact() != null) {
+        if (fl.getContact() != null) {
             mContactNumber.setText(fl.getContact());
         }
-        if(fl.getMedicalLicenseNo() != null) {
+        if (fl.getMedicalLicenseNo() != null) {
             mMedicalLicenseNumber.setText(fl.getMedicalLicenseNo());
         }
     }

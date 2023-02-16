@@ -1,9 +1,6 @@
 package sg.nus.iss.team7.locum.Adapter;
 
 import static android.view.View.GONE;
-import static androidx.core.content.ContextCompat.getColorStateList;
-
-import static java.security.AccessController.getContext;
 
 import android.content.Context;
 import android.content.Intent;
@@ -12,22 +9,19 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.text.ParseException;
 import java.util.ArrayList;
 
-import sg.nus.iss.team7.locum.Interface.RecyclerViewInterface;
 import sg.nus.iss.team7.locum.JobDetailActivity;
 import sg.nus.iss.team7.locum.Model.JobPost;
 import sg.nus.iss.team7.locum.R;
 import sg.nus.iss.team7.locum.Utilities.DatetimeParser;
 
-public class HomeRecommendedAdapter extends RecyclerView.Adapter<HomeRecommendedAdapter.MyViewHolder>{
+public class HomeRecommendedAdapter extends RecyclerView.Adapter<HomeRecommendedAdapter.MyViewHolder> {
 
     Context context;
     ArrayList<JobPost> myList;
@@ -35,22 +29,6 @@ public class HomeRecommendedAdapter extends RecyclerView.Adapter<HomeRecommended
 
     public HomeRecommendedAdapter(Context context) {
         this.context = context;
-    }
-
-    public static class MyViewHolder extends RecyclerView.ViewHolder {
-        public TextView date, hour_rate, address, clinic_name, time, similarity;
-        public Button viewBtn;
-
-        public MyViewHolder(@NonNull View view) {
-            super(view);
-            date = (TextView) view.findViewById(R.id.date);
-            time = (TextView) view.findViewById(R.id.time);
-            hour_rate = (TextView) view.findViewById(R.id.hour_rate);
-            clinic_name = (TextView) view.findViewById(R.id.clinic_name);
-            address = (TextView) view.findViewById(R.id.address);
-            similarity = (TextView) view.findViewById(R.id.similarity);
-            viewBtn = (Button) view.findViewById(R.id.viewBtn);
-        }
     }
 
     public void setMyList(ArrayList<JobPost> list) {
@@ -105,7 +83,6 @@ public class HomeRecommendedAdapter extends RecyclerView.Adapter<HomeRecommended
             e.printStackTrace();
         }
         holder.hour_rate.setText(hourRateStr);
-//        holder.clinic_name.setText(jobPost.getClinic().getName());
         holder.clinic_name.setText(jobPost.getTitle());
         holder.address.setText(addressStr);
     }
@@ -116,5 +93,21 @@ public class HomeRecommendedAdapter extends RecyclerView.Adapter<HomeRecommended
             return myList.size();
         }
         return 0;
+    }
+
+    public static class MyViewHolder extends RecyclerView.ViewHolder {
+        public TextView date, hour_rate, address, clinic_name, time, similarity;
+        public Button viewBtn;
+
+        public MyViewHolder(@NonNull View view) {
+            super(view);
+            date = (TextView) view.findViewById(R.id.date);
+            time = (TextView) view.findViewById(R.id.time);
+            hour_rate = (TextView) view.findViewById(R.id.hour_rate);
+            clinic_name = (TextView) view.findViewById(R.id.clinic_name);
+            address = (TextView) view.findViewById(R.id.address);
+            similarity = (TextView) view.findViewById(R.id.similarity);
+            viewBtn = (Button) view.findViewById(R.id.viewBtn);
+        }
     }
 }

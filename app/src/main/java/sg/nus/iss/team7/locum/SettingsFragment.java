@@ -2,20 +2,13 @@ package sg.nus.iss.team7.locum;
 
 
 import android.app.Activity;
-
-import android.graphics.drawable.Drawable;
-import android.graphics.drawable.InsetDrawable;
 import android.os.Bundle;
-
-import androidx.core.content.ContextCompat;
-import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.DividerItemDecoration;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
-import android.widget.TextView;
+
+import androidx.fragment.app.Fragment;
 
 import sg.nus.iss.team7.locum.Adapter.SettingsListAdapter;
 
@@ -27,7 +20,7 @@ public class SettingsFragment extends Fragment {
 
 
         // Inflate the layout for this fragment
-        View view =  inflater.inflate(R.layout.fragment_settings, container, false);
+        View view = inflater.inflate(R.layout.fragment_settings, container, false);
 
         ListView list = (ListView) view.findViewById(R.id.settingsListView);
         String[] values = {"Edit Profile", "Log Out"};
