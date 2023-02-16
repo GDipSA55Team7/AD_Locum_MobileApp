@@ -14,7 +14,7 @@
     <color name="white">#FFFFFFFF</color>
     <color name="light_grey">#F5F5F5F5</color>
     <color name="medium_grey">#e9ecef</color>
-    <color name="darker_grey"> #D3D3D3</color>
+    <color name="darker_grey">#D3D3D3</color>
     <color name="darkest_grey">#808080</color>
     <color name="Btn_BgColor">#87CEFA</color>
     <color name="validation_failed">#FF0000</color>

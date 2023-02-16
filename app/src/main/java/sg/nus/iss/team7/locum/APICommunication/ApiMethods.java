@@ -2,7 +2,6 @@ package sg.nus.iss.team7.locum.APICommunication;
 
 
 import java.util.ArrayList;
-import java.util.List;
 
 import okhttp3.ResponseBody;
 import retrofit2.Call;

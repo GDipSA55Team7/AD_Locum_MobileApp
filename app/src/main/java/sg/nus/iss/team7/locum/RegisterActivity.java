@@ -1,8 +1,5 @@
 package sg.nus.iss.team7.locum;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -22,6 +19,9 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.google.gson.Gson;
 
 import java.io.IOException;
@@ -40,10 +40,10 @@ import sg.nus.iss.team7.locum.Utilities.SharedPrefUtility;
 
 public class RegisterActivity extends AppCompatActivity {
 
-    EditText mName,mUserName,mPassword,mEmail,mContactNumber,mMedicalLicenseNumber;
-    Button mRegister,mReset;
-    Map<String,Boolean> mapFieldToValidStatus = new HashMap<>();
-    FreeLancer fl = null;
+    private EditText mName, mUserName, mPassword, mEmail, mContactNumber, mMedicalLicenseNumber;
+    private Button mRegister, mReset;
+    private Map<String, Boolean> mapFieldToValidStatus = new HashMap<>();
+    private FreeLancer fl = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,7 +56,7 @@ public class RegisterActivity extends AppCompatActivity {
         mReset = findViewById(R.id.reset);
 
         mRegister.setOnClickListener(v -> {
-            if(allFieldsValid()){
+            if (allFieldsValid()) {
                 //listener for receiving token
                 FirebaseTokenUtils.getDeviceToken(getApplicationContext(), token -> {
                     //onTokenReceived(String token), set token on freelancer object to be send in API call
@@ -73,9 +73,9 @@ public class RegisterActivity extends AppCompatActivity {
                             if (response.isSuccessful() && response.code() == 201) {
                                 FreeLancer returnedFL = response.body();
                                 if (returnedFL != null && returnedFL.getName() != null) {
-                                    Toast.makeText(getApplicationContext(), getResources().getString(R.string.RegisterSuccess) + returnedFL.getName(),Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(getApplicationContext(), getResources().getString(R.string.RegisterSuccess) + returnedFL.getName(), Toast.LENGTH_SHORT).show();
                                     //Store freeLancer Details into shared Pref
-                                    SharedPrefUtility.storeFLDetailsInSharedPref(getApplicationContext(),returnedFL);
+                                    SharedPrefUtility.storeFLDetailsInSharedPref(getApplicationContext(), returnedFL);
                                     launchMainActivity();
                                 }
                             }
@@ -86,24 +86,24 @@ public class RegisterActivity extends AppCompatActivity {
                                     createDialogForRegisterFailed(getResources().getString(R.string.InternalServerError));
                                 }
                                 //Server-side Validation Error - non-unique Fields(username,Email,medicalLicenseNo)
-                                else if  ( statusCode == 406) {
+                                else if (statusCode == 406) {
                                     FreeLancer invalidFL = null;
                                     if (response.errorBody() != null) {
                                         //converting a JSON response string from an API to FreeLancer class object using GSON
-                                        invalidFL = new Gson().fromJson( response.errorBody().charStream(), FreeLancer.class);
+                                        invalidFL = new Gson().fromJson(response.errorBody().charStream(), FreeLancer.class);
                                     }
                                     //display fields that have failed validation
-                                    if(invalidFL != null){
-                                        String errString =  invalidFL.getErrorsFieldString();
+                                    if (invalidFL != null) {
+                                        String errString = invalidFL.getErrorsFieldString();
                                         String displayErrorTxt = "These fields have already been taken/registered :";
-                                        if(!errString.isEmpty()){
-                                            if(errString.contains("Username")){
+                                        if (!errString.isEmpty()) {
+                                            if (errString.contains("Username")) {
                                                 displayErrorTxt += " UserName,";
                                             }
-                                            if(errString.contains("Email")){
+                                            if (errString.contains("Email")) {
                                                 displayErrorTxt += " Email,";
                                             }
-                                            if(errString.contains("Medical")){
+                                            if (errString.contains("Medical")) {
                                                 displayErrorTxt += " MedicalLicenseNumber,";
                                             }
                                             displayErrorTxt = displayErrorTxt.substring(0, displayErrorTxt.length() - 1);
@@ -118,31 +118,29 @@ public class RegisterActivity extends AppCompatActivity {
                         public void onFailure(@NonNull Call<FreeLancer> call, @NonNull Throwable t) {
                             if (t instanceof IOException) {
                                 createDialogForRegisterFailed(getResources().getString(R.string.NetworkFailure));
-                            }
-                            else {
+                            } else {
                                 createDialogForRegisterFailed(getResources().getString(R.string.JSONParsingIssue));
                             }
                         }
                     });
                 });
-            }
-            else{
+            } else {
                 createDialogForRegisterFailed(getResources().getString(R.string.AllFieldsAreValid));
             }
         });
 
         mReset.setOnClickListener(v -> {
-            LinearLayout linearLayout =  findViewById(R.id.linearlayoutRegisterActivity);
+            LinearLayout linearLayout = findViewById(R.id.linearlayoutRegisterActivity);
             clearAllFields(linearLayout);
         });
     }
 
-    private void initListenersAndFieldValidationListener(){
+    private void initListenersAndFieldValidationListener() {
 
         mName = findViewById(R.id.name);
         mName.setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
 
-        mUserName= findViewById(R.id.username);
+        mUserName = findViewById(R.id.username);
         mUserName.setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
 
         mEmail = findViewById(R.id.email);
@@ -157,39 +155,39 @@ public class RegisterActivity extends AppCompatActivity {
         mMedicalLicenseNumber = findViewById(R.id.medicalLicenseNumber);
         mMedicalLicenseNumber.setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
 
-        listenerForLengthValidation(mName,getResources().getString(R.string.Name),1,10);
-        listenerForLengthValidation(mUserName,getResources().getString(R.string.UserName),3,12);
-        listenerForLengthValidation(mPassword,getResources().getString(R.string.Password),5,15);
+        listenerForLengthValidation(mName, getResources().getString(R.string.Name), 1, 10);
+        listenerForLengthValidation(mUserName, getResources().getString(R.string.UserName), 3, 12);
+        listenerForLengthValidation(mPassword, getResources().getString(R.string.Password), 5, 15);
 
         String validEmailRegex = getResources().getString(R.string.ValidEmailRegex);
         String validMedicalLicenseNumberRegex = getResources().getString(R.string.ValidMedicalLicenseNumberRegex);
         String validContactNumberRegex = getResources().getString(R.string.ValidContactNumberRegex);
 
-        listenerForRegexValidation(mEmail,getResources().getString(R.string.Email),validEmailRegex);
-        listenerForRegexValidation(mMedicalLicenseNumber,getResources().getString(R.string.MedicalLicenseNumber),validMedicalLicenseNumberRegex);
-        listenerForRegexValidation(mContactNumber,getResources().getString(R.string.ContactNumber),validContactNumberRegex);
+        listenerForRegexValidation(mEmail, getResources().getString(R.string.Email), validEmailRegex);
+        listenerForRegexValidation(mMedicalLicenseNumber, getResources().getString(R.string.MedicalLicenseNumber), validMedicalLicenseNumberRegex);
+        listenerForRegexValidation(mContactNumber, getResources().getString(R.string.ContactNumber), validContactNumberRegex);
     }
 
-    private boolean validateLength(EditText editTxt, String fieldName, int minChar, int maxChar){
+    private boolean validateLength(EditText editTxt, String fieldName, int minChar, int maxChar) {
 
         boolean fieldIsValid = true;
         String checkFieldStr = editTxt.getText().toString().trim();
 
-        if(checkFieldStr.isEmpty()){
+        if (checkFieldStr.isEmpty()) {
             editTxt.setError(fieldName + getResources().getString(R.string.MustNotBeEmpty));
-            if(fieldIsValid){
+            if (fieldIsValid) {
                 fieldIsValid = false;
             }
-        }
-        else if (checkFieldStr.length() < minChar || checkFieldStr.length() > maxChar){
-            editTxt.setError(fieldName + " must be between " +minChar + " and " + maxChar + " characters");
-            if(fieldIsValid){
+        } else if (checkFieldStr.length() < minChar || checkFieldStr.length() > maxChar) {
+            editTxt.setError(fieldName + " must be between " + minChar + " and " + maxChar + " characters");
+            if (fieldIsValid) {
                 fieldIsValid = false;
             }
         }
         return fieldIsValid;
     }
-    private void listenerForLengthValidation(final EditText editTxt,final String fieldName,final int minChar,final int maxChar){
+
+    private void listenerForLengthValidation(final EditText editTxt, final String fieldName, final int minChar, final int maxChar) {
         editTxt.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -206,7 +204,8 @@ public class RegisterActivity extends AppCompatActivity {
             }
         });
     }
-    private void listenerForRegexValidation(final EditText editTxt,final String fieldName,final String validPattern){
+
+    private void listenerForRegexValidation(final EditText editTxt, final String fieldName, final String validPattern) {
         editTxt.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -214,8 +213,8 @@ public class RegisterActivity extends AppCompatActivity {
 
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                Boolean fieldIsValid = validateWithRegex(editTxt,fieldName,validPattern);
-                mapFieldToValidStatus.put(fieldName,fieldIsValid);
+                Boolean fieldIsValid = validateWithRegex(editTxt, fieldName, validPattern);
+                mapFieldToValidStatus.put(fieldName, fieldIsValid);
             }
 
             @Override
@@ -223,23 +222,23 @@ public class RegisterActivity extends AppCompatActivity {
             }
         });
     }
-    private boolean validateWithRegex(EditText editTxt,final String fieldName, final String validRegexPattern) {
+
+    private boolean validateWithRegex(EditText editTxt, final String fieldName, final String validRegexPattern) {
 
         String fieldInput = editTxt.getText().toString().trim();
 
-        if (fieldInput.isEmpty()){
-            editTxt.setError( fieldName + getResources().getString(R.string.MustNotBeEmpty));
+        if (fieldInput.isEmpty()) {
+            editTxt.setError(fieldName + getResources().getString(R.string.MustNotBeEmpty));
             return false;
-        }
-        else if(!fieldInput.matches(validRegexPattern)){
+        } else if (!fieldInput.matches(validRegexPattern)) {
 
-            switch(fieldName){
+            switch (fieldName) {
 
                 case "Email":
                     editTxt.setError("Must be valid " + getResources().getString(R.string.Email) + getResources().getString(R.string.EmailValidation));
                     break;
                 case "ContactNumber":
-                    editTxt.setError( getResources().getString(R.string.ContactNumber)  + getResources().getString(R.string.ContactNumberValidation));
+                    editTxt.setError(getResources().getString(R.string.ContactNumber) + getResources().getString(R.string.ContactNumberValidation));
                     break;
                 case "MedicalLicenseNumber":
                     editTxt.setError("Must be valid " + getResources().getString(R.string.MedicalLicenseNumber) + getResources().getString(R.string.MedicalLicenseNumberValidation));
@@ -252,31 +251,32 @@ public class RegisterActivity extends AppCompatActivity {
         return true;
     }
 
-    private boolean allFieldsValid(){
+    private boolean allFieldsValid() {
         boolean isValid = true;
         //contains false
-        if(mapFieldToValidStatus.values().isEmpty()){
+        if (mapFieldToValidStatus.values().isEmpty()) {
             isValid = false;
         }
-        for (Boolean b : mapFieldToValidStatus.values()){
-            if(b == Boolean.FALSE){
+        for (Boolean b : mapFieldToValidStatus.values()) {
+            if (b == Boolean.FALSE) {
                 isValid = false;
             }
         }
         return isValid;
     }
+
     private void clearAllFields(ViewGroup group) {
         for (int i = 0, count = group.getChildCount(); i < count; ++i) {
             View view = group.getChildAt(i);
             if (view instanceof EditText) {
-                ((EditText)view).setText("");
+                ((EditText) view).setText("");
             }
-            if(view instanceof ViewGroup && (((ViewGroup)view).getChildCount() > 0))
-                clearAllFields((ViewGroup)view);
+            if (view instanceof ViewGroup && (((ViewGroup) view).getChildCount() > 0))
+                clearAllFields((ViewGroup) view);
         }
     }
 
-    private void createDialogForRegisterFailed(String msg){
+    private void createDialogForRegisterFailed(String msg) {
         new AlertDialog.Builder(RegisterActivity.this)
                 .setIcon(R.drawable.ic_exit_application)
                 .setTitle(getResources().getString(R.string.RegisterFailed))
@@ -291,26 +291,26 @@ public class RegisterActivity extends AppCompatActivity {
     public boolean dispatchTouchEvent(MotionEvent event) {
         if (event.getAction() == MotionEvent.ACTION_DOWN) {
             View v = getCurrentFocus();
-            if ( v instanceof EditText) {
+            if (v instanceof EditText) {
                 Rect outRect = new Rect();
                 v.getGlobalVisibleRect(outRect);
-                if (!outRect.contains((int)event.getRawX(), (int)event.getRawY())) {
+                if (!outRect.contains((int) event.getRawX(), (int) event.getRawY())) {
                     v.clearFocus();
                     InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                     imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
                 }
             }
         }
-        return super.dispatchTouchEvent( event );
+        return super.dispatchTouchEvent(event);
     }
 
-    private void launchMainActivity(){
-        Intent intent = new Intent(RegisterActivity.this,MainActivity.class);
+    private void launchMainActivity() {
+        Intent intent = new Intent(RegisterActivity.this, MainActivity.class);
         startActivity(intent);
         finish();
     }
 
-    private void setFreeLancerDetails(String deviceToken){
+    private void setFreeLancerDetails(String deviceToken) {
         fl = new FreeLancer();
         fl.setName(mName.getText().toString().trim());
         fl.setUsername(mUserName.getText().toString().trim());

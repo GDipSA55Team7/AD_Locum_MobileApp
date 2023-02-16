@@ -1,6 +1,5 @@
 package sg.nus.iss.team7.locum.Adapter;
 
-import static android.view.View.GONE;
 import static androidx.core.content.ContextCompat.getColorStateList;
 
 import android.content.Context;
@@ -20,7 +19,7 @@ import sg.nus.iss.team7.locum.Model.JobPost;
 import sg.nus.iss.team7.locum.R;
 import sg.nus.iss.team7.locum.Utilities.DatetimeParser;
 
-public class RecommenderFragmentAdapter extends RecyclerView.Adapter<RecommenderFragmentAdapter.MyViewHolder>{
+public class RecommenderFragmentAdapter extends RecyclerView.Adapter<RecommenderFragmentAdapter.MyViewHolder> {
     private final RecyclerViewInterface recyclerViewInterface;
 
     Context context;
@@ -30,37 +29,6 @@ public class RecommenderFragmentAdapter extends RecyclerView.Adapter<Recommender
     public RecommenderFragmentAdapter(Context context, RecyclerViewInterface recyclerViewInterface) {
         this.recyclerViewInterface = recyclerViewInterface;
         this.context = context;
-    }
-
-    public static class MyViewHolder extends RecyclerView.ViewHolder {
-        public TextView date, full_rate, hour_rate, time_start, time_end, job_name, clinic_name, address, status, similarity;
-
-        public MyViewHolder(@NonNull View view, RecyclerViewInterface recyclerViewInterface) {
-            super(view);
-            date = (TextView) view.findViewById(R.id.date);
-            full_rate = (TextView) view.findViewById(R.id.full_rate);
-            hour_rate = (TextView) view.findViewById(R.id.hour_rate);
-            time_start = (TextView) view.findViewById(R.id.time_start);
-            time_end = (TextView) view.findViewById(R.id.time_end);
-            job_name = (TextView) view.findViewById(R.id.job_name);
-            clinic_name = (TextView) view.findViewById(R.id.clinic_name);
-            address = (TextView) view.findViewById(R.id.address);
-            status = (TextView) view.findViewById(R.id.status);
-            similarity = (TextView) view.findViewById(R.id.similarity2);
-
-            view.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (recyclerViewInterface != null) {
-                        //int pos = getAbsoluteAdapterPosition();
-                        int pos = getAdapterPosition();
-                        if(pos != RecyclerView.NO_POSITION) {
-                            recyclerViewInterface.onItemClick(pos);
-                        }
-                    }
-                }
-            });
-        }
     }
 
     public void setMyList(ArrayList<JobPost> list) {
@@ -130,21 +98,51 @@ public class RecommenderFragmentAdapter extends RecyclerView.Adapter<Recommender
 
     private void setStatusBar(@NonNull MyViewHolder holder) {
 
-        if(jobPost.getStatus().equalsIgnoreCase("PENDING_CONFIRMATION_BY_CLINIC")) {
+        if (jobPost.getStatus().equalsIgnoreCase("PENDING_CONFIRMATION_BY_CLINIC")) {
             holder.status.setText("APPLIED");
-            holder.status.setBackgroundTintList(getColorStateList(context,R.color.status_mid));
+            holder.status.setBackgroundTintList(getColorStateList(context, R.color.status_mid));
         } else if (jobPost.getStatus().equalsIgnoreCase("OPEN")) {
             holder.status.setText("OPEN");
             holder.status.setBackgroundTintList(getColorStateList(context, R.color.status_green));
-        } else if(jobPost.getStatus().equalsIgnoreCase("ACCEPTED")){
+        } else if (jobPost.getStatus().equalsIgnoreCase("ACCEPTED")) {
             holder.status.setText("ACCEPTED");
             holder.status.setBackgroundTintList(getColorStateList(context, R.color.darker_grey));
-        } else if(jobPost.getStatus().equalsIgnoreCase("CANCELLED")){
+        } else if (jobPost.getStatus().equalsIgnoreCase("CANCELLED")) {
             holder.status.setText("CANCELLED");
             holder.status.setBackgroundTintList(getColorStateList(context, R.color.darker_grey));
-        }else if (jobPost.getStatus().startsWith("COMPLETED")) {
+        } else if (jobPost.getStatus().startsWith("COMPLETED")) {
             holder.status.setText("COMPLETED");
             holder.status.setBackgroundTintList(getColorStateList(context, R.color.darker_grey));
+        }
+    }
+
+    public static class MyViewHolder extends RecyclerView.ViewHolder {
+        public TextView date, full_rate, hour_rate, time_start, time_end, job_name, clinic_name, address, status, similarity;
+
+        public MyViewHolder(@NonNull View view, RecyclerViewInterface recyclerViewInterface) {
+            super(view);
+            date = (TextView) view.findViewById(R.id.date);
+            full_rate = (TextView) view.findViewById(R.id.full_rate);
+            hour_rate = (TextView) view.findViewById(R.id.hour_rate);
+            time_start = (TextView) view.findViewById(R.id.time_start);
+            time_end = (TextView) view.findViewById(R.id.time_end);
+            job_name = (TextView) view.findViewById(R.id.job_name);
+            clinic_name = (TextView) view.findViewById(R.id.clinic_name);
+            address = (TextView) view.findViewById(R.id.address);
+            status = (TextView) view.findViewById(R.id.status);
+            similarity = (TextView) view.findViewById(R.id.similarity2);
+
+            view.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (recyclerViewInterface != null) {
+                        int pos = getAdapterPosition();
+                        if (pos != RecyclerView.NO_POSITION) {
+                            recyclerViewInterface.onItemClick(pos);
+                        }
+                    }
+                }
+            });
         }
     }
 }

@@ -9,6 +9,17 @@ import com.google.gson.annotations.SerializedName;
 
 public class JobPost implements Parcelable {
 
+    public static final Creator<JobPost> CREATOR = new Creator<JobPost>() {
+        @Override
+        public JobPost createFromParcel(Parcel in) {
+            return new JobPost(in);
+        }
+
+        @Override
+        public JobPost[] newArray(int size) {
+            return new JobPost[size];
+        }
+    };
     @SerializedName("id")
     @Expose
     private Integer id;
@@ -30,7 +41,6 @@ public class JobPost implements Parcelable {
     @SerializedName("paymentRefNo")
     @Expose
     private String paymentRefNo;
-
     @SerializedName("ratePerHour")
     @Expose
     private Double ratePerHour;
@@ -89,7 +99,7 @@ public class JobPost implements Parcelable {
         }
         status = in.readString();
         additionalFeeListString = in.readString();
-        if(clinic != null){
+        if (clinic != null) {
             clinic = in.readParcelable(clinic.getClass().getClassLoader());
             if (in.readByte() == 0) {
                 clinicUser = null;
@@ -156,18 +166,6 @@ public class JobPost implements Parcelable {
     public int describeContents() {
         return 0;
     }
-
-    public static final Creator<JobPost> CREATOR = new Creator<JobPost>() {
-        @Override
-        public JobPost createFromParcel(Parcel in) {
-            return new JobPost(in);
-        }
-
-        @Override
-        public JobPost[] newArray(int size) {
-            return new JobPost[size];
-        }
-    };
 
     public String getAdditionalFeeListString() {
         return additionalFeeListString;
@@ -280,6 +278,7 @@ public class JobPost implements Parcelable {
     public void setPaymentRefNo(String paymentRefNo) {
         this.paymentRefNo = paymentRefNo;
     }
+
     public double getSimilarity() {
         return similarity;
     }

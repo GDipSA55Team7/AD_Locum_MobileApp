@@ -7,46 +7,60 @@ import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 
-public class FreeLancer implements Parcelable{
+public class FreeLancer implements Parcelable {
 
+    public static final Creator<FreeLancer> CREATOR = new Creator<FreeLancer>() {
+        @Override
+        public FreeLancer createFromParcel(Parcel in) {
+            return new FreeLancer(in);
+        }
+
+        @Override
+        public FreeLancer[] newArray(int size) {
+            return new FreeLancer[size];
+        }
+    };
     @SerializedName("id")
     @Expose
     private String id;
-
     @SerializedName("username")
     @Expose
     private String username;
-
     @SerializedName("password")
     @Expose
     private String password;
-
     @SerializedName("name")
     @Expose
     private String name;
-
-
     @SerializedName("email")
     @Expose
     private String email;
-
     @SerializedName("contact")
     @Expose
     private String contact;
-
     @SerializedName("medicalLicenseNo")
     @Expose
     private String medicalLicenseNo;
-
     @SerializedName("errorsFieldString")
     @Expose
     private String errorsFieldString;
-
     @SerializedName("deviceToken")
     @Expose
     private String deviceToken;
 
     public FreeLancer() {
+    }
+
+    protected FreeLancer(Parcel in) {
+        id = in.readString();
+        username = in.readString();
+        password = in.readString();
+        name = in.readString();
+        email = in.readString();
+        contact = in.readString();
+        medicalLicenseNo = in.readString();
+        errorsFieldString = in.readString();
+        //  deviceToken = in .readString();
     }
 
     public String getId() {
@@ -121,18 +135,6 @@ public class FreeLancer implements Parcelable{
         this.deviceToken = deviceToken;
     }
 
-    protected FreeLancer(Parcel in) {
-        id = in.readString();
-        username = in.readString();
-        password = in.readString();
-        name = in.readString();
-        email = in.readString();
-        contact = in.readString();
-        medicalLicenseNo = in.readString();
-        errorsFieldString = in.readString();
-      //  deviceToken = in .readString();
-    }
-
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(id);
@@ -143,26 +145,13 @@ public class FreeLancer implements Parcelable{
         dest.writeString(contact);
         dest.writeString(medicalLicenseNo);
         dest.writeString(errorsFieldString);
-      //  dest.writeString(deviceToken);
+        //  dest.writeString(deviceToken);
     }
 
     @Override
     public int describeContents() {
         return 0;
     }
-
-    public static final Creator<FreeLancer> CREATOR = new Creator<FreeLancer>() {
-        @Override
-        public FreeLancer createFromParcel(Parcel in) {
-            return new FreeLancer(in);
-        }
-
-        @Override
-        public FreeLancer[] newArray(int size) {
-            return new FreeLancer[size];
-        }
-    };
-
 
 
 }

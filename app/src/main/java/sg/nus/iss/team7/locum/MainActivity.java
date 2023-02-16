@@ -1,15 +1,9 @@
 package sg.nus.iss.team7.locum;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.media.Image;
 import android.os.Bundle;
 import android.os.PersistableBundle;
-import android.provider.ContactsContract;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
@@ -17,12 +11,12 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
-
-import java.util.ArrayList;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -30,7 +24,6 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import sg.nus.iss.team7.locum.APICommunication.ApiMethods;
 import sg.nus.iss.team7.locum.APICommunication.RetroFitClient;
-import sg.nus.iss.team7.locum.Model.JobPost;
 import sg.nus.iss.team7.locum.Utilities.JsonFieldParser;
 
 public class MainActivity extends AppCompatActivity {
@@ -58,7 +51,7 @@ public class MainActivity extends AppCompatActivity {
         notificationButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                getSupportFragmentManager().beginTransaction().setCustomAnimations(R.anim.fade_in, R.anim.fade_out).replace(R.id.container,notificationsFragment).commit();
+                getSupportFragmentManager().beginTransaction().setCustomAnimations(R.anim.fade_in, R.anim.fade_out).replace(R.id.container, notificationsFragment).commit();
             }
         });
 
@@ -66,37 +59,37 @@ public class MainActivity extends AppCompatActivity {
 
         SharedPreferences sharedPref = getSharedPreferences("FL_Shared_Pref", MODE_PRIVATE);
         String userDetails = sharedPref.getString("FL_Details", "no value");
-        if(userDetails!="no value") {
+        if (userDetails != "no value") {
             String name = JsonFieldParser.getField(userDetails, "name");
 
             TextView topBarText = findViewById(R.id.nameBar);
             topBarText.setText("Hello, " + name);
 
         }
-        if(savedInstanceState!=null) {
+        if (savedInstanceState != null) {
             bottomNavigationView.setSelectedItemId(saveState);
         } else {
-            getSupportFragmentManager().beginTransaction().replace(R.id.container,homeFragment).commit();
+            getSupportFragmentManager().beginTransaction().replace(R.id.container, homeFragment).commit();
         }
 
         bottomNavigationView.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                switch (item.getItemId()){
+                switch (item.getItemId()) {
                     case R.id.menuHome:
-                        getSupportFragmentManager().beginTransaction().setCustomAnimations(R.anim.fade_in, R.anim.fade_out).replace(R.id.container,homeFragment).commit();
+                        getSupportFragmentManager().beginTransaction().setCustomAnimations(R.anim.fade_in, R.anim.fade_out).replace(R.id.container, homeFragment).commit();
                         return true;
                     case R.id.menuSearch:
-                        getSupportFragmentManager().beginTransaction().setCustomAnimations(R.anim.fade_in, R.anim.fade_out).replace(R.id.container,jobSearchFragment).commit();
+                        getSupportFragmentManager().beginTransaction().setCustomAnimations(R.anim.fade_in, R.anim.fade_out).replace(R.id.container, jobSearchFragment).commit();
                         return true;
                     case R.id.menuJobs:
-                        getSupportFragmentManager().beginTransaction().setCustomAnimations(R.anim.fade_in, R.anim.fade_out).replace(R.id.container,myJobsFragment).commit();
+                        getSupportFragmentManager().beginTransaction().setCustomAnimations(R.anim.fade_in, R.anim.fade_out).replace(R.id.container, myJobsFragment).commit();
                         return true;
                     case R.id.menuSettings:
-                        getSupportFragmentManager().beginTransaction().setCustomAnimations(R.anim.fade_in, R.anim.fade_out).replace(R.id.container,settingsFragment).commit();
+                        getSupportFragmentManager().beginTransaction().setCustomAnimations(R.anim.fade_in, R.anim.fade_out).replace(R.id.container, settingsFragment).commit();
                         return true;
                     case R.id.menuRecommended:
-                        getSupportFragmentManager().beginTransaction().setCustomAnimations(R.anim.fade_in, R.anim.fade_out).replace(R.id.container,jobMatchFragment).commit();
+                        getSupportFragmentManager().beginTransaction().setCustomAnimations(R.anim.fade_in, R.anim.fade_out).replace(R.id.container, jobMatchFragment).commit();
                         return true;
                 }
 
@@ -131,7 +124,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onFailure(Call<Boolean> call, Throwable t) {
                 t.printStackTrace();
-                Toast.makeText(context,"error getting notifications", Toast.LENGTH_SHORT);
+                Toast.makeText(context, "error getting notifications", Toast.LENGTH_SHORT);
             }
         });
     }

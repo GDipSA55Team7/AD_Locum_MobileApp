@@ -1,4 +1,3 @@
-
 package sg.nus.iss.team7.locum.Model;
 
 import android.os.Parcel;
@@ -9,6 +8,17 @@ import com.google.gson.annotations.SerializedName;
 
 public class Clinic implements Parcelable {
 
+    public static final Creator<Clinic> CREATOR = new Creator<Clinic>() {
+        @Override
+        public Clinic createFromParcel(Parcel in) {
+            return new Clinic(in);
+        }
+
+        @Override
+        public Clinic[] newArray(int size) {
+            return new Clinic[size];
+        }
+    };
     @SerializedName("id")
     @Expose
     private Integer id;
@@ -24,7 +34,6 @@ public class Clinic implements Parcelable {
     @SerializedName("contact")
     @Expose
     private String contact;
-
     @SerializedName("email")
     @Expose
     private String email;
@@ -64,18 +73,6 @@ public class Clinic implements Parcelable {
     public int describeContents() {
         return 0;
     }
-
-    public static final Creator<Clinic> CREATOR = new Creator<Clinic>() {
-        @Override
-        public Clinic createFromParcel(Parcel in) {
-            return new Clinic(in);
-        }
-
-        @Override
-        public Clinic[] newArray(int size) {
-            return new Clinic[size];
-        }
-    };
 
     public Integer getId() {
         return id;
@@ -125,7 +122,11 @@ public class Clinic implements Parcelable {
         this.hcicode = hcicode;
     }
 
-    public String getEmail() { return email; }
+    public String getEmail() {
+        return email;
+    }
 
-    public void setEmail(String email) { this.email = email; }
+    public void setEmail(String email) {
+        this.email = email;
+    }
 }

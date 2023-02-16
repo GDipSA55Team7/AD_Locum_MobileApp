@@ -10,7 +10,6 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -40,7 +39,7 @@ import sg.nus.iss.team7.locum.Interface.RecyclerViewInterface;
 import sg.nus.iss.team7.locum.Model.JobPost;
 import sg.nus.iss.team7.locum.Utilities.JsonFieldParser;
 
-public class ConfirmedJobChildFragment extends Fragment implements RecyclerViewInterface{
+public class ConfirmedJobChildFragment extends Fragment implements RecyclerViewInterface {
 
     private JobSearchAdapter adapter;
     private ArrayList<JobPost> responseList = new ArrayList<JobPost>();
@@ -144,37 +143,14 @@ public class ConfirmedJobChildFragment extends Fragment implements RecyclerViewI
             @Override
             public void onFailure(Call<ArrayList<JobPost>> call, Throwable t) {
                 t.printStackTrace();
-                Toast.makeText(getContext(),"error getting job list", Toast.LENGTH_SHORT);
+                Toast.makeText(getContext(), "error getting job list", Toast.LENGTH_SHORT);
             }
         });
     }
 
-    public void onResume () {
+    public void onResume() {
         super.onResume();
         getJobs(adapter);
     }
-//    @Override
-//    public void onButtonClick(int position){
-//
-//        alertMsg=getString(R.string.cancelMsg);
-//        alertTitle=getString(R.string.cancelAlertTitle);
-//
-//                AlertDialog.Builder dlg = new AlertDialog.Builder(getContext())
-//                        .setTitle(alertTitle)
-//                        .setMessage(alertMsg)
-//                        .setPositiveButton(R.string.yes,new DialogInterface.OnClickListener() {
-//                            @Override
-//                            public void onClick(DialogInterface dialog, int which) {
-//                                Toast.makeText(getContext(), "Cancel successfully", Toast.LENGTH_SHORT).show();
-//                            }
-//                        })
-//                        .setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
-//                            @Override
-//                            public void onClick(DialogInterface dialog, int which) {
-//                                Toast.makeText(getContext(), "Not cancel", Toast.LENGTH_SHORT).show();
-//                            }
-//                        });
-//                dlg.show();
-//    }
 
 }

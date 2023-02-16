@@ -2,23 +2,23 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
-        android:icon="@drawable/ic_baseline_home_24"
         android:id="@+id/menuHome"
-        android:title="Home"/>
+        android:icon="@drawable/ic_baseline_home_24"
+        android:title="Home" />
     <item
-        android:icon="@drawable/ic_baseline_search_24"
         android:id="@+id/menuSearch"
-        android:title="Search"/>
+        android:icon="@drawable/ic_baseline_search_24"
+        android:title="Search" />
     <item
-        android:icon="@drawable/ic_baseline_star_border_24"
         android:id="@+id/menuRecommended"
-        android:title="Job Matches"/>
+        android:icon="@drawable/ic_baseline_star_border_24"
+        android:title="Job Matches" />
     <item
-        android:icon="@drawable/ic_baseline_my_jobs"
         android:id="@+id/menuJobs"
-        android:title="My Jobs"/>
+        android:icon="@drawable/ic_baseline_my_jobs"
+        android:title="My Jobs" />
     <item
-        android:icon="@drawable/ic_baseline_settings_24"
         android:id="@+id/menuSettings"
-        android:title="Settings"/>
+        android:icon="@drawable/ic_baseline_settings_24"
+        android:title="Settings" />
 </menu>

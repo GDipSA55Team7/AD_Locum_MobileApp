@@ -10,23 +10,22 @@ import sg.nus.iss.team7.locum.R;
 
 public class SharedPrefUtility {
 
-    public static FreeLancer readFromSharedPref(Context context){
+    public static FreeLancer readFromSharedPref(Context context) {
 
         Gson gson = new Gson();
-        SharedPreferences sharedPreferences =  context.getSharedPreferences( context.getResources().getString(R.string.Freelancer_Shared_Pref), Context.MODE_PRIVATE);
-        if(sharedPreferences.contains(context.getResources().getString(R.string.Freelancer_Details))){
-            String json = sharedPreferences.getString( context.getResources().getString(R.string.Freelancer_Details), "");
+        SharedPreferences sharedPreferences = context.getSharedPreferences(context.getResources().getString(R.string.Freelancer_Shared_Pref), Context.MODE_PRIVATE);
+        if (sharedPreferences.contains(context.getResources().getString(R.string.Freelancer_Details))) {
+            String json = sharedPreferences.getString(context.getResources().getString(R.string.Freelancer_Details), "");
             FreeLancer fl = gson.fromJson(json, FreeLancer.class);
             return fl;
-        }
-        else{
+        } else {
             return null;
         }
     }
 
 
-    public static void storeFLDetailsInSharedPref(Context context, FreeLancer freeLancer){
-        if(freeLancer != null){
+    public static void storeFLDetailsInSharedPref(Context context, FreeLancer freeLancer) {
+        if (freeLancer != null) {
             Gson gson = new Gson();
             String json = gson.toJson(freeLancer);
             SharedPreferences sharedPreferences = context.getSharedPreferences(context.getResources().getString(R.string.Freelancer_Shared_Pref), Context.MODE_PRIVATE);

@@ -2,21 +2,18 @@ package sg.nus.iss.team7.locum;
 
 import static android.content.Context.MODE_PRIVATE;
 
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.LinearLayout;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import com.facebook.shimmer.ShimmerFrameLayout;
 
@@ -34,7 +31,6 @@ import retrofit2.Retrofit;
 import sg.nus.iss.team7.locum.APICommunication.ApiMethods;
 import sg.nus.iss.team7.locum.APICommunication.RetroFitClient;
 import sg.nus.iss.team7.locum.Adapter.HomeRecommendedAdapter;
-import sg.nus.iss.team7.locum.Interface.RecyclerViewInterface;
 import sg.nus.iss.team7.locum.Model.JobPost;
 import sg.nus.iss.team7.locum.Utilities.JsonFieldParser;
 
@@ -44,7 +40,6 @@ public class HomeFragment extends Fragment {
     private ShimmerFrameLayout shimmerFrameLayoutRec, shimmerFrameLayoutNext;
     private HomeRecommendedAdapter recAdapter, nextAdapter;
     private TextView emptyView, emptyViewNext, scheduledCount, confirmationCount, completedCount, paymentCount;
-
     private View confirmedJobs, pendingConfirmationJobs, pendingPaymentJobs, completedJobs;
     private RecyclerView recyclerView, recyclerViewNext;
     private Retrofit retrofit = RetroFitClient.getClient(RetroFitClient.BASE_URL);
@@ -101,7 +96,7 @@ public class HomeFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 getActivity().getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.container,new ConfirmedJobChildFragment(), null)
+                        .replace(R.id.container, new ConfirmedJobChildFragment(), null)
                         .addToBackStack(null).commit();
             }
         });
@@ -110,7 +105,7 @@ public class HomeFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 getActivity().getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.container,new AppliedJobChildFragment(), null)
+                        .replace(R.id.container, new AppliedJobChildFragment(), null)
                         .addToBackStack(null).commit();
             }
         });
@@ -119,7 +114,7 @@ public class HomeFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 getActivity().getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.container,new HistoryJobChildFragment(), null)
+                        .replace(R.id.container, new HistoryJobChildFragment(), null)
                         .addToBackStack(null).commit();
             }
         });
@@ -128,7 +123,7 @@ public class HomeFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 getActivity().getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.container,new HistoryJobChildFragment(), null)
+                        .replace(R.id.container, new HistoryJobChildFragment(), null)
                         .addToBackStack(null).commit();
             }
         });
@@ -168,7 +163,7 @@ public class HomeFragment extends Fragment {
             @Override
             public void onFailure(Call<ArrayList<JobPost>> call, Throwable t) {
                 t.printStackTrace();
-                Toast.makeText(getContext(),"error getting job list", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), "error getting job list", Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -211,7 +206,7 @@ public class HomeFragment extends Fragment {
             @Override
             public void onFailure(Call<ArrayList<JobPost>> call, Throwable t) {
                 t.printStackTrace();
-                Toast.makeText(getContext(),"error getting job list", Toast.LENGTH_SHORT);
+                Toast.makeText(getContext(), "error getting job list", Toast.LENGTH_SHORT);
             }
         });
     }
@@ -247,7 +242,7 @@ public class HomeFragment extends Fragment {
             @Override
             public void onFailure(Call<ArrayList<JobPost>> call, Throwable t) {
                 t.printStackTrace();
-                Toast.makeText(getContext(),"error getting job count", Toast.LENGTH_SHORT);
+                Toast.makeText(getContext(), "error getting job count", Toast.LENGTH_SHORT);
             }
         });
     }
@@ -261,7 +256,7 @@ public class HomeFragment extends Fragment {
         return id;
     }
 
-    public void onResume () {
+    public void onResume() {
         super.onResume();
         getRecommendedJobs(recAdapter);
         getNextJob(nextAdapter);

@@ -61,7 +61,7 @@ public class SettingsListAdapter extends ArrayAdapter<String> {
                     .setPositiveButton(context.getResources().getString(R.string.Yes), (dialog, id) -> {
                         FreeLancer loggedOutUser = readFromSharedPref();
                         clearSharedPref();
-                        FirebaseTokenUtils.updateServerOnLogout(getContext(),loggedOutUser.getUsername());
+                        FirebaseTokenUtils.updateServerOnLogout(getContext(), loggedOutUser.getUsername());
                         returnToLoginActivity();
                     })
                     .setNegativeButton(context.getResources().getString(R.string.No), null)
@@ -69,17 +69,20 @@ public class SettingsListAdapter extends ArrayAdapter<String> {
         }
         return rowView;
     }
-    private void clearSharedPref(){
+
+    private void clearSharedPref() {
         SharedPreferences sharedPreferences = getContext().getSharedPreferences(getContext().getResources().getString(R.string.Freelancer_Shared_Pref), MODE_PRIVATE);
         sharedPreferences.edit().clear().apply();
     }
-    private void returnToLoginActivity(){
+
+    private void returnToLoginActivity() {
         Intent intent = new Intent(getContext(), LoginActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         context.startActivity(intent);
         ((Activity) context).finish();
     }
-    private FreeLancer readFromSharedPref(){
+
+    private FreeLancer readFromSharedPref() {
         Gson gson = new Gson();
         SharedPreferences sharedPreferences = getContext().getSharedPreferences(getContext().getResources().getString(R.string.Freelancer_Shared_Pref), MODE_PRIVATE);
         String json = sharedPreferences.getString(getContext().getResources().getString(R.string.Freelancer_Details), "");

@@ -34,13 +34,12 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import sg.nus.iss.team7.locum.APICommunication.ApiMethods;
 import sg.nus.iss.team7.locum.APICommunication.RetroFitClient;
-import sg.nus.iss.team7.locum.Adapter.JobSearchAdapter;
 import sg.nus.iss.team7.locum.Adapter.RecommenderFragmentAdapter;
 import sg.nus.iss.team7.locum.Interface.RecyclerViewInterface;
 import sg.nus.iss.team7.locum.Model.JobPost;
 import sg.nus.iss.team7.locum.Utilities.JsonFieldParser;
 
-public class JobMatchFragment extends Fragment implements RecyclerViewInterface{
+public class JobMatchFragment extends Fragment implements RecyclerViewInterface {
 
     private RecyclerView recyclerView;
     private RecommenderFragmentAdapter adapter;
@@ -125,7 +124,7 @@ public class JobMatchFragment extends Fragment implements RecyclerViewInterface{
                     if (responseList != null) {
                         responseList = responseList.stream()
                                 .sorted(Comparator.comparingDouble(JobPost::getSimilarity).reversed()
-                                .thenComparing(o -> LocalDateTime.parse(o.getStartDateTime(), DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm"))))
+                                        .thenComparing(o -> LocalDateTime.parse(o.getStartDateTime(), DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm"))))
                                 .collect(Collectors.toCollection(ArrayList::new));
                         adapter.setMyList(responseList);
                         shimmerFrameLayout.stopShimmer();
@@ -152,12 +151,12 @@ public class JobMatchFragment extends Fragment implements RecyclerViewInterface{
             @Override
             public void onFailure(Call<ArrayList<JobPost>> call, Throwable t) {
                 t.printStackTrace();
-                Toast.makeText(getContext(),"error getting job list", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), "error getting job list", Toast.LENGTH_SHORT).show();
             }
         });
     }
 
-    public void onResume () {
+    public void onResume() {
         super.onResume();
         getJobs(adapter);
     }

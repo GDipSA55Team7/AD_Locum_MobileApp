@@ -3,30 +3,29 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="160dp"
+    android:background="?android:attr/selectableItemBackground"
+    android:orientation="horizontal"
+    android:paddingLeft="5dp"
     android:paddingTop="5dp"
     android:paddingRight="5dp"
-    android:paddingLeft="5dp"
-    android:orientation="horizontal"
-    android:paddingBottom="5dp"
-    android:background="?android:attr/selectableItemBackground"
-    >
+    android:paddingBottom="5dp">
 
     <LinearLayout
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_gravity="center"
-        android:gravity="top"
         android:layout_weight="1.2"
-        android:orientation="vertical" >
+        android:gravity="top"
+        android:orientation="vertical">
 
         <TextView
             android:id="@+id/date"
             android:layout_width="110dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
+            android:layout_marginTop="2dp"
             android:gravity="center"
             android:text="23 MAY 2023"
-            android:layout_marginTop="2dp"
             android:textColor="@color/app_main_blue"
             android:textSize="16dp"
             android:textStyle="bold" />
@@ -40,7 +39,7 @@
             android:maxLines="1"
             android:text="$1000"
             android:textSize="25dp"
-            android:textStyle="bold"/>
+            android:textStyle="bold" />
 
         <TextView
             android:id="@+id/hour_rate"
@@ -48,8 +47,8 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:text="$100/hr"
-            android:textStyle="bold"
             android:textSize="13dp"
+            android:textStyle="bold"
 
             />
 
@@ -57,11 +56,11 @@
             android:id="@+id/time_start"
             android:layout_width="90dp"
             android:layout_height="wrap_content"
-            android:gravity="center"
             android:layout_gravity="center"
             android:layout_marginTop="10dp"
-            android:textSize="18dp"
-            android:text="10:30 AM" />
+            android:gravity="center"
+            android:text="10:30 AM"
+            android:textSize="18dp" />
 
         <View
             android:layout_width="100px"
@@ -77,17 +76,17 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:gravity="center"
-            android:textSize="18dp"
-            android:text="08:30 PM" />
+            android:text="08:30 PM"
+            android:textSize="18dp" />
 
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="0dp"
-        android:layout_weight="3"
         android:layout_height="match_parent"
+        android:layout_weight="3"
         android:gravity="center_vertical"
-        android:orientation="horizontal" >
+        android:orientation="horizontal">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
@@ -96,14 +95,14 @@
 
             <TextView
                 android:id="@+id/job_name"
-                android:layout_width="280dp"
+                android:layout_width="275dp"
                 android:layout_height="50dp"
+                android:maxLines="2"
+                android:minLines="2"
                 android:text="Consultations long name test long name testdddddddddddddddddddddddddddddddddddddddddddd "
                 android:textColor="@color/app_main_blue"
                 android:textSize="18dp"
                 android:textStyle="bold"
-                android:maxLines="2"
-                android:minLines="2"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -113,8 +112,8 @@
                 android:layout_width="275dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
-                android:text="Punggol Family Clinic Pte Ltdddddddddddddddddddddddddddddd"
                 android:maxLines="1"
+                android:text="Punggol Family Clinic Pte Ltdddddddddddddddddddddddddddddd"
                 app:layout_constraintStart_toStartOf="@+id/job_name"
                 app:layout_constraintTop_toBottomOf="@id/job_name" />
 
@@ -138,12 +137,11 @@
                 android:backgroundTint="@color/darkest_grey"
                 android:gravity="center"
                 android:text="status bar"
-                android:textStyle="bold"
                 android:textColor="@color/white"
+                android:textStyle="bold"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="@+id/job_name"
-                app:layout_constraintTop_toBottomOf="@id/address"
-                 />
+                app:layout_constraintTop_toBottomOf="@id/address" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

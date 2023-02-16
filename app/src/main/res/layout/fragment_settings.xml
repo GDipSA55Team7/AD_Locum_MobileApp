@@ -8,21 +8,18 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation ="vertical"  >
+        android:orientation="vertical">
 
         <ListView
             android:id="@+id/settingsListView"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="10"
             android:layout_marginTop="10dp"
+            android:layout_weight="10"
             android:divider="@android:color/transparent"
-            android:dividerHeight="5.0sp"
-            >
-        </ListView>
+            android:dividerHeight="5.0sp"></ListView>
 
     </LinearLayout>
-
 
 
 </FrameLayout>

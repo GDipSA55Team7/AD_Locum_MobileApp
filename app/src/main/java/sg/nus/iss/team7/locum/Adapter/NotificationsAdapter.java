@@ -1,11 +1,7 @@
 package sg.nus.iss.team7.locum.Adapter;
 
-import static android.content.Context.MODE_PRIVATE;
-import static java.security.AccessController.getContext;
-
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -30,7 +26,7 @@ import sg.nus.iss.team7.locum.JobDetailActivity;
 import sg.nus.iss.team7.locum.Model.Notification;
 import sg.nus.iss.team7.locum.R;
 
-public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdapter.MyViewHolder>{
+public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdapter.MyViewHolder> {
 
     Context context;
     ArrayList<Notification> myList;
@@ -38,18 +34,6 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
 
     public NotificationsAdapter(Context context) {
         this.context = context;
-    }
-
-    public static class MyViewHolder extends RecyclerView.ViewHolder {
-        public TextView notificationTitle, notificationBody;
-        public ImageView itemNotificationIndicator;
-
-        public MyViewHolder(@NonNull View view) {
-            super(view);
-            notificationBody = (TextView) view.findViewById(R.id.notificationBody);
-            notificationTitle = (TextView) view.findViewById(R.id.notificationTitle);
-            itemNotificationIndicator = (ImageView) view.findViewById(R.id.ItemNotificationIndicator);
-        }
     }
 
     public void setMyList(ArrayList<Notification> list) {
@@ -135,5 +119,17 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
             return myList.size();
         }
         return 0;
+    }
+
+    public static class MyViewHolder extends RecyclerView.ViewHolder {
+        public TextView notificationTitle, notificationBody;
+        public ImageView itemNotificationIndicator;
+
+        public MyViewHolder(@NonNull View view) {
+            super(view);
+            notificationBody = (TextView) view.findViewById(R.id.notificationBody);
+            notificationTitle = (TextView) view.findViewById(R.id.notificationTitle);
+            itemNotificationIndicator = (ImageView) view.findViewById(R.id.ItemNotificationIndicator);
+        }
     }
 }

@@ -1,32 +1,22 @@
 package sg.nus.iss.team7.locum;
 
-import static android.widget.NumberPicker.OnScrollListener.SCROLL_STATE_TOUCH_SCROLL;
-import static androidx.recyclerview.widget.RecyclerView.SCROLL_STATE_IDLE;
-import static java.lang.Thread.sleep;
-
-import androidx.annotation.NonNull;
-import androidx.appcompat.widget.SearchView;
-import androidx.core.content.ContextCompat;
-import androidx.core.view.ViewCompat;
-import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.DividerItemDecoration;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
-
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.InsetDrawable;
 import android.os.Bundle;
-import android.os.Handler;
-import android.transition.TransitionInflater;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.appcompat.widget.SearchView;
+import androidx.core.content.ContextCompat;
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.DividerItemDecoration;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.facebook.shimmer.ShimmerFrameLayout;
 
@@ -34,7 +24,6 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.List;
 import java.util.stream.Collectors;
 
 import retrofit2.Call;
@@ -45,10 +34,9 @@ import sg.nus.iss.team7.locum.APICommunication.ApiMethods;
 import sg.nus.iss.team7.locum.APICommunication.RetroFitClient;
 import sg.nus.iss.team7.locum.Adapter.JobSearchAdapter;
 import sg.nus.iss.team7.locum.Interface.RecyclerViewInterface;
-import sg.nus.iss.team7.locum.Model.FreeLancer;
 import sg.nus.iss.team7.locum.Model.JobPost;
 
-public class JobSearchFragment extends Fragment implements RecyclerViewInterface{
+public class JobSearchFragment extends Fragment implements RecyclerViewInterface {
 
     private ArrayList<JobPost> responseList = new ArrayList<>();
     private ShimmerFrameLayout shimmerFrameLayout;
@@ -119,11 +107,9 @@ public class JobSearchFragment extends Fragment implements RecyclerViewInterface
                 if (!filteredList.contains(jobPost)) {
                     if (jobPost.getClinic().getName().toLowerCase().contains(text.toLowerCase())) {
                         filteredList.add(jobPost);
-                    }
-                    else if (jobPost.getDescription().toLowerCase().contains(text.toLowerCase())) {
+                    } else if (jobPost.getDescription().toLowerCase().contains(text.toLowerCase())) {
                         filteredList.add(jobPost);
-                    }
-                    else if (jobPost.getClinic().getAddress().toLowerCase().contains(text.toLowerCase())) {
+                    } else if (jobPost.getClinic().getAddress().toLowerCase().contains(text.toLowerCase())) {
                         filteredList.add(jobPost);
                     }
                 }
@@ -181,12 +167,12 @@ public class JobSearchFragment extends Fragment implements RecyclerViewInterface
             @Override
             public void onFailure(Call<ArrayList<JobPost>> call, Throwable t) {
                 t.printStackTrace();
-                Toast.makeText(getContext(),"error getting job list", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), "error getting job list", Toast.LENGTH_SHORT).show();
             }
         });
     }
 
-    public void onResume () {
+    public void onResume() {
         super.onResume();
         searchView.setQuery("", false);
         getOpenJobs(adapter);

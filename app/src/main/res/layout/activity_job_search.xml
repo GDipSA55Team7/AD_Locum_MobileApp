@@ -16,13 +16,13 @@
             android:id="@+id/searchView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginLeft="8dp"
             android:layout_marginTop="4dp"
             android:layout_marginRight="8dp"
-            android:layout_marginLeft="8dp"
             android:layout_marginBottom="8dp"
             android:background="@drawable/search_view_bg"
-            app:queryBackground="@null"
             app:iconifiedByDefault="false"
+            app:queryBackground="@null"
             app:queryHint="Search" />
     </LinearLayout>
 
@@ -31,8 +31,8 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:gravity="center"
-        android:visibility="gone"
-        android:text="No jobs found" />
+        android:text="No jobs found"
+        android:visibility="gone" />
 
     <com.facebook.shimmer.ShimmerFrameLayout
         android:id="@+id/shimmer_view_container"
@@ -41,29 +41,33 @@
         android:layout_gravity="center"
         android:layout_marginTop="5dp"
         android:orientation="vertical"
-        app:shimmer_repeat_mode="reverse"
-        app:shimmer_duration="700">
+        app:shimmer_duration="700"
+        app:shimmer_repeat_mode="reverse">
 
         <!-- Adding 7 rows of placeholders -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
-            <include layout="@layout/loading_job_search_list_item"/>
-            <include layout="@layout/loading_job_search_list_item"/>
-            <include layout="@layout/loading_job_search_list_item"/>
 
             <include layout="@layout/loading_job_search_list_item" />
 
-            <include layout="@layout/loading_job_search_list_item"/>
-            <include layout="@layout/loading_job_search_list_item"/>
-            <include layout="@layout/loading_job_search_list_item"/>
+            <include layout="@layout/loading_job_search_list_item" />
+
+            <include layout="@layout/loading_job_search_list_item" />
+
+            <include layout="@layout/loading_job_search_list_item" />
+
+            <include layout="@layout/loading_job_search_list_item" />
+
+            <include layout="@layout/loading_job_search_list_item" />
+
+            <include layout="@layout/loading_job_search_list_item" />
         </LinearLayout>
 
     </com.facebook.shimmer.ShimmerFrameLayout>
 
-    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/swipeContainer"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -71,8 +75,7 @@
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/jobRecyclerView"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" >
-        </androidx.recyclerview.widget.RecyclerView>
+            android:layout_height="match_parent"></androidx.recyclerview.widget.RecyclerView>
 
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 

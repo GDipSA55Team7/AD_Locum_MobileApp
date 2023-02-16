@@ -9,6 +9,7 @@ import android.os.IBinder;
 public class DismissNotificationService extends Service {
     public DismissNotificationService() {
     }
+
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
 
@@ -18,10 +19,10 @@ public class DismissNotificationService extends Service {
         stopSelf();
         return START_STICKY;
     }
+
     @Override
     public IBinder onBind(Intent intent) {
-        // TODO: Return the communication channel to the service.
-        throw new UnsupportedOperationException("Not yet implemented");
+        throw new UnsupportedOperationException("Not implemented");
     }
 }
 
